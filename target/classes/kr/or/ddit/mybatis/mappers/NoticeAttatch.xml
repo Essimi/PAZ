@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.noticeAdmin.dao.NoticeAttatchDAO">
+
+<insert id="insertNoticeAttatche" parameterType="kr.or.ddit.vo.AttatchVO">
+	
+	<selectKey resultType="string" keyProperty="fileCode" order="BEFORE">
+		SELECT 'ATTATCH' || LPAD(ATTATCH_SEQ.NEXTVAL, 5, '0') FROM DUAL
+	</selectKey>
+	
+	INSERT INTO ATTATCH (
+	    FILE_CODE
+	    ,REAL_NAME
+	    ,SAVE_NAME
+	    ,FILE_MIME
+	    ,FILE_SIZE
+	    ,P_CODE
+	    ,POST_CODE
+	) VALUES (
+	    #{fileCode}
+	    ,#{realName,jdbcType=VARCHAR}
+	    ,#{saveName,jdbcType=VARCHAR}
+	    ,#{fileMime,jdbcType=VARCHAR}
+	    ,#{fileSize,jdbcType=NUMERIC}
+	    ,#{pCode,jdbcType=VARCHAR}
+	    ,#{postCode,jdbcType=VARCHAR}
+	)
+		
+</insert>
+
+
+
+</mapper>

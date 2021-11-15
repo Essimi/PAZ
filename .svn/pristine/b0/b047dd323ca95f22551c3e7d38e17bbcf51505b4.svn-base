@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "kr.or.ddit.project.dao.RequestProjectDAO">
+
+	<!-- 회원에게 온 프로젝트 요청 리스트 출력 -->
+	<select id="selectRequestList" parameterType="kr.or.ddit.vo.MemberVO" resultType="kr.or.ddit.vo.RequestProjectVO">
+		SELECT C.P_TITLE, A.*, B.MEM_ID
+		  FROM REQ_HISTORY A, MEMBER B, PROJECT C
+		 WHERE A.RECIPIENT = B.MEM_ID
+		   AND C.P_CODE = A.P_CODE
+		   AND B.MEM_ID = #{memId}
+		   AND A.STATUS_CODE = 'REQ_STATUS001'
+	</select>
+
+	<!-- 요청 수락, 거절 시 update  -->
+	<update id="updateRequestProjecStatus" parameterType="kr.or.ddit.vo.RequestProjectVO">
+		UPDATE REQ_HISTORY
+		   SET
+		      RESP_DATE = SYSDATE,
+		      STATUS_CODE = #{statusCode}
+		 WHERE REQ_CODE = #{reqCode}
+		
+	</update>
+	
+	<!-- 요청 수락 시 프로젝트 멤버에 해당 회원 추가 -->
+	<update id="InsertProjectMember" parameterType="kr.or.ddit.vo.RequestProjectVO">
+		INSERT INTO P_MEM (
+				  MEM_ID
+				, P_CODE
+				, WORK_TIME
+				, POSITION
+		) VALUES (
+				  #{memId}
+				, #{pCode}
+				, 0
+				, #{position}
+		)
+	</update>
+
+
+
+	<!-- 프로젝트 팀원 초대 시  -->
+	<update id="InsertRequstProjectHistory" parameterType="kr.or.ddit.vo.RequestProjectVO">
+		<selectKey keyProperty="reqCode" resultType="String" order="BEFORE">
+			SELECT 'req_' || LPAD(REQHISTORY_SEQ.NEXTVAL, 2, '0')
+			  FROM DUAL
+		</selectKey>
+		
+		INSERT INTO req_history (
+		    REQ_CODE,
+		    P_CODE,
+		    SENDER,
+		    RECIPIENT,
+		    REQ_DATE,
+		    STATUS_CODE,
+		    POSITION
+		) VALUES (
+		      #{reqCode}
+		    , #{pCode}
+		    , #{sender}
+		    , #{recipient}
+		    , SYSDATE
+		    , 'REQ_STATUS001'
+		    , #{position}
+		)
+	</update>
+	
+	
+	
+	
+	
+	<!-- 선택한 프로젝트의 멤버 리스트 출력 -->
+	<select id="SelectProjectMemberList" parameterType="kr.or.ddit.vo.RequestProjectVO" resultType="kr.or.ddit.vo.RequestProjectVO">
+		SELECT MEM_ID
+          FROM P_MEM
+         WHERE P_CODE = #{pCode}
+	</select>
+
+	<!-- mem_mapping 에 역할코드, 회원 아이디 추가 -->
+	<update id="InsertMemberMapping" parameterType="kr.or.ddit.vo.RequestProjectVO">
+		INSERT INTO MEM_MAPPING (
+		    MEM_ID,
+		    ROLE_CODE
+		) VALUES (
+		    #{memId},
+		    #{roleCode}
+		)
+	
+	</update>
+	
+	<!-- 회원 존재하나 확인. -->
+	<select id="selectMemberInfo" parameterType="String" resultType = "String">
+		SELECT MEM_NICKNAME
+		 FROM MEMBER
+		 WHERE MEM_ID = #{memId}
+	</select>
+	
+	<!-- 해당 프로젝트 초대 리스트 내역 -->
+	<select id="listRequestProjectHistory" parameterType="kr.or.ddit.vo.ProjectVO" resultType="kr.or.ddit.vo.RequestProjectVO">
+		SELECT A.RECIPIENT, A.REQ_DATE, A.POSITION, B.MEM_NICKNAME, B.MEM_MAIL
+		  FROM REQ_HISTORY A, MEMBER B
+	     WHERE A.RECIPIENT = B.MEM_ID
+		   AND A.P_CODE = #{pCode}
+		   AND A.STATUS_CODE = 'REQ_STATUS001'
+	</select>
+
+</mapper>

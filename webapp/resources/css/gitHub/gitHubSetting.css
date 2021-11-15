@@ -1,0 +1,23 @@
+@charset "UTF-8";
+
+#inputGitId, #inputGitRepo, #inputGitToken{
+	width : 620px;
+	display : inline;
+ 
+}
+
+#gitCheckBtn{
+	width : 70px;
+	display : inline;
+	margin-bottom: 5px;
+
+}
+
+#checkIcon{
+	margin-left: 30px;
+
+}
+
+.dataTables_empty{
+	display : none
+}

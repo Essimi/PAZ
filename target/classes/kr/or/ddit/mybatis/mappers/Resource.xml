@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.security.auth.dao.ResourceDAO">
+
+	<resultMap type="kr.or.ddit.vo.ResourceVO" id="resourceMap" autoMapping="true">
+		<id property="resCode" column="RES_CODE"/>
+		<collection property="authorities" ofType="kr.or.ddit.vo.AuthorityVO">
+			<constructor>
+				<idArg javaType="string" column="ROLE_CODE"/>
+			</constructor>
+		</collection>
+	</resultMap>
+	
+	<select id="selectAllResources" resultMap="resourceMap">
+		SELECT
+		    A.RES_CODE,    
+		    , RESOURCE_NAME
+		    , RESOURCE_PATTERN
+		    , DESCRIPTION
+		    , ROLE_CODE
+		    , LEVEL
+		FROM  RESOURCE_TB A LEFT OUTER JOIN R_MAPPING B
+			  ON (A.RES_CODE = B.RES_CODE)
+		START WITH PARENT_CODE IS NULL
+		CONNECT BY PRIOR A.RES_CODE = PARENT_CODE
+	</select>
+	
+	<select id="selectResourceListForAuthority" resultType="kr.or.ddit.vo.ResourceVO" parameterType="string">
+		SELECT DISTINCT RES_CODE
+		FROM R_MAPPING
+		WHERE ROLE_CODE IN (
+		SELECT PARENT_CODE
+		    FROM LAYER
+		    START WITH CHILD_ROLE = #{roleCode}
+		    CONNECT BY PRIOR PARENT_ROLE = CHILD_ROLE
+		)
+		ORDER BY RES_CODE
+	</select>
+	
+	<select id="selectAllSortedResources" resultMap="resourceMap">
+		SELECT
+		    A.RES_CODE
+		    , RESOURCE_NAME
+		    , RESOURCE_PATTERN
+		    , DESCRIPTION
+		    , SORT_ORDER
+		    , ROLE_CODE
+		FROM  RESOURCE_TB A LEFT OUTER JOIN R_MAPPING B
+			  ON (A.RES_CODE = B.RES_CODE)
+		ORDER BY SORT_ORDER, RES_CODE	  
+	</select>
+	
+	<delete id="deleteResourceRole" parameterType="kr.or.ddit.vo.AuthorityVO">
+		DELETE FROM R_MAPPING
+		WHERE ROLE_CODE = #{roleCode}
+	</delete>
+	
+	<insert id="insertResourceRole" parameterType="kr.or.ddit.vo.AuthorityVO">
+		INSERT ALL
+		<foreach collection="resCode" item="resId">
+			INTO R_MAPPING (RES_CODE, ROLE_CODE)
+			VALUES (#{resId}, #{roleCode})
+		</foreach>
+		SELECT * FROM DUAL
+	</insert>
+</mapper>

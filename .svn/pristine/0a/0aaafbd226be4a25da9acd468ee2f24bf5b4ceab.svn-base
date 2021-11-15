@@ -1,0 +1,30 @@
+package kr.or.ddit.common.qna.controller;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.or.ddit.common.qna.service.QnAService;
+import kr.or.ddit.vo.QnaVO;
+
+@Controller
+public class QnASelectController {
+	
+	@Inject
+	private QnAService service;
+	
+	// 고객센터 게시글의 상세조회 입니다.
+	
+	@RequestMapping("project/qnaView.do")
+	public String qnaView(@RequestParam("QnANo") String qandaCode, Model model){
+		
+		QnaVO qna = service.retrieveQnA(qandaCode);
+		
+		model.addAttribute("qna", qna);
+		
+		return "serviceCenter/QnAView";
+	}
+}

@@ -1,0 +1,104 @@
+package kr.or.ddit.common.noticeAdmin.service;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.or.ddit.common.noticeAdmin.dao.NoticeAttatchDAO;
+import kr.or.ddit.common.noticeAdmin.dao.NoticeDAO;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.AttatchVO;
+import kr.or.ddit.vo.NoticeVO;
+import kr.or.ddit.vo.PagingVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class NoticeServiceImpl implements NoticeService {
+	
+	@Inject
+	private NoticeDAO noticeDao;
+	
+	@Inject
+	private NoticeAttatchDAO attatchDao;
+	
+	
+	@Value("#{appInfo.attatchPath}")
+	private File saveFolder;
+	
+	private int processAttatche(NoticeVO notice) {
+		
+		int rowcnt = 0;
+		
+		AttatchVO attatch = notice.getAttatch();
+		
+		// 현재 쓰고 있는 글의 글 코드가 들어가야한다.
+		attatch.setPostCode(notice.getNoticeCode());
+		
+		log.info("글 코드를 잘 검색해오는지! 글코드에 잘 들어가는지 {}", notice.getNoticeCode());
+		
+		if(attatch!=null) {
+			
+			rowcnt = attatchDao.insertNoticeAttatche(attatch);
+			
+			try {
+				attatch.saveTo(saveFolder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return rowcnt;
+	}
+
+	@Override
+	public List<NoticeVO> selectNoticeList(PagingVO<NoticeVO> pagingVO) {
+		
+		List<NoticeVO> noticeList = noticeDao.selectNoticeList(pagingVO);
+		pagingVO.setTotalRecord(noticeDao.selectTotalRecord(pagingVO));
+		pagingVO.setDataList(noticeList);
+		return noticeList;
+		
+	}
+
+	@Override
+	public NoticeVO selectNotice(String noticeCode) {
+		
+		NoticeVO notice = noticeDao.selectNotice(noticeCode);
+		
+		return notice;
+	}
+
+	@Transactional
+	@Override
+	public ServiceResult insertNotice(NoticeVO notice) {
+		
+		ServiceResult result = null;
+		
+		// 글의 코드를 먼저 생성하자.
+		String noticeCode = noticeDao.selectNoticeCode();
+		
+		log.info("글 코드를 잘 검색해오는지! 공지사항 코드를 잘 가지고 오는지 {}", noticeCode);
+		
+		notice.setNoticeCode(noticeCode);
+		
+		int rowcnt = noticeDao.insertNotice(notice);
+		
+		if(rowcnt > 0) {
+			rowcnt += processAttatche(notice);
+			result = ServiceResult.OK;		
+		}else {
+			result = ServiceResult.FAILED;
+		}
+		
+		return result;
+	}
+	
+}

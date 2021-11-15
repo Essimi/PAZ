@@ -1,0 +1,65 @@
+package kr.or.ddit.common.qna.controller;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.or.ddit.common.qna.service.QnAService;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.QnaVO;
+
+@Controller
+public class QnAModifyController {
+	
+	@Inject
+	private QnAService service;
+	
+//  글 수정	
+//  글 작성 폼으로 이동 입니다.
+	
+	@RequestMapping("project/qnaUpdate.do")
+	public String getQnAWrite(@ModelAttribute("qna") QnaVO qna) {
+	
+		return "serviceCenter/QnAWrite";
+	}
+	
+	@RequestMapping(value = "project/qnaUpdate.do", method = RequestMethod.POST)
+	public String postQnAWrite(@Valid @ModelAttribute("qna") QnaVO qna, Errors errors, 
+			                   @RequestParam("QnANo") String qandaCode, Model model) {
+		
+		String viewName = null;
+		String message = null;
+		
+		qna.setQandaCode(qandaCode);
+		
+	    System.out.println(qna);
+		
+		if(!errors.hasErrors()) {
+			ServiceResult result = service.modifyQnA(qna);
+			
+			
+			switch (result) {
+			case OK:
+				viewName = "redirect:/project/qnaView.do?QnANo="+qna.getQandaCode();
+				break;
+			default:
+				viewName = "serviceCenter/QnAWrite";
+				message = "알 수 없는 오류입니다. 다시 시도해주세요";
+				break;
+			}
+		}else {
+			viewName = "serviceCenter/QnAWrite";
+		}
+		
+		model.addAttribute("message", message);
+		
+		return viewName;
+	}
+}

@@ -1,0 +1,125 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<style>
+#pagingArea {
+	background-color: white;
+	float: right;
+}
+
+#noticeButton {
+	margin-top: 15px;
+	height: 38px;
+}
+
+</style>
+
+<!-- 메인페이지 시작 -->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<!-- 메인 Content 시작 -->
+			<div class="invoice p-3 mb-3">
+			
+				<br>
+			
+				<div class="row">
+					<div class="col-12">
+						<h4><i class="fas fa-chalkboard-teacher"></i> 공지사항</h4>
+					</div>
+				</div>
+				
+				<br>
+				
+				<!-- 테이블 구역 -->
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body">
+									<!-- 테이블 시작 -->
+									<table class="table table-bordered table-striped">
+									
+										<thead>
+											<tr>
+												<th>글번호</th>
+												<th>제목</th>
+												<th>작성자</th>
+												<th>날짜</th>
+											</tr>
+										</thead>
+										
+										<c:set var="noticeList" value="${pagingVO.dataList}"></c:set>
+										
+										<tbody>
+											<c:choose>
+											
+												<c:when test="${not empty noticeList}">
+													<c:forEach items="${noticeList}" var="notice">
+													<tr>
+														<td>${notice.rnum }</td>
+														
+														<td>
+														
+															<c:url value="notice.do" var="viewURL">
+																<c:param name="noticeCode" value="${notice.noticeCode }" />
+															</c:url>
+															
+															<a href="${viewURL }">${notice.noticeTitle}</a>
+
+														</td>
+														
+														<td>${notice.memId }</td>
+														<td>${notice.noticeDate }</td>
+													</tr>
+													</c:forEach>
+												</c:when>
+												
+												<c:otherwise>
+													<tr>
+														<td colspan="6">게시글이 없습니다.</td>
+													</tr>
+												</c:otherwise>
+											</c:choose>
+										</tbody>
+										
+										
+										<tfoot>
+										
+											<tr>
+											
+											<td colspan="6">
+											
+											<input type="button"
+											class="linkBtn btn btn-info" id="noticeButton"
+											value="공지작성" data-gopage="${cPath }/notice/noticeInsert.do">
+											
+											<div id="pagingArea" class="card-footer clearfix">${pagingVO.pagingHTML }</div>
+											</td>
+											
+											</tr>
+										</tfoot>
+										
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="searchForm">
+	<input type="hidden" name="page" />
+</form>
+
+
+<script type="text/javascript"
+	src="${pageContext.request.contextPath }/resources/js/custom/paging.js"></script>
+
+<script type="text/javascript">
+	let searchForm = $("#searchForm").paging();
+</script>

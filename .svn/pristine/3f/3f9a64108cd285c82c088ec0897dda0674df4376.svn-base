@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+#QnA_main_Content {
+	height: 500px;
+}
+
+#QnA_WriteContent {
+	height: 450px;
+}
