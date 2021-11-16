@@ -134,27 +134,31 @@
 		where p_code = #{pCode}
 	</select>
 	
-	<!-- 회의록 참여자 삭제 -->
-	<delete id="deleteMeetingMemberList" parameterType="int">
+	<!-- 회의록 참여자 삭제 / 회의록 딜레트 사용  -->
+	<delete id="deleteMeetingMemberList" parameterType="String">
 	DELETE FROM meeting_mem
     WHERE
-        meeting_code =#{meetingCode,jdbcType=VARCHAR}; 
+        meeting_code = #{meetingCode,jdbcType=VARCHAR}
 	</delete>
 	
 	<!-- 회의록 수정 -->
 	<update id="updateMeeting" parameterType="kr.or.ddit.vo.MeetingVO">
 		UPDATE meeting
 	    SET
-	        p_code =#{pCode,jdbcType=VARCHAR}
-	        ,mem_id =#{memId,jdbcType=VARCHAR}
-	        ,meeting_topic =#{meetingTopic,jdbcType=VARCHAR}
+	        meeting_topic =#{meetingTopic,jdbcType=VARCHAR}
 	        ,meeting_content =#{meetingContent,jdbcType=CLOB}
 	        ,meeting_result =#{meetingResult,jdbcType=CLOB}
 	        ,meeting_date =#{meetingDate,jdbcType=DATE}
 	    WHERE
-	         meeting_code =#{meetingCode,jdbcType=VARCHAR};
+	         meeting_code =#{meetingCode,jdbcType=VARCHAR}
 	</update>
 	
 	
+	<!-- 회의록 삭제 -->
+	<delete id="deleteMeeting" parameterType="String">
+	DELETE FROM meeting
+    WHERE
+        meeting_code = #{meetingCode,jdbcType=VARCHAR}
+	</delete>
 	
 </mapper>

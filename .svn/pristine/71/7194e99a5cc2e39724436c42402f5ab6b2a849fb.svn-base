@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd" >
+ <tiles-definitions> 
+<!-- definition name == logical view name -->
+<!-- 경로 설정, value 위치의 실행파일을 name 으로 지정 후 template 위치에 넣어줌 -->
+<!-- tiles 기본 설정 입니다. -->
+  <definition name="super" template="/WEB-INF/views/util/template.jsp">
+  	<put-attribute name="preScript" value="/resources/tilesData/preScript.jsp" />
+  	<put-attribute name="header" value="/resources/tilesData/headerMenu.jsp"/>
+  	<put-attribute name="header2" value="/resources/tilesData/headerMenu2.jsp"/>
+  	<put-attribute name="left" value="/resources/tilesData/leftMenu.jsp"/>
+  	<put-attribute name="postScript" value="/resources/tilesData/postScript.jsp" />  
+  </definition>
+
+  <!-- index.jsp 파일 설정 -->
+  <definition name="index" extends="super">
+  	<put-attribute name="content" value="/WEB-INF/views/index.jsp"/>
+  </definition>
+                 
+  <!-- 모든 경로(*/*) 에 대한 매핑주소를 대입함   -->
+  <!-- 공통적인 script만 사용하고 개인적으로 추가해야할 script(pre,post) 가 없더라도 해당 경로로 폴더와 파일을 생성해야 합니다. -->
+  <!-- 해당 name의 경로로 사용되는 tiles 탬플릿은 하단의 경로를 무조건적으로 읽기 때문에, 파일이 없다면 에러가 발생합니다.  -->
+  <!-- 추가해야할 script가 없다면 해당하는 경로에 폴더와 파일을 생성한 후에 jsp 파일 내용을 비워두면 됩니다.  -->
+  <definition name="*/*" extends="super">  
+    <put-attribute name="preScript2" value="/resources/tilesData/personalScript/{1}/{2}PRE.jsp"/>
+  	<put-attribute name="content" value="/WEB-INF/views/{1}/{2}.jsp"/>
+  	<put-attribute name="postScript2" value="/resources/tilesData/personalScript/{1}/{2}POST.jsp"/>
+  </definition>
+  
+  <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+  <!-- 유형이 다른 tiles -->
+  <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+  
+   <definition name="myProjectPage" template="/WEB-INF/views/util/myProjectTiles.jsp">
+  	<put-attribute name="preScript" value="/resources/tilesData/preScript.jsp" />
+  	<put-attribute name="header" value="/resources/tilesData/headerMenu.jsp"/>
+  	<put-attribute name="postScript" value="/resources/tilesData/postScript.jsp" />  
+  </definition>
+  
+  <definition name="myProject" extends="myProjectPage">
+  	<put-attribute name="content" value="/WEB-INF/views/project/myProject.jsp"/>
+  </definition>
+  
+  <definition name="myProjectEdit" extends="myProjectPage">
+  	<put-attribute name="content" value="/WEB-INF/views/myProjectEdit.jsp"/>
+  </definition>
+  
+  <definition name="myProjectEdit" extends="myProjectPage">
+  	<put-attribute name="content" value="/WEB-INF/views/home.jsp"/>
+  </definition>
+  
+</tiles-definitions>

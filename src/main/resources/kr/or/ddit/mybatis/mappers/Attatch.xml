@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.utils.AttatchDAO">
 
-	<insert id="intsertAttatches" parameterType="kr.or.ddit.vo.AttatchVO">
+	<insert id="intsertAttatches" parameterType="AttatchVO">
 		<selectKey resultType="String" keyProperty="fileCode" order="BEFORE">
 <!-- 			SELECT NVL(MAX(ATT_NO), 0) + 1 -->
 <!-- 			FROM ATTATCH -->
@@ -30,7 +30,7 @@
 		SELECT * FROM DUAL
 	</insert>
 	
-	<select id="SelectAttatch" parameterType="int" resultType="kr.or.ddit.vo.AttatchVO">
+	<select id="selectAttatch" parameterType="int" resultType="kr.or.ddit.vo.AttatchVO">
 		SELECT FILE_CODE, REAL_NAME, SAVE_NAME,
         		FILE_NAME, FILE_SIZE
 		FROM ATTATCH
