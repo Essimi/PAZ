@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.calendar.dao.CalendarDAO">
+	<select id="selectTotalRecord" parameterType="PagingVO"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM SCHEDULE
+		WHERE P_CODE = #{detailSearch.pCode}
+	</select>
+
+	<select id="selectCalendarList" parameterType="kr.or.ddit.vo.PagingVO"
+		resultType="kr.or.ddit.vo.CalendarVO">
+		
+		SELECT B.*
+		FROM (
+			SELECT A.*, ROWNUM RNUM
+			FROM (
+				SELECT SCHEDULE_CODE, SCHEDULE_NAME, SCHEDULE_CONTENT, SCHEDULE_START,
+		SCHEDULE_DEADLINE
+		FROM SCHEDULE
+		WHERE P_CODE = #{detailSearch.pCode}
+			) A
+		)B
+	
+		<trim prefix="WHERE">
+
+	<if test="startRow gt 0 and endRow gt 0 ">
+		<![CDATA[
+			(RNUM >= #{startRow} AND RNUM <= #{endRow})
+		]]>
+	</if>		
+		</trim>
+		
+	</select>
+
+	<select id="selectCalendar" resultType="kr.or.ddit.vo.CalendarVO">
+		SELECT SCHEDULE_NAME, SCHEDULE_CODE, SCHEDULE_CONTENT, TO_CHAR(SCHEDULE_START, 'YYYY-MM-DD') as SCHEDULE_START, TO_CHAR(SCHEDULE_DEADLINE, 'YYYY-MM-DD') as SCHEDULE_DEADLINE
+		FROM SCHEDULE
+		WHERE P_CODE = #{pCode}
+		AND SCHEDULE_CODE = #{scheduleCode}
+	</select>
+
+	<insert id="insertCalendar" parameterType="kr.or.ddit.vo.CalendarVO">
+		<selectKey keyProperty="scheduleCode" resultType="string"
+			order="BEFORE">
+			SELECT SCHEDULE_SEQ.NEXTVAL
+			FROM DUAL
+		</selectKey>
+		INSERT INTO schedule (
+		schedule_code,
+		schedule_name,
+		schedule_content,
+		schedule_start,
+		schedule_deadline,
+		p_code
+
+		) VALUES (
+		#{scheduleCode, jdbcType=VARCHAR},
+		#{scheduleName, jdbcType=VARCHAR},
+		#{scheduleContent, jdbcType=CLOB},
+		#{scheduleStart, jdbcType=DATE},
+		#{scheduleDeadline, jdbcType=DATE},
+		#{pCode}
+		)
+
+	</insert>
+	
+	<update id="updateCalendar">
+	UPDATE schedule
+    SET
+        schedule_name = #{scheduleName, jdbcType=VARCHAR},
+        schedule_content = #{scheduleContent, jdbcType=CLOB},
+        schedule_start = #{scheduleStart, jdbcType=DATE},
+        schedule_deadline = #{scheduleDeadline, jdbcType=DATE}
+	WHERE
+    schedule_code = #{scheduleCode}
+    AND p_code = #{pCode}
+	</update>
+	
+	<delete id="deleteCalendar" >
+	DELETE FROM schedule
+	WHERE
+    schedule_code = #{scheduleCode}
+    AND p_code = #{pCode}
+	</delete>
+
+
+
+
+
+</mapper>

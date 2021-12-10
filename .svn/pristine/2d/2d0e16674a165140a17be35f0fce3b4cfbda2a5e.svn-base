@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.task.dao.TaskDAO">
+
+	<!-- detailSearch -->
+	<sql id="searchFrag">
+		<!--  <trim prefix=" AND "> -->
+		 	<if test="detailSearch neq null">
+		 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.memId)">
+		 			AND A.MEM_ID = #{detailSearch.memId}
+		 		</if>
+		 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.workStatus)">
+		 			AND A.WORK_STATUS = #{detailSearch.workStatus}
+		 		</if>
+		 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.importance)">
+		 			AND A.IMPORTANCE = #{detailSearch.importance}
+		 		</if>
+		 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.workName)">
+		 			AND INSTR(A.WORK_NAME, #{detailSearch.workName}) > 0
+		 		</if>
+		 	</if>   	
+		<!--  </trim> -->
+	</sql>
+	
+	
+	<!-- 게시글 총 개수 조회 -->
+	<select id = "selectTaskTotalRecord" resultType = "int" parameterType = "kr.or.ddit.vo.PagingVO">
+		SELECT COUNT(*)
+		FROM WORK A
+	    WHERE A.P_CODE = #{detailSearch.pCode}
+	    <include refid="searchFrag" />
+	</select>
+	
+
+	<!-- 업무 리스트 조회 -->
+	<select id="selectTaskList" parameterType="kr.or.ddit.vo.PagingVO" resultType="kr.or.ddit.vo.TaskVO">
+		SELECT D.*
+		FROM (
+			SELECT C.*, ROWNUM RNUM
+			FROM (
+				SELECT B.MEM_NICKNAME
+				       , A.WORK_CODE
+				       , A.P_CODE
+				       , A.MEM_ID
+				       , A.TOP_WORK_CODE
+				       , D.WORK_NAME topWorkName
+				       , A.WORK_STATUS
+				       , A.WORK_NAME
+				       , A.WORK_CONTENTS
+				       , TO_CHAR(A.WORK_START, 'YYYY-MM-DD') WORK_START
+				       , TO_CHAR(A.WORK_DEADLINE, 'YYYY-MM-DD') WORK_DEADLINE
+				       , C.PROGRESS_NAME PROGRESS
+				       , A.IMPORTANCE
+			      FROM WORK A, MEMBER B, WORK_PROGRESS C,
+				(SELECT WORK_CODE,
+			            WORK_NAME
+			       FROM WORK 
+			      WHERE WORK_CODE IN (SELECT TOP_WORK_CODE
+                                		FROM WORK)) D
+			WHERE A.MEM_ID = B.MEM_ID
+			  AND A.PROGRESS = C.PROGRESS
+			  AND A.TOP_WORK_CODE = D.WORK_CODE(+)
+			  AND A.P_CODE = #{detailSearch.pCode}
+			  <include refid="searchFrag" />
+			  
+			) C  ORDER BY C.WORK_CODE DESC
+		) D
+		<![CDATA[   
+			WHERE  RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]>                              
+	</select>
+	
+	
+	<select id="selectTopTaskName" parameterType="kr.or.ddit.vo.TaskVO" resultType="kr.or.ddit.vo.TaskVO" >
+		SELECT WORK_NAME topWorkName
+		  FROM WORK
+		 WHERE WORK_CODE = #{topWorkCode}
+	</select>
+	
+	
+	<select id="selectTopTaskSearchList" parameterType="kr.or.ddit.vo.TaskVO" resultType="kr.or.ddit.vo.TaskVO">
+		SELECT WORK_NAME, WORK_CODE
+		  FROM WORK
+		 WHERE REPLACE(WORK_NAME, ' ', '') LIKE REPLACE('%'||#{workName}||'%', ' ', '')
+		   AND P_CODE = #{pCode} 
+	</select>
+	
+</mapper>

@@ -3,48 +3,53 @@
 <mapper namespace="kr.or.ddit.meeting.dao.MeetingDao">
 	
 	
+<!-- 검색 -->	
+		<sql id="searchFrag">
+		and p_code = #{detailSearch.pCode,jdbcType=VARCHAR}
+			<if test="searchVO neq null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)">
+				<choose>
+					<when test="searchVO.searchType eq 'meetingTopic'">
+						and INSTR(MEETING_TOPIC, #{searchVO.searchWord}) > 0
+					</when>
+					<when test="searchVO.searchType eq 'memId'">
+						and INSTR(mem_id, #{searchVO.searchWord}) > 0
+					</when>
+					<when test="searchVO.searchType eq 'meetingContent'">
+						and INSTR(MEETING_CONTENT, #{searchVO.searchWord}) > 0
+					</when>
+					<otherwise>
+						and INSTR(MEETING_TOPIC, #{searchVO.searchWord}) > 0
+								OR INSTR(mem_Id, #{searchVO.searchWord}) > 0
+								OR INSTR(MEETING_CONTENT, #{searchVO.searchWord}) > 0
+					</otherwise>
+				</choose>
+			</if>
+	</sql>
 	
-<!-- 		<sql id="searchFrag"> -->
-<!-- 		<where> -->
-<!-- 			<if test="searchVO neq null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)"> -->
-<!-- 				<choose> -->
-<!-- 					<when test="searchVO.searchType eq 'name'"> -->
-<!-- 						INSTR(mem_Id, #{searchVO.searchWord}) > 0 -->
-<!-- 					</when> -->
-<!-- 					<when test="searchVO.searchType eq 'address'"> -->
-<!-- 						meeting_topic LIKE '%'||#{searchVO.searchWord}||'%' -->
-<!-- 					</when> -->
-<!-- 					<otherwise> -->
-<!-- 						INSTR(mem_Id, #{searchVO.searchWord}) > 0 -->
-<!-- 						OR -->
-<!-- 						meeting_topic LIKE '%'||#{searchVO.searchWord}||'%' -->
-<!-- 					</otherwise> -->
-<!-- 				</choose> -->
-<!-- 			</if> -->
-<!-- 		</where> -->
-<!-- 	</sql> -->
-	
-	
+<!-- 페이지를 위한 레코드 수 -->	
 	<select id="selectTotalRecord" resultType="int">
 		SELECT COUNT(*)
 		FROM meeting
-<!-- 		<include refid="searchFrag" /> -->
+		WHERE 1=1
+		<include refid="searchFrag" />  <!-- ??? -->
 	</select>
 	
+	
+<!-- 회의록 리스트 -->	
 	<select id="selectMeetingList" resultType="kr.or.ddit.vo.MeetingVO" parameterType="kr.or.ddit.vo.PagingVO">	
 		SELECT B.*
 				FROM (
 					SELECT A.*, ROWNUM RNUM
 					FROM (
 						SELECT
-		                    meeting_code,    p_code,    mem_id,
+		                    meeting_code,    p_code,    a.mem_id mem_id,
 		                    meeting_topic,    meeting_content,    meeting_result,
-		                    meeting_date
-							, ROWID RID
-						FROM meeting
-					   where p_code = 'PROJECT00004'
-						
-						ORDER BY RID DESC
+		                     TO_CHAR(meeting_date,'YYYY-MM-DD HH:MI')meeting_date, 
+		                    MEM_NICKNAME
+						FROM meeting a, member b
+                       where a.mem_id = b.mem_id 
+						<include refid="searchFrag" />  
+						ORDER BY meeting_code DESC
 					) A  
 				) B
 			<![CDATA[
@@ -52,23 +57,51 @@
 			]]>
 		</select>
 	
+	
+<!-- 회의록 상세조회와 회의록 참여자 조회 -->
 	<resultMap type="kr.or.ddit.vo.MeetingVO" id="memberMap" autoMapping="true">
-		<id property="pCode" column="p_code"/>				<!-- 회의록의 vo 기본값 지정 -->
+		<id property="pCode" column="p_code"/>				<!-- 회의록의 vo 기본값 지정 (기본키)-->
 		<collection property="memberList" javaType="java.util.List" ofType="kr.or.ddit.vo.MemberVO" autoMapping="true">
-			<id property="memId" column="MEM_LIST" />		<!-- 맴버 vo에서 리스트를 잇는다 -->
-			<result property="memNickname" column="MEM_NICKNAME"/>
+			<id property="memId" column="MEM_LIST" />		<!-- 맴버 vo에서 리스트를 잇는다(조인 역할) -->
+			<result property="memNickname" column="MEM_NICKNAME"/> <!-- 원하는 거 넣기 -->
 		</collection>
 	</resultMap>
 	
 	<select id="selectMeeting" parameterType="string" resultMap="memberMap">
 		SELECT
-		    A.meeting_code,    p_code,  a.mem_id,   B.mem_list, 
-		    meeting_topic,    meeting_content,    meeting_result,    
-		    meeting_date, mem_nickname
-		FROM meeting A LEFT OUTER JOIN (
-        select mem_list, meeting_code, mem_nickname
-          from meeting_mem  INNER JOIN member 
-          on(mem_id = mem_list)
+		    a.meeting_code,
+		    p_code,
+		    a.mem_id,
+		    b.mem_list,
+		    meeting_topic,
+		    meeting_content,
+		    meeting_result,
+		    TO_CHAR(meeting_date,'YYYY-MM-DD HH:MI')meeting_date, 
+		    a.mem_nickname mem_nickname_to,
+		    b.mem_nickname mem_nickname_we
+		FROM
+		    (SELECT
+		    meeting_code,
+		    p_code,
+		    c.mem_id,
+		    meeting_topic,
+		    meeting_content,
+		    meeting_result,
+		    meeting_date,
+		    d.mem_nickname
+		    
+		FROM
+		    meeting c, member d
+		where
+		     c.mem_id = d.mem_id) a
+		    LEFT OUTER JOIN (
+		        SELECT
+		            mem_list,
+		            meeting_code,
+		            mem_nickname
+		        FROM
+		            meeting_mem
+		            INNER JOIN member ON ( mem_id = mem_list )
         ) B   
 		    ON(A.meeting_code = B.meeting_code)
 		WHERE A.meeting_code = #{meeting_code}
@@ -91,8 +124,8 @@
 					    meeting_date
 					) VALUES (
 			   	  	    #{meetingCode,jdbcType=VARCHAR},
-						'PROJECT00004',
-						'cc002',
+						#{pCode,jdbcType=VARCHAR},
+						#{write,jdbcType=VARCHAR},
 						#{meetingTopic,jdbcType=VARCHAR},
 						#{meetingContent,jdbcType=CLOB},
 						#{meetingResult,jdbcType=CLOB},
@@ -107,21 +140,45 @@
 		INSERT ALL
 		<foreach collection="memberList" item="member">
 		INTO meeting_mem (
-		    mem_list,
-		    meeting_code
+		    mem_list,							<!-- ,스플릿해서 리스트에 넣고 만든 참여자들 넣는곳 -->
+		    meeting_code						<!-- 프로젝트 코드 -->
 		) VALUES (
-		    #{member.memId,jdbcType=VARCHAR},
-			#{meetingCode,jdbcType=VARCHAR}
+		    #{member.memId,jdbcType=VARCHAR},	<!-- 여러 참여자가 들어가는곳 -->
+			#{meetingCode,jdbcType=VARCHAR}		<!-- 프로젝트 코드 들어가는곳 -->
 		)
 		</foreach>
 		
-		SELECT * FROM DUAL   
+		SELECT * FROM DUAL  					<!-- 데이터 작성시 연산용으로 보기위해 쓰는곳  -->				
 	</insert>
 	
 	
 
+	<!-- 회의록 참여자 조회  -->
+	<select id="chackSelect" parameterType="DataListVO" resultType="ProjectMemberVO">
+		select A.*, nvl(b.mem_list,'y') checkyn
+		  from
+		      (
+		      select
+		          a.mem_id,
+		          p_code,
+		          mem_nickname
+		      from
+		          p_mem a inner join member b
+		          on(a.mem_id = b.mem_id)
+		      where p_code = #{pCode,jdbcType=VARCHAR}
+		        and a.out_status  = 0    
+		        ) A left outer join (select 
+		              mem_list,
+		              meeting_code
+		         from 
+		              meeting_mem
+		        where
+		              meeting_code = #{meetingCode,jdbcType=VARCHAR})B
+		  on (a.mem_id = b.mem_list)
+	</select>
 	
-	<!-- 회의록 참여자 체크박스  -->
+	
+	<!-- 프로젝트 소속된 맴버들 참여자 목록 -->
 	<select id="chackmember" parameterType="kr.or.ddit.vo.DataListVO" resultType="kr.or.ddit.vo.ProjectMemberVO">
 		SELECT
 		    a.mem_id,
@@ -132,6 +189,7 @@
 		    on(a.mem_id= b.mem_id)
 		    
 		where p_code = #{pCode}
+		 and a.OUT_STATUS =0
 	</select>
 	
 	<!-- 회의록 참여자 삭제 / 회의록 딜레트 사용  -->
@@ -148,7 +206,6 @@
 	        meeting_topic =#{meetingTopic,jdbcType=VARCHAR}
 	        ,meeting_content =#{meetingContent,jdbcType=CLOB}
 	        ,meeting_result =#{meetingResult,jdbcType=CLOB}
-	        ,meeting_date =#{meetingDate,jdbcType=DATE}
 	    WHERE
 	         meeting_code =#{meetingCode,jdbcType=VARCHAR}
 	</update>

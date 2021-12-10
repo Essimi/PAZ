@@ -1,0 +1,57 @@
+package kr.or.ddit.chat.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.or.ddit.chat.service.ChattingService;
+import kr.or.ddit.vo.ChatRoomVO;
+import kr.or.ddit.vo.MemberProfileVO;
+import kr.or.ddit.vo.MemberVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+public class ChattingMainController {
+	
+	@Inject
+	private ChattingService service;
+	
+	@RequestMapping("chat/chatting.do")
+	public String chattingMain(
+			@RequestParam(value="pCode", required=true) String pCode
+			,@AuthenticationPrincipal(expression="authMember") MemberVO authMember
+			,Model model
+			
+			) {
+		
+		Map<String, String> info = new HashMap<>();
+		
+		info.put("memId", authMember.getMemId());
+		info.put("pCode", pCode);
+		
+		// 프로젝트의 멤버 정보에 대한 조회
+		List<MemberProfileVO> memberList = new ArrayList<>();
+		memberList = service.selectProjectMember(info);
+		
+		// 채팅방 정보에 대한 조회
+		List<ChatRoomVO> chatRoomList = new ArrayList<>();
+		chatRoomList = service.selectchatRoom(info);
+		
+		model.addAttribute("memberList",memberList);
+		model.addAttribute("chatRoomList",chatRoomList); 
+		
+		return "chat/chattingMain";
+		
+	}
+	
+}

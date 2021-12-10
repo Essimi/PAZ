@@ -1,0 +1,71 @@
+package kr.or.ddit.vo;
+
+import java.util.List;
+
+public class KanbanVO {
+	
+	
+	//카드넘버
+	private String cardNo;
+	
+	//전의 카드 넘버
+	private String cardPreNo;
+	
+	//후의 카드 넘버
+	private String cardNextNo;
+	
+	//업무 코드 
+	private String workCode;
+	
+	//카드 리스트 안에 업무들 
+	private List<TaskVO> cardList;
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+
+	public String getCardPreNo() {
+		return cardPreNo;
+	}
+
+	public void setCardPreNo(String cardPreNo) {
+		this.cardPreNo = cardPreNo;
+	}
+
+	public String getCardNextNo() {
+		return cardNextNo;
+	}
+
+	public void setCardNextNo(String cardNextNo) {
+		this.cardNextNo = cardNextNo;
+	}
+
+	public String getWorkCode() {
+		return workCode;
+	}
+
+	public void setWorkCode(String workCode) {
+		this.workCode = workCode;
+	}
+
+	public List<TaskVO> getCardList() {
+		return cardList;
+	}
+
+	public void setCardList(List<TaskVO> cardList) {
+		this.cardList = cardList;
+	}
+
+	@Override
+	public String toString() {
+		return "KanbanVO [cardNo=" + cardNo + ", cardPreNo=" + cardPreNo + ", cardNextNo=" + cardNextNo + ", workCode="
+				+ workCode + ", cardList=" + cardList + "]";
+	}
+	
+	
+
+}

@@ -1,0 +1,32 @@
+package kr.or.ddit.admin.dashboard.controller;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.admin.dashboard.service.DashboardService;
+import kr.or.ddit.vo.AdminDashboardVO;
+import kr.or.ddit.vo.DataListVO;
+
+@Controller
+public class ProjectClassificationDashController {
+	
+	@Inject
+	DashboardService service;
+	
+	@RequestMapping("projectClassification.do")
+	public String Access(
+			Model model  
+			) {
+		List<AdminDashboardVO> dataListV = service.projectPartList();
+		
+		model.addAttribute("dataListVO",dataListV);
+
+		
+			return "admin/projectClassification";
+	}
+}

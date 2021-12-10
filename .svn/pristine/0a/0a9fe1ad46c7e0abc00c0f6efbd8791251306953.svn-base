@@ -1,0 +1,28 @@
+package kr.or.ddit.payment.refund.service;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.PayRefundVO;
+import kr.or.ddit.vo.PayVO;
+
+/**
+ * 환불 관련 
+ * @author essimi
+ *
+ */
+public interface PayRefundService {
+	
+	/**
+	 * 결제 정보 조회
+	 * @param pay
+	 * @return
+	 */
+	public PayVO payInfo(String pCode);
+	
+	/**
+	 * 환불 내역 저장
+	 * @param payRefund
+	 * @return
+	 */
+	public ServiceResult createPayRefundInfo(PayRefundVO payRefund);
+
+}

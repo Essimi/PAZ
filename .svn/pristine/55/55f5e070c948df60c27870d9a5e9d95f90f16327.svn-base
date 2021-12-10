@@ -1,0 +1,60 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<script>
+
+
+
+	document.addEventListener('DOMContentLoaded',
+			function() {
+		let scheduleName = $(this).parents('#calendarModal').data("scheduleName");
+		let scheduleContent = $(this).parents('#calendarModal').data("scheduleContent");
+				var calendarEl = document.getElementById('calendar');
+				var colorCode = "#"
+						+ Math.round(Math.random() * 0xffffff).toString(16);
+
+				var calendar = new FullCalendar.Calendar(calendarEl, {
+					initialView : 'dayGridMonth',
+					
+
+					events : '${cPath}/calendar/calendarfordata.do',
+						
+					eventColor : colorCode,
+					eventClick : function(info) {
+						let event = info.event;
+					 	$('#modalTitle').html(event.title);
+						$('#modalBody').html(event.extendedProps.scheduleContent);
+						$('#eventUrl').attr('href', event.url); 
+						$('#calendarModal').modal();
+					}
+
+				});
+				
+				
+				calendar.render();
+			});
+</script>
+
+
+<div id="calendar"></div>
+<div id="calendarModal" class="modal fade">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 id="modalTitle" class="modal-title"></h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+        </div>
+        <div id="modalBody" class="modal-body"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+
+

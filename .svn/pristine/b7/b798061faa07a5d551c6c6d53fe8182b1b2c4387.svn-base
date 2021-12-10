@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.admin.payRetrieve.dao.PayRetrieveDAO">
+
+	<sql id="searchFrag">
+		
+			<if test="searchVO neq null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)">
+				<choose>
+					<when test="searchVO.searchType eq 'pTitle'">
+						and INSTR(mem_id, #{searchVO.searchWord}) > 0
+					</when>
+					<otherwise>
+						and INSTR(mem_id, #{searchVO.searchWord}) > 0
+					</otherwise>
+				</choose>
+			</if>
+		
+	</sql>
+	
+	
+	<select id="selectTotalRecord" resultType="int">
+		SELECT COUNT(*)
+		 from
+        	 pay_info c, refund_info d, member e
+         where
+             c.pay_code = d.pay_code(+) 
+         and
+             c.mem_id = e.mem_id
+		<include refid="searchFrag" />
+	</select>
+	
+	
+	
+	<resultMap type="PayVO" id="PayMap" autoMapping="true">	
+		<collection property="refundInfo" javaType="String" ofType="PayRefundVO" autoMapping="true">
+			<id property="payCode" column="pay_code"/>
+			<id property="refundCode" column="REFUND_CODE"/>
+			<result property="refundCode" column="refund_code"/>
+		</collection>
+	</resultMap>
+	
+	
+	<select id="selectPayRetrieveList" resultMap="PayMap" parameterType="kr.or.ddit.vo.PagingVO">	
+		
+	SELECT B.*
+	   FROM(
+	        SELECT A.*, ROWNUM RNUM
+	        FROM(
+	            select
+	                pay_date,
+	                c.pay_code,
+	                d.refund_code,
+	                c.mem_id,
+	                PAY_AMOUNT,
+	                MEM_NICKNAME
+	            from
+	                pay_info c, refund_info d, member e
+	            where
+	                c.pay_code = d.pay_code(+) 
+	            and
+	                 c. mem_id = e. mem_id
+                    
+                   <include refid="searchFrag" />
+                    ORDER BY pay_date DESC
+                 ) A
+                         ) B
+                     
+		    <![CDATA[
+				WHERE  RNUM >= #{startRow} AND RNUM <= #{endRow}
+			]]>
+
+		</select>
+	
+	<resultMap type="PayVO" id="PaySelectMap" autoMapping="true">
+		<id property="payCode" column="pay_code"/>
+		<association property="refundInfo"  javaType="PayRefundVO" autoMapping="true">
+			<id property="payCode" column="REFUND_PAY"/>
+			<id property="refundCode" column="REFUND_CODE"/>
+		</association>
+	</resultMap>
+	<select id="selectPayRetrieve" parameterType="string" resultMap="PaySelectMap">
+	    SELECT 
+	        C.pay_code,        B.P_CODE,        refund_code,
+	        refund_detail,        refund_date,         mem_id,
+	        pay_date,        pay_amount,        pay_month,
+	        pay_provider,        pay_mer_uid,        pay_pgsuccess,
+	        pay_addition, D.pay_code refund_pay
+	    FROM pay_info C, refund_info D, project B
+	     WHERE C.pay_code = D.pay_code(+)
+	     AND C.P_CODE = B.P_CODE
+	     AND C.Pay_code = #{pay_code}
+				
+	</select>
+</mapper>

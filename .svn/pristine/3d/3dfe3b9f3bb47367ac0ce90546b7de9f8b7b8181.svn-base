@@ -1,0 +1,407 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+	
+<!-- 환불 관련 스크립트, 타 jsp 에 구성시 실행이 안됩니다. -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+
+
+
+<div class="col-md-4">
+	<div class="card card-widget widget-user-2">
+		<div class="widget-user-header bg-warning">
+			<div class="widget-user-image">
+				<img class="img-circle elevation-2" src="${cPath }/resources/file/profileImage/${memberInfo.memIkon.saveName }" 
+				     onerror="this.src='${cPath }/resources/file/profileImage/profile.jpg'">
+			</div>
+			<input type="button" onclick="location.href='${cPath }/mypage/myPageUpdate.do'" value="회원정보수정"> 
+			<input type="button" id="memdelete" value="회원탈퇴">
+		</div>
+		<div class="card-footer p-0">
+			<ul class="nav flex-column">
+				<li class="nav-item">
+					<div class="input-group-prepend">
+						<span class="input-group-text"><i class="fas fa-user"></i></span>
+						${memberInfo.memId }
+					</div>
+				</li>
+				<li class="nav-item">
+					<div class="input-group-prepend">
+						<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+					</div> ${memberInfo.memMail }
+				</li>
+				<li class="nav-item">
+					<div class="input-group-prepend">
+						<span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
+					</div> ${memberInfo.memTel }
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+
+<input type="button" id="refundBtn" class="btn btn-default" data-toggle="modal" data-target="#modal-lg">
+<input type="button" id="plusBtn" class="btn btn-default" data-toggle="modal" data-target="#modal-lgg">
+
+
+<!-- 환불 modal -->
+<div class="modal fade" id="modal-lg">
+	<div class="modal-dialog">
+		<div class="modal-content bg-default">
+			<div class="modal-header">
+				<h4 class="modal-title">환불</h4>
+				<h6>환불이 가능한 결제 리스트들 입니다.</h6>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<table border="1">
+					<thead>
+						<tr>
+							<th>결제일자</th>
+							<th>금액</th>
+							<th>개월</th>
+							<th>결제수단</th>	
+						</tr>
+					</thead>
+					<tbody id = "refundArea">
+					
+					</tbody>		
+				</table>
+			</div>
+			<div class="modal-footer justify-content-between">
+				<button type="button" class="btn btn-info" data-dismiss="modal">취소</button>
+				<button type="button" class="btn btn-info realRefund">환불하기</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<!-- 추가결제 -->
+	<div class="modal fade" id="modal-lgg">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<div id="pricing" class="container-fluid">
+					<div class="text-center">
+						<h4>결제수단을 선택해주세요</h4>
+						<h5>결제를 하셔야 프로그램을 이용하실 수 있습니다.</h5>
+					</div>
+					<div class="row slideanim">
+						<div class="col-sm-4 col-xs-12">
+							<div class="panel panel-default text-center">
+								<div class="panel-heading">
+									<h1>PAYCO</h1>
+								</div>
+								<br>
+
+								<div class="panel-body">
+									<button type="button" class="btn btn-block btn-outline-danger payInfo" value="5000, payco, 1">
+										<p>
+											<strong>1</strong> 개월 (5,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-danger payInfo" value="10000, payco, 3">
+										<p>
+											<strong>3</strong> 개월 (10,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-danger payInfo" value="15000, payco, 5">
+										<p>
+											<strong>5</strong> 개월 (15,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-danger payInfo" value="20000, payco, 7">
+										<p>
+											<strong>7</strong> 개월 (20,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-danger payInfo" value="25000, payco, 9">
+										<p>
+											<strong>9</strong> 개월 (25,000)
+										</p>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4 col-xs-12">
+							<div class="panel panel-default text-center">
+								<div class="panel-heading">
+									<h1>KAKAO</h1>
+								</div>
+
+								<br>
+
+								<div class="panel-body">
+									<button type="button" class="btn btn-block btn-outline-warning payInfo" value="5000, kakao, 1">
+										<p>
+											<strong>1</strong> 개월 (5,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-warning payInfo" value="10000, kakao, 3">
+										<p>
+											<strong>3</strong> 개월 (10,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-warning payInfo" value="15000, kakao, 5">
+										<p>
+											<strong>5</strong> 개월 (15,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-warning payInfo" value="20000, kakao, 7">
+										<p>
+											<strong>7</strong> 개월 (20,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-warning payInfo" value="25000, kakao, 9">
+										<p>
+											<strong>9</strong> 개월 (25,000)
+										</p>
+									</button>
+								</div>
+								<div class="panel-footer"></div>
+							</div>
+						</div>
+						<div class="col-sm-4 col-xs-12">
+							<div class="panel panel-default text-center">
+								<div class="panel-heading">
+									<h1>TOSS</h1>
+								</div>
+								<br>
+								<div class="panel-body">
+									<button type="button" class="btn btn-block btn-outline-primary payInfo" value="5000, uplus, 1">
+										<p>
+											<strong>1</strong> 개월 (5,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-primary payInfo" value="10000, uplus, 3">
+										<p>
+											<strong>3</strong> 개월 (10,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-primary payInfo" value="15000, uplus, 5">
+										<p>
+											<strong>5</strong> 개월 (15,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-primary payInfo" value="20000, uplus, 7">
+										<p>
+											<strong>7</strong> 개월 (20,000)
+										</p>
+									</button>
+									<button type="button" class="btn btn-block btn-outline-primary payInfo" value="25000, uplus, 9">
+										<p>
+											<strong>9</strong> 개월 (25,000)
+										</p>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<br> <br>
+
+				</div>
+				<div class="modal-footer justify-content-between">
+					<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+<script>
+
+	$(function() {
+	    var Toast = Swal.mixin({
+	      toast: true,
+	      position: 'top-end',
+	      showConfirmButton: false,
+	      timer: 3000
+	    });
+	    
+	    var message = "${status}";
+	    if(message != ""){
+			switch (message) {
+			  case "PKDUPLICATED":
+				toastr.error("회원님이 PL역할인 프로젝트가 존재해 탈퇴할 수 없습니다.");
+			    break;
+			  case "FAILED":
+				toastr.error("서버상의 오류가 발생했습니다. 다시 시도해 주세요.");
+			    break;
+			};
+	    };
+		
+		$("#memdelete").on("click", function() {
+			if (confirm("정말로 탈퇴하시겠습니까?")) {
+				location.href = "${cPath }/mypage/memberDelete.do";
+			}
+		})
+		
+	});
+	    
+	    
+	
+	
+/* 환불 관련(상세조회) script */
+$('#refundBtn').click(function() {
+	
+	// 초기화를 위한 변수명 지정
+	let lastDate = null;
+	let lastAmount = 0;
+	let lastTool = null;
+		
+	$.ajax({
+		url : '${cPath}/project/payInfo.do',
+		dataType : 'json',
+		method : 'POST',
+		success : function(resp){
+		
+			let array = resp;
+			
+			console.log(resp)
+			
+			$("#refundArea").empty();
+			
+			// 환불 리스트를 생성합니다.
+			for(let i = 0; i < array.length; i++){
+				$("#refundArea").append(
+					"<tr>"
+					+ "<th>" + array[i].payDate + "</th>"
+					+ "<th>" + array[i].payAmount + "</th>"
+					+ "<th id ='th_" + i + "'>" + array[i].payMonth + "</th>"
+					+ "<th>" + array[i].payProvider + "</th>"
+					+ "<th><button id = 'btn_"+ i + "' class = 'btn btn-info refundBtn' value ='" + array[i].payCode + "'></button></th>"
+					+ "</tr>");
+			}
+			
+		},
+		error : function(xhr, error, msg){
+		
+		},
+	});
+})
+
+$('#refundArea').on('click','.refundBtn', function(){
+	
+	// 환불 사유 저장을 위한 변수를 지정해줍니다.
+	let warning;
+	let refundPayCode = $(this).val();
+	let refundMonth = $(this).prop("id");
+	
+	// 문자열을 자르기 위해 추출합니다.
+	let test = refundMonth.substring(4);
+	let monthCount = $("#th_" + test).text();
+			
+	if(warning = prompt("환불 사유를 입력해주세요")){
+		
+		$.ajax({
+			url : '${cPath}/project/payRefund.do',
+			method : 'POST',
+			data : {
+				"reason" : warning,
+				"refundPayCode" : refundPayCode,
+				"refundMonth" : monthCount
+			},
+			success: function(resp){
+				
+				// 컨트롤러에서 모든 검증을 마치고 리턴받은 메세지를 출력합니다.
+				alert(resp)			
+				location.href = "${cPath}/project/myprojectList.do"
+				
+			},	
+			error : function(xhr, error, msg){
+				
+				// 날짜 검증이 실패했다면 에러메세지를 출력합니다.
+				alert(resp.dateError);
+				location.replace(location.href);			
+			}
+		}) 
+		
+	}else{
+		alert("취소하셨습니다.")
+	}
+}) 
+
+
+
+// 추가 결제 관련 script
+$('.payInfo').click(function() {
+	let cost = $(this).val().split(',');
+
+	let money = cost[0]; // 가격 지정
+	let plat = cost[1]; // 플랫폼 이름 지정
+	let platt = plat.trim() // 공백을 제거한 플랫폼 이름
+	let months = cost[2] // 결제 달 지정
+
+	let IMP = window.IMP; // 문서에는 생략 가능이라는데 생략할 경우 실행이 안됩니다.
+	IMP.init('imp23458695');
+
+	IMP.request_pay({
+		pg : platt, // 동적인 플랫폼 이름
+		merchant_uid : 'merchant_' + new Date().getTime(),
+		name : '회원 결제',
+		amount : money, // 동적인 가격
+		buyer_email : 'daeduck@PAZ.LASTPROJECT',
+		buyer_name : 'PAZ',
+		buyer_tel : '010-1234-5678',
+		buyer_addr : '대전 대덕인재개발원',
+		buyer_postcode : '123-456'
+	}, function(resp) {
+
+		// 결제검증
+		$.ajax({
+			type : "POST",
+			url : "${cPath}/project/PayController.do/" + resp.imp_uid
+		}).done(function(data) {
+
+			// 위의 resp.paid_amount 와 data.response.amount를 비교한후 로직 실행 (import 서버검증)
+
+			if (resp.paid_amount == data.response.amount) {
+
+				// 검증이 완료되었다면, 데이터베이스에 해당 결제 정보를 저장합니다.              
+				$.ajax({
+					url : "${cPath}/project/PayPlusAddition.do",
+					method : 'POST',
+					data : {
+						"payCode" : data.response.impUid,
+						"payAmount" : data.response.amount,
+						"payMonth" : months,
+						"payProvider" : data.response.pgProvider,
+						"payMerUid" : data.response.merchantUid,
+						"payPgSuccess" : data.response.pgTid
+					},
+					success : function(message) {
+
+						alert(message);
+
+						location.replace(location.href);
+					},
+					error : function(xhr, jQuery, error) {
+
+						alert("결제가 실패했습니다..");
+						console.log(jQuery);
+						console.log(error);
+						location.replace(location.href);
+					}
+				})
+			} else {
+				alert("결제가 실패하였습니다.(검증 실패)");
+				location.replace(location.href);
+			}
+		});
+	});
+})
+</script>

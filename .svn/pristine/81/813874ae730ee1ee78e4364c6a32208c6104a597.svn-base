@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.meeting.dao.MeetingDao">
+	
+	
+	
+		<sql id="searchFrag">
+		<where>
+		1=1
+		and p_code = 'PROJECT00004'
+			<if test="searchVO neq null and @org.apache.commons.lang3.StringUtils@isNotBlank(searchVO.searchWord)">
+				<choose>
+					<when test="searchVO.searchType eq 'meetingTopic'">
+						and INSTR(MEETING_TOPIC, #{searchVO.searchWord}) > 0
+					</when>
+					<when test="searchVO.searchType eq 'memId'">
+						and INSTR(mem_id, #{searchVO.searchWord}) > 0
+					</when>
+					<when test="searchVO.searchType eq 'meetingContent'">
+						and INSTR(MEETING_CONTENT, #{searchVO.searchWord}) > 0
+					</when>
+					<otherwise>
+						and INSTR(MEETING_TOPIC, #{searchVO.searchWord}) > 0
+								OR INSTR(mem_Id, #{searchVO.searchWord}) > 0
+								OR INSTR(MEETING_CONTENT, #{searchVO.searchWord}) > 0
+					</otherwise>
+				</choose>
+			</if>
+		</where>
+	</sql>
+	
+	
+	<select id="selectTotalRecord" resultType="int">
+		SELECT COUNT(*)
+		FROM meeting
+		<include refid="searchFrag" />  <!-- ??? -->
+	</select>
+	
+	<select id="selectMeetingList" resultType="kr.or.ddit.vo.MeetingVO" parameterType="kr.or.ddit.vo.PagingVO">	
+		SELECT B.*
+				FROM (
+					SELECT A.*, ROWNUM RNUM
+					FROM (
+						SELECT
+		                    meeting_code,    p_code,    mem_id,
+		                    meeting_topic,    meeting_content,    meeting_result,
+		                    meeting_date
+							, ROWID RID
+						FROM meeting
+<!-- 					   where p_code = 'PROJECT00004' -->
+						<include refid="searchFrag" />  
+						ORDER BY RID DESC
+					) A  
+				) B
+			<![CDATA[
+					WHERE  RNUM >= #{startRow} AND RNUM <= #{endRow}
+			]]>
+		</select>
+	
+	<resultMap type="kr.or.ddit.vo.MeetingVO" id="memberMap" autoMapping="true">
+		<id property="pCode" column="p_code"/>				<!-- 회의록의 vo 기본값 지정 -->
+		<collection property="memberList" javaType="java.util.List" ofType="kr.or.ddit.vo.MemberVO" autoMapping="true">
+			<id property="memId" column="MEM_LIST" />		<!-- 맴버 vo에서 리스트를 잇는다 -->
+			<result property="memNickname" column="MEM_NICKNAME"/>
+		</collection>
+	</resultMap>
+	
+	<select id="selectMeeting" parameterType="string" resultMap="memberMap">
+		SELECT
+		    A.meeting_code,    p_code,  a.mem_id,   B.mem_list, 
+		    meeting_topic,    meeting_content,    meeting_result,    
+		    meeting_date, mem_nickname
+		FROM meeting A LEFT OUTER JOIN (
+        select mem_list, meeting_code, mem_nickname
+          from meeting_mem  INNER JOIN member 
+          on(mem_id = mem_list)
+        ) B   
+		    ON(A.meeting_code = B.meeting_code)
+		WHERE A.meeting_code = #{meeting_code}
+		
+	</select>
+	
+	<!-- 회의록 작성문 인서트 -->
+	<insert id="inser1tMeeting" parameterType="kr.or.ddit.vo.MeetingVO">
+		<selectKey keyProperty="meetingCode" resultType="String" order="BEFORE">
+			select 'MEETING' || LPAD(MEETING_SEQ.NEXTVAL, 5, '0')
+			 FROM DUAL
+		</selectKey>
+			INSERT INTO meeting (
+					    meeting_code,
+					    p_code,
+					    mem_id,
+					    meeting_topic,
+					    meeting_content,
+					    meeting_result,
+					    meeting_date
+					) VALUES (
+			   	  	    #{meetingCode,jdbcType=VARCHAR},
+						'PROJECT00004',
+						'cc002',
+						#{meetingTopic,jdbcType=VARCHAR},
+						#{meetingContent,jdbcType=CLOB},
+						#{meetingResult,jdbcType=CLOB},
+						SYSDATE
+					)
+	</insert>
+	
+	
+	
+	<!-- 회의록 참여자 인원 체크후 인서트용 -->
+	<insert id="inser2tMeeting" parameterType="kr.or.ddit.vo.MeetingVO" >
+		INSERT ALL
+		<foreach collection="memberList" item="member">
+		INTO meeting_mem (
+		    mem_list,
+		    meeting_code
+		) VALUES (
+		    #{member.memId,jdbcType=VARCHAR},
+			#{meetingCode,jdbcType=VARCHAR}
+		)
+		</foreach>
+		
+		SELECT * FROM DUAL   
+	</insert>
+	
+	
+
+	
+	<!-- 회의록 참여자 체크박스  -->
+	<select id="chackmember" parameterType="kr.or.ddit.vo.DataListVO" resultType="kr.or.ddit.vo.ProjectMemberVO">
+		SELECT
+		    a.mem_id,
+		    p_code,
+		    MEM_NICKNAME
+		FROM
+		    p_mem a inner join member b
+		    on(a.mem_id= b.mem_id)
+		    
+		where p_code = #{pCode}
+	</select>
+	
+	<!-- 회의록 참여자 삭제 / 회의록 딜레트 사용  -->
+	<delete id="deleteMeetingMemberList" parameterType="String">
+	DELETE FROM meeting_mem
+    WHERE
+        meeting_code = #{meetingCode,jdbcType=VARCHAR}
+	</delete>
+	
+	<!-- 회의록 수정 -->
+	<update id="updateMeeting" parameterType="kr.or.ddit.vo.MeetingVO">
+		UPDATE meeting
+	    SET
+	        meeting_topic =#{meetingTopic,jdbcType=VARCHAR}
+	        ,meeting_content =#{meetingContent,jdbcType=CLOB}
+	        ,meeting_result =#{meetingResult,jdbcType=CLOB}
+	    WHERE
+	         meeting_code =#{meetingCode,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<!-- 회의록 삭제 -->
+	<delete id="deleteMeeting" parameterType="String">
+	DELETE FROM meeting
+    WHERE
+        meeting_code = #{meetingCode,jdbcType=VARCHAR}
+	</delete>
+	
+</mapper>

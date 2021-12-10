@@ -1,0 +1,19 @@
+
+
+
+	let webSocket = null;
+	
+	$("#open").on("click", function(){
+		
+		webSocket = new WebSocket("ws://localhost${cPath}/websocket/echo");
+		
+		webSocket.onmessage=function(event){
+			let jsonMsg = event.data;
+			let obj = JSON.parse(jsonMsg);
+			let receive = obj.sender + ":" + obj.message;
+			messageArea.append($("<p>").addClass("receive").text(receive));
+		}
+
+	});
+	
+	

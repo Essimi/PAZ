@@ -1,0 +1,200 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<!-- 선택한 멤버의 정보를 조회하는 스크립트 -->
+
+<script>
+
+	$('.marginClass').click(function() {
+		
+		$('#profileModal').modal();
+
+		var memId = $(this).attr("id");
+
+		$.ajax({
+
+			data : {
+				memId : memId
+			},
+			dataType : "json",
+			url : "${cPath}/chat/chattingProfile.do",
+
+			success : function(resp) {
+
+				$('#getChoiceMemNickname').val(resp.memNickname);
+				$('#getChoiceMemId').val(resp.memId);
+
+				$('#nameSpace').text(resp.memNickname);
+				$('#aboutSpace').text(resp.pTitle + "/" + resp.position);
+				$('#companySpace').text(resp.memCompany);
+				$('#telSpace').text(resp.memTel);
+				
+				console.log(resp.saveName);
+				
+				if (resp.saveName == null) {
+					$("#SpaceIMG").attr("src", "${cPath }/resources/file/검정색.jpg");
+				} else {
+					$("#SpaceIMG").attr("src", "${cPath }/resources/file/profileImage/" + resp.saveName);
+				}
+
+			},
+			error : function(error) {
+				console.log("실패");
+			}
+
+		});
+
+	});
+	
+</script>
+
+<!-- ************************* -->
+
+<!-- 선택한 1명의 멤버를 대상으로 채팅을 진행한다. -->
+
+<script>
+
+	let webSocket = null;
+	let chatroomCode = null;
+
+	$('#startChat').click(function() {
+		
+		webSocket = null;
+		chatroomCode = null;
+		
+		$('.receive').remove();
+		
+		// 현재 선택된 멤버의 정보를 가져온다.
+		let yourId = $('#getChoiceMemId').val();
+		let yourNickname = $('#getChoiceMemNickname').val();
+		
+		console.log(yourId);
+
+		$.ajax({
+
+			data : {
+				"yourId" : yourId,
+				"yourNickname" : yourNickname
+			},
+			dataType : "json",
+			url : "${cPath}/chat/oneMakeChat.do",
+			method : "POST",
+			async:false,
+			success : function(resp) {
+				
+				chatroomCode = resp.chatroomCode;
+				console.log("★챗룸 코드 확인★" + chatroomCode);
+				
+			},
+			error : function(error) {
+				console.log("실패");
+			}
+
+		});
+
+		// 채팅방 정보를 기반으로 웹소켓을 연결한다.
+
+		let myId = $('#myId').val();
+
+		webSocket = new WebSocket("ws://192.168.0.52${cPath}/websocket/echo/"+chatroomCode+"/"+myId);
+
+		webSocket.onopen = function(event) {
+
+			console.log(event);
+			console.log("웹소켓 오픈");
+
+		}
+		webSocket.onclose = function(event) {
+			console.log(event);
+		}
+		webSocket.onerror = function(event) {
+			console.log(event);
+		}
+
+		webSocket.onmessage = function(event) {
+
+			// 서버에서 가져오는 메시지의 정보
+			// 서버에서 메시지가 들어올 때 실행된다.
+
+			console.log("메시지를 주고 받을 때 이 메시지가 출력된다. (2)");
+
+			// 화면에 메시지를 표현한다.
+
+			let msg = event.data; // 이벤트에서 가져온 json 형식 데이터
+			let obj = JSON.parse(msg); // json 형식의 값을 변환
+			
+			let today = new Date(); 
+			
+			let chatTag = "";
+			
+			if (obj.sender == myId ) {
+				
+				chatTag = "<div class='direct-chat-msg right'>";
+				chatTag += "<div class='direct-chat-infos clearfix'>";
+				chatTag += "<span class='direct-chat-name float-right'>";
+				chatTag += "ME";
+				chatTag += "</span>";
+				chatTag += "<span class='direct-chat-timestamp float-left'>";
+				chatTag += today;
+				chatTag += "</span>";
+				chatTag += "</div>";
+				chatTag += "<img class='direct-chat-img'";
+				chatTag += "src='${cPath }/resources/file/검정색.jpg'>";
+				// 이후 변경 예정
+				chatTag += "<div class='direct-chat-text'>";
+				chatTag += obj.message;
+				chatTag += "</div>";
+				chatTag += "</div>";
+				
+				
+			} else {
+				
+				chatTag = "<div class='direct-chat-msg'>";
+				chatTag += "<div class='direct-chat-infos clearfix'>";
+				chatTag += "<span class='direct-chat-name float-left'>";
+				chatTag += obj.sender;
+				chatTag += "</span>";
+				chatTag += "<span class='direct-chat-timestamp float-right'>";
+				chatTag += today;
+				chatTag += "</span>";
+				chatTag += "</div>";
+				chatTag += "<img class='direct-chat-img'";
+				chatTag += "src='${cPath }/resources/file/검정색.jpg'>";
+				chatTag += "<div class='direct-chat-text' style='background-color:#FFE4E1; border: 1px solid #FFE4E1;'>";
+				chatTag += obj.message;
+				chatTag += "</div>";
+				chatTag += "</div>";
+				
+			}
+
+			messageArea.append($("<div>").addClass("receive").html(chatTag));
+
+		}
+
+		let messageTag = $("#messageTag");
+		let messageArea = $("#messageArea");
+
+		$("#sendMsg").on("click",function() {
+			
+			// 클라이언트의 메시지를 가장 먼저 가져오는 부분이다.
+			// 클라이언트의 메시지를 서버에게 전달한다.
+
+			let message = messageTag.val();
+
+			if (!message) {
+				return;
+			}
+
+			webSocket.send(message); // 서버 방향으로 메시지를 보낸다.
+			messageTag.val("");
+			
+		});
+
+		// 이후 시간이 될 때 수정하기.
+		$('#profileModal').modal("hide");
+		$('#chatModal').modal();
+		
+	});
+	
+</script>
+
+<!-- ************************* -->

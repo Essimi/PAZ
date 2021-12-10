@@ -1,0 +1,44 @@
+package kr.or.ddit.admin.payRetrieve.controller;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.or.ddit.admin.payRetrieve.service.PayRetrieveService;
+import kr.or.ddit.payment.pay.dao.PayDAO;
+import kr.or.ddit.payment.pay.service.PayService;
+import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.PayVO;
+import kr.or.ddit.vo.SearchVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+public class PayRetrieveListController {
+	@Inject
+	private PayRetrieveService service;
+	
+	@RequestMapping("admin/payRetrieve/List.do")
+	public String selectPayRetrieveList(
+			@RequestParam(value="page",required=false, defaultValue="1") int currentPage
+			,@ModelAttribute("searchVO")SearchVO searchVO
+			,Model medel
+			
+			) {
+		
+		PagingVO<PayVO> pagingVO = new PagingVO<>();
+		pagingVO.setCurrentPage(currentPage);
+		pagingVO.setSearchVO(searchVO);
+		
+		medel.addAttribute("pagingVO",pagingVO);
+		
+		service.selectPayRetrieveList(pagingVO);
+		
+		
+		return "payRetrieve/payRetrieveList";
+	}
+}

@@ -1,0 +1,197 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+ 
+  <!-- 상단 메뉴 -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background:#f9f9f9">
+  
+  <!-- 페이지 메인 문구 -->
+ <!--<div class="container-fluid">
+	<div class="row mb-2">
+		<div class="col-sm-6">
+			<h5>GitConnect</h5>
+		</div>
+	</div>
+</div>  -->
+   
+
+    <!-- 오른쪽 아이콘 리스트  시작-->
+    <ul class="navbar-nav ml-auto">
+    
+       
+     <!--  검색 바 -->
+<!--       <li class="nav-item" > -->
+<!--         <a class="nav-link" data-widget="navbar-search" href="#" role="button"> -->
+<!--           <i class="fas fa-search"></i> -->
+<!--         </a> -->
+<!--         <div class="navbar-search-block"> -->
+<!--           <form class="form-inline"> -->
+<!--             <div class="input-group input-group-sm"> -->
+<!--               <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search"> -->
+<!--               <div class="input-group-append"> -->
+<!--                 <button class="btn btn-navbar" type="submit"> -->
+<!--                   <i class="fas fa-search"></i> -->
+<!--                 </button> -->
+<!--                 <button class="btn btn-navbar" type="button" data-widget="navbar-search"> -->
+<!--                   <i class="fas fa-times"></i> -->
+<!--                 </button> -->
+<!--               </div> -->
+<!--             </div> -->
+<!--           </form> -->
+<!--         </div> -->
+<!--       </li> -->
+      
+      
+      <!-- 타이머 -->
+      <li class="nav-item" >
+        <a class="nav-link"  data-slide="true" href="#" role="button">
+          <i class="fas far fa-clock"></i>
+        </a>
+      </li>
+      
+      <!-- 프로젝트 리스트 -->
+<!--       <li class="nav-item" > -->
+<%--         <a href="${cPath }/project/myprojectList.do" class="nav-link"  data-slide="true" role="button"> --%>
+<!--           <i class="fas fa-clipboard-list"></i> -->
+<!--         </a> -->
+<!--       </li> -->
+      
+      <!-- 화상 회의 -->
+      <li class="nav-item" >
+        <a class="nav-link"  data-slide="true" href="#" role="button">
+          <i class="fas fa-tv"></i>
+        </a>
+      </li>
+      
+      
+     <!-- ************************************************ --> 
+     <!-- 채팅 -->
+      <li class="nav-item dropdown">
+        <!-- 채팅 아이콘 등록(하단 숫자는 채팅 갯수) -->
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-comments"></i>
+          <span class="badge badge-danger navbar-badge">99</span>
+        </a>
+        
+        <!-- 채팅 리스트 div -->
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        
+        <!-- 첫번째 채팅 예시 -->
+          <a href="#" class="dropdown-item">     
+            <div class="media">
+              <img src="${cPath }/resources/adminLTE3/dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  예시1
+                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">Call me whenever you can...</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+          </a>
+          
+          <div class="dropdown-divider"></div>
+          
+          <!-- 두번째 채팅 예시 -->
+          <a href="#" class="dropdown-item">
+            <div class="media">
+              <img src="${cPath }/resources/adminLTE3/dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  예시2
+                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">I got your message bro</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+          </a>
+          
+          <div class="dropdown-divider"></div>
+          
+          <!-- 세번째 채팅 예시 -->
+          <a href="#" class="dropdown-item">
+            <div class="media">
+              <img src="${cPath }/resources/adminLTE3/dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
+              <div class="media-body">
+                <h3 class="dropdown-item-title">
+                  예시3
+                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
+                </h3>
+                <p class="text-sm">The subject goes here</p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              </div>
+            </div>
+          </a>
+          
+          <!-- 하단 버튼  -->
+          <div class="dropdown-divider"></div>
+          <a href="${cPath }/chat/chatting.do?pCode=${project.pCode}" class="dropdown-item dropdown-footer">채팅 메인페이지</a>
+        </div>
+      </li>
+      <!-- ************************************************ --> 
+      
+      
+      
+     <!-- ************************************************ --> 
+     <!-- 알람 --> 
+      <li class="nav-item dropdown">
+        <!-- 알람 아이콘 등록(하단 숫자는 알람 갯수) -->
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <i class="far fa-bell"></i>
+          <span class="badge badge-warning navbar-badge">99</span>
+        </a>
+        
+        <!-- 알람 리스트 div -->
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        
+          <!-- 알람의 총 개수 -->
+          <span class="dropdown-item dropdown-header">999 Notifications</span>
+          
+          
+          <div class="dropdown-divider"></div>
+          
+          <!-- 첫번째 알람 예시 -->
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-envelope mr-2"></i> 4 new messages
+            <span class="float-right text-muted text-sm">3 mins</span>
+          </a>
+          
+          <div class="dropdown-divider"></div>
+          
+          <!-- 두번째 알람 예시 -->
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-users mr-2"></i> 8 friend requests
+            <span class="float-right text-muted text-sm">12 hours</span>
+          </a>
+          
+          <div class="dropdown-divider"></div>
+          
+          <!-- 세번째 알람 예시 -->
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-file mr-2"></i> 3 new reports
+            <span class="float-right text-muted text-sm">2 days</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+        </div>
+      </li>
+       <!-- ************************************************ --> 
+       
+      <!-- 마이페이지 -->
+      <li class="nav-item" >
+        <a class="nav-link"  data-slide="true" href="${cPath }/mypage/myPage.do" role="button">
+          <i class="fas fa-user"></i>
+        </a>
+      </li> 
+       
+      <!-- Full Screen -->
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+      
+      
+    </ul>
+  </nav>

@@ -1,0 +1,159 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<style>
+#pagingArea {
+	background-color: white;
+	float: right;
+}
+
+#noticeButton {
+	margin-top: 15px;
+	height: 38px;
+}
+
+</style>
+
+<!-- 메인페이지 시작 -->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<!-- 메인 Content 시작 -->
+			<div class="invoice p-3 mb-3">
+			
+				<br>
+			
+				<div class="row">
+					<div class="col-12">
+						<h4><i class="fas fa-chalkboard-teacher"></i> 공지사항</h4>
+					</div>
+				</div>
+				
+				<br>
+				
+				<!-- 테이블 구역 -->
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body">
+								
+								<div id="searchUI" class="form-inline" style="float: right">
+										  <!-- 검색타입 -->
+										  <div class="input-group input-group-sm" style="width: 100px;">
+						                    <select name="searchType" class="form-control mr-3">
+												<option value>아이디</option>
+												<option value="pTitle">프로젝트 명</option>
+<!-- 												<option value="meetingContent">내용</option> -->
+											</select>
+						                    </div>
+										  <!-- 검색기능 -->
+						                  <div class="input-group input-group-sm" style="width: 150px; float: right ">
+						                    <input type="text" name="searchWord" class="form-control float-right" placeholder="Search">
+						                    <div class="input-group-append">
+						                      <input type="button" value="검색" id="searchBtn" class="btn btn-default">
+						                    </div>
+						                  </div>
+					                  </div>
+					                  <br>
+					                  
+									<!-- 테이블 시작 -->
+									<table class="table table-bordered table-striped">
+									
+										<thead>
+											<tr>
+												<th>결제 날짜</th>
+												<th>결제/환불</th>
+												<th>아이디</th>
+												<th>프로젝트 코드</th>
+												<th>결제 금액</th>
+											</tr>
+										</thead>
+										
+										<c:set var="payRetrieveList" value="${pagingVO.dataList}"></c:set>
+										
+										<tbody>
+											<c:choose>
+											
+												<c:when test="${not empty payRetrieveList}">
+													<c:forEach items="${payRetrieveList}" var="Retrieve">
+													<tr>
+														<td>${Retrieve.payDate }</td>
+														
+														<!-- 여기가 환불 결제 조회하는곳  -->
+													
+															<c:choose>
+																<c:when test="${not empty Retrieve.refundInfo.refundCode}">
+																<td>환불</td>
+																</c:when>
+																<c:otherwise>
+																<td>결제</td>
+																</c:otherwise>
+															</c:choose>
+														
+														
+														<td>
+														
+															<c:url value="/admin/payRetrieve/select.do" var="viewURL">
+																<c:param name="payCode" value="${Retrieve.payCode}" />
+															</c:url>
+															
+															<a href="${viewURL }">${Retrieve.memId}</a>
+
+														</td>
+														
+														<td>${Retrieve.projectInfo.pTitle}</td>
+														
+														<td>${Retrieve.payAmount} 원</td>
+													</tr>
+													</c:forEach>
+												</c:when>
+												
+												<c:otherwise>
+													<tr>
+														<td colspan="6">게시글이 없습니다.</td>
+													</tr>
+												</c:otherwise>
+											</c:choose>
+										</tbody>
+										
+										
+										<tfoot>
+										
+											<tr>
+											
+											<td colspan="6">
+											<div id="pagingArea" class="card-footer clearfix">${pagingVO.pagingHTML }</div>
+											</td>
+											
+											</tr>
+										</tfoot>
+										
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<form id="searchForm">
+	<input type="hidden" name="searchType" />
+	<input type="hidden" name="searchWord" />
+	<input type="hidden" name="page" />
+</form>
+
+
+<script type="text/javascript"
+	src="${pageContext.request.contextPath }/resources/js/commonjs/custom/paging.js">
+</script>
+
+<script type="text/javascript">
+	$("[name='searchWord']").val("${searchVO.searchWord}");
+	$("[name='searchType']").val("${searchVO.searchType}");
+	let searchForm = $("#searchForm").paging();
+</script>

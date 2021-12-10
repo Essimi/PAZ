@@ -1,0 +1,338 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
+<security:authorize access="isAuthenticated()">
+   <security:authentication property="principal.authMember" var="authMember"/>
+</security:authorize>
+
+
+<style>
+.modal-backdrop {
+	display: none;
+}
+
+</style>
+
+ <!--  메인 사이드바 컨테이너 시작 -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!--  메인 로고 출력 --> 
+    <a href="${cPath }/project/${project.pCode }/projectView.do" class="brand-link">
+      <img src="${cPath }/resources/adminLTE3/dist/img/picon.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">
+      
+      
+       <c:set var="title" value="${project.pTitle }"></c:set>
+        <c:choose>
+        	<c:when test="${fn:length(title) gt 6 }">
+        		${fn:substring(title,0,6) } ..
+        	</c:when>
+        	
+        	<c:otherwise>
+        		${title }
+        	</c:otherwise>
+        </c:choose>
+      </span>
+    </a>
+
+   <!-- 사이드바 시작 -->
+   
+    <div class="sidebar">
+    
+      <!-- 사이드바 유저 접속 정보 -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image" id="leftImage">
+        </div>
+        <div class="info">
+          <!-- 아이콘 클릭시 내 정보? 미정 -->
+          <a id="leftA" class="d-block" data-toggle="modal" data-target="#myModalLeft"></a>
+        </div>
+      </div>
+
+      
+      
+      <script type="text/javascript">
+      
+      	$(function() {
+      	
+      		$('#leftA').on('click', function() {
+      			$('#myModalLeft').attr("style", "background: #00000066")
+      			
+      		})
+      	})
+      
+      </script>
+      
+              <!--     	 Trigger the modal with a button
+				<button id="addMember" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">  <i class="fas fa-user-plus"></i></button>
+			 -->	
+				<!-- Modal -->  
+				<div id="myModalLeft" class="modal fade" role="dialog">
+				  <div class="modal-dialog">
+				
+				    <!-- Modal content-->
+				    <div class="modal-content">
+				     
+				     
+				      <div class="modal-body"  style="padding:0;">
+				      <%-- 
+				      <div class="col-md-4">
+						<div class="card card-widget widget-user-2">
+							<div class="widget-user-header bg-warning">
+								<div class="widget-user-image">
+									<img class="img-circle elevation-2" src="${cPath }/resources/file/profileImage/${memberInfo.memIkon.saveName }" 
+									     onerror="this.src='${cPath }/resources/file/profileImage/profile.jpg'">
+								</div>
+								<input type="button" onclick="location.href='${cPath }/mypage/myPageUpdate.do'" value="회원정보수정"> 
+								<input type="button" id="memdelete" value="회원탈퇴">
+							</div>
+							<div class="card-footer p-0">
+								<ul class="nav flex-column">
+									<li class="nav-item">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-user"></i></span>
+											${memberInfo.memId }
+										</div>
+									</li>
+									<li class="nav-item">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-envelope"></i></span>
+										</div> ${memberInfo.memMail }
+									</li>
+									<li class="nav-item">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
+										</div> ${memberInfo.memTel }
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+ --%>
+ 
+	
+						<div class="dropdown-menu-header">
+	                          <div class="dropdown-menu-header-inner bg-info">
+	                              <div class="menu-header-image opacity-2" style="background-image: url('assets/images/dropdown-header/city3.jpg');"></div>
+	                              <div class="menu-header-content text-left">
+	                                  <div class="widget-content p-0">
+	                                      <div class="widget-content-wrapper">
+	                                          <div class="widget-content-left mr-3">
+	                                              <img width="42" class="rounded-circle" src="assets/images/avatars/1.jpg" alt="">
+	                                          </div>
+	                                          <div class="widget-content-left">
+	                                              <div class="widget-heading">Alina Mcloughlin</div>
+	                                              <div class="widget-subheading opacity-8">A short profile description</div>
+	                                          </div>
+	                                          <div class="widget-content-right mr-2">
+	                                              <button class="btn-pill btn-shadow btn-shine btn btn-focus">Logout</button>
+	                                          </div>
+	                                      </div>
+	                                  </div>
+	                              </div>
+	                          </div>
+	                      </div>
+
+				       
+				        
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">취소</button>
+				        <button id="saveBtn" type="button" class="btn btn-info btn-sm toastrDefaultSuccess" >확인</button>
+				      
+				      </div>
+				    </div>
+				
+				  </div>
+				</div>
+      
+      
+      
+      
+      
+      
+      
+      
+
+     
+      <!-- 메인 사이드바 -->
+      <!-- 아이콘 - https://fontawesome.com/ -->
+      <!-- i 태그 안에 넣으면 됩니다 -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        
+
+        
+          <!-- li 태그 하나당 메뉴바 하나 입니다 -->
+          <li class="nav-item">
+            <a href="${cPath }/project/${project.pCode}/kanban/kanban.do" class="nav-link">
+              <i class="nav-icon fas fa-columns"></i>
+              <p>
+                칸반       
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="${cPath }/project/${project.pCode}/ganttChartTW/ganttChartTW.do" class="nav-link">
+              <i class="nav-icon fas fa-list"></i>
+              <p>
+                간트 차트
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="${cPath }/task/taskList.do" class="nav-link">
+              <i class="nav-icon fas fa-folder-open"></i>
+              <p>
+               업무
+                 
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="${cPath }/project/${project.pCode }/meeting/list.do" class="nav-link">
+              <i class="nav-icon fab fa-confluence"></i>
+              <p>
+               회의록
+                 
+              </p>
+            </a>
+          </li>
+      
+          <li class="nav-item">
+            <a href="${cPath }/project/${project.pCode}/issue/issueList.do" class="nav-link">
+              <i class="nav-icon fas fa-exclamation-circle"></i>
+              <p>
+                이슈
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="${cPath }/project/${project.pCode}/calendar/calendarMain.do" class="nav-link">
+              <i class="nav-icon far fa-calendar"></i>
+              <p>
+               일정 관리
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="${cPath }/project/projectPEStatus.do" class="nav-link">
+              <i class="nav-icon fas fa-chart-bar"></i>
+              <p>
+              대시보드
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="${cPath }/project/gitTeam.do" class="nav-link">
+              <i class="nav-icon fab fa-git"></i>
+              <p>
+                깃허브
+                 
+              </p>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="${cPath }/project/${project.pCode}/news/newsList.do" class="nav-link">
+              <i class="nav-icon far fa-newspaper"></i>
+              <p>
+                뉴스
+              </p>
+            </a>
+
+	<!-- 이건 PL만 -->
+          </li>
+          
+    	<c:if test="${position eq 'PL'}"> 
+          <li id="navItem" class="nav-item">
+            <a id="navA" href="#" class="nav-link">
+              <i class="nav-icon fas fa-cog"></i>
+              <p>
+               설정
+              <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+             <ul id="treeViewNav" class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="../../index.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>공지사항</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath }/project/${project.pCode}/calendar/calendarList.do" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>일정</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath }/setting/memberSetting.do" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>팀원</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="${cPath }/project/gitSetting.do" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>GitHub 연동</p>
+                </a>
+              </li>
+              <!-- 미사용(정책 변경) -->
+              <%-- <li class="nav-item">
+                <a href="${cPath }/setting/settingProject.do" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>프로젝트 설정</p>
+                </a>
+              </li> --%>
+            </ul>
+         </li>
+      </c:if>
+      
+      
+          
+         </ul> 
+      </nav>
+    </div>
+  </aside>
+
+<script type="text/javascript">
+	var AuthenticatedId = "${authMember.memId}";
+	var leftImage = $("#leftImage");
+	var leftA = $("#leftA");
+	
+	$.ajax({
+		url : "${cPath}/mypage/leftMemberInfo.do",
+		data : {memId : AuthenticatedId },
+		method : "post",
+		dataType : "json",
+		success : function(resp) {
+			let saveName = "";
+			if(resp.memIkon){
+				saveName = resp.memIkon.saveName;
+			}else{
+				saveName = "profile.jpg";
+			}
+			
+			let imgTag = $("<img>").addClass(['img-circle', 'elevation-2'])
+								   .attr({
+										src : '${cPath }/resources/file/profileImage/' + saveName,
+										onerror : "this.src='${cPath }/resources/file/profileImage/profile.jpg'"
+										});
+			leftImage.html(imgTag);
+			leftA.text(resp.memNickname + "(" + resp.memId + ")");
+		},
+		error : function(xhr, errorResp, error) {
+			console.log(xhr);
+			console.log(errorResp);
+			console.log(error);
+		}
+	})
+</script>

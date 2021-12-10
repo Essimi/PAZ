@@ -1,0 +1,33 @@
+package kr.or.ddit.admin.dashboard.controller;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.admin.dashboard.service.DashboardService;
+import kr.or.ddit.vo.AdminDashboardVO;
+import kr.or.ddit.vo.DataListVO;
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
+@Controller
+public class AgeDashboardController {
+	
+	@Inject
+	DashboardService service;
+	
+	@RequestMapping("adminAgeDashboard.do")
+	public String Access(
+		Model model
+		) {
+	List<AdminDashboardVO> dataListV = service.memAgeList();
+	
+	model.addAttribute("dataListVO",dataListV);
+
+	
+		return "admin/adminAgeDashboard";
+	}
+}

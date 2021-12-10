@@ -1,0 +1,95 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<style>
+#QnA_main_Content {
+	height: 500px;
+}
+</style>
+
+<!-- 메인페이지 시작 -->
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<!-- 메인 Content 시작 -->
+			<div class="invoice p-3 mb-3">
+				<div class="row">
+					<div class="col-12">
+
+						<h4>
+							<i class="fas fa-chalkboard-teacher"></i> 공지사항 상세보기
+						</h4>
+
+						<br>
+
+						<div class="card card-primary card-outline">
+							<div class="card-body p-0">
+								<div class="mailbox-read-info">
+
+
+	
+									<h5>${notice.noticeTitle}</h5>
+									
+
+								</div>
+
+								<div class="mailbox-read-message" id="QnA_main_Content">
+								
+								<p style="white-space: pre-line;">${notice.noticeContents}</p>
+								
+														
+								</div>
+								
+								
+								
+										<!-- /.card-body -->
+            <div class="card-footer bg-white">
+              <ul class="mailbox-attachments d-flex align-items-stretch clearfix">
+              
+                <li>
+                
+
+                  <div class="mailbox-attachment-info">
+                  	<i class="fas fa-paperclip">${notice.attatch.realName}</i>
+                  		<span class="mailbox-attachment-size clearfix mt-1">
+                  			<span>${notice.attatch.fileSize} KB</span>
+                  			
+                  			<c:url value="/notice/download.do" var="downloadURL">
+								<c:param name="noticeCode" value="${notice.noticeCode }" />
+							</c:url>
+                  			
+                  			<a href="${downloadURL }" class="btn btn-default btn-sm float-right"><i class="fas fa-cloud-download-alt"></i></a>
+                        </span>
+                  </div>
+                </li>
+    
+    
+       
+              </ul>
+            </div>
+								
+								
+							</div>
+
+							<div class="card-footer">
+							
+								<div class="float-right">
+									<input type="button" class="linkBtn btn btn-info" value="수정"
+								       data-gopage="${cPath }/project/qnaNotAnswerList.do">
+									<input type="button" class="linkBtn btn btn-info" value="삭제"
+								       data-gopage="${cPath }/project/qnaNotAnswerList.do">
+								</div>
+								
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<br>
+
+			</div>
+		</div>
+	</div>
+</div>

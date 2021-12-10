@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.admin.dashboard.dao.DashboardDAO">
+	
+	<select id="selectPayDashInfo" resultType="AdminDashboardVO" parameterType="DataListVO">
+		select c.month_Date, ABS(c.AMOUNT-NVL(d.AMOUNT,0)) amount_Sum
+		from
+		(
+		SELECT SUBSTR(PAY_DATE,1,5)month_Date, SUM(PAY_AMOUNT) AMOUNT 
+		FROM PAY_INFO
+		GROUP BY SUBSTR(PAY_DATE,1,5)
+		ORDER BY SUBSTR(PAY_DATE,1,5)
+		)c,
+		(
+		SELECT SUBSTR(PAY_DATE,1,5)month_Date, SUM(PAY_AMOUNT) AMOUNT
+		  FROM PAY_INFO A, REFUND_INFO B
+		  WHERE A.PAY_CODE = B.PAY_CODE
+		GROUP BY SUBSTR(PAY_DATE,1,5)
+		ORDER BY SUBSTR(PAY_DATE,1,5)
+		)d
+		where c.month_Date=d.month_Date(+)
+		ORDER BY month_Date
+	</select>
+	
+	<select id="selectMemAgeDash" resultType="AdminDashboardVO" parameterType="DataListVO">
+		select RPAD(SUBSTR(TRUNC(MONTHS_BETWEEN(SYSDATE,TO_DATE(to_char(MEM_BIRTH,'YYYY'),'YYYY'))/12),1,1),2,0) mem_age
+		        , count(SUBSTR(MEM_BIRTH,1,3)) age_count
+		  from member
+		GROUP BY RPAD(SUBSTR(TRUNC(MONTHS_BETWEEN(SYSDATE,TO_DATE(to_char(MEM_BIRTH,'YYYY'),'YYYY'))/12),1,1),2,0)
+		ORDER BY mem_age
+	</select>
+	
+	<select id="selectClassification" resultType="AdminDashboardVO" parameterType="DataListVO">
+		SELECT MEM_COMPANY MEM_COMPANYLIST, COUNT(MEM_COMPANY) MEM_COMPANYCOUNT
+		  FROM member
+	  GROUP BY MEM_COMPANY
+	</select>
+	
+	<select id="selectGenderDashboard" resultType="AdminDashboardVO" parameterType="DataListVO">
+		SELECT
+		    mem_gender, count(mem_gender) count_gender
+		FROM
+		    member
+		group by mem_gender
+	</select>
+
+</mapper>

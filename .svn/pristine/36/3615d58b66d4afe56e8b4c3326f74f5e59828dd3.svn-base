@@ -1,0 +1,312 @@
+@charset "UTF-8";
+
+body {
+   font: 400 15px Lato, sans-serif;
+   line-height: 1.8;
+   color: #818181;
+}
+ h2 {
+   font-size: 24px;
+   text-transform: uppercase;
+   color: #303030;
+   font-weight: 600;
+   margin-bottom: 30px;
+ }
+ h4 {
+   font-size: 19px;
+   line-height: 1.375em;
+   color: #303030;
+   font-weight: 400;
+   margin-bottom: 30px;
+ }  
+ .jumbotron {
+   background-color: #ffff;
+   color: #fff;
+   padding: 100px 25px;
+   font-family: Montserrat, sans-serif;
+ }
+ 
+ img{
+ image-rendering: -webkit-optimize-contrast;
+ }
+ 
+ 
+ .container-fluid {
+   padding: 60px 50px;
+ }
+ .bg-grey {
+   background-color: #f9f9f9;
+ }
+ .logo-small {
+   color: #f4511e;
+   font-size: 50px;
+ 					}
+ .logo {
+   color: #f4511e;
+   font-size: 200px;
+ }
+ .thumbnail {
+   padding: 0 0 15px 0;
+   border: none;
+   border-radius: 0;
+ }
+ .thumbnail img {
+   width: 100%;
+   height: 100%;
+   margin-bottom: 10px;
+ }
+ .carousel-control.right, .carousel-control.left {
+   background-image: none;
+   color: #f4511e;
+ }
+ .carousel-indicators li {
+   border-color: #f4511e;
+ }
+ .carousel-indicators li.active {
+   background-color: #f4511e;
+ }
+ .item h4 {
+   font-size: 19px;
+   line-height: 1.375em;
+   font-weight: 400;
+   font-style: italic;
+   margin: 70px 0;
+ }
+ .item span {
+   font-style: normal;
+ }
+ .panel {
+   border: 1px solid #f4511e; 
+   border-radius:0 !important;
+   transition: box-shadow 0.5s;
+ }
+ .panel:hover {
+   box-shadow: 5px 0px 40px rgba(0,0,0, .2);
+ }
+ .panel-footer .btn:hover {
+   border: 1px solid #f4511e;
+   background-color: #fff !important;
+   color: #f4511e;
+ }
+ .panel-heading {
+   color: #fff !important;
+   background-color: #f4511e !important;
+   padding: 25px;
+   border-bottom: 1px solid transparent;
+   border-top-left-radius: 0px;
+   border-top-right-radius: 0px;
+   border-bottom-left-radius: 0px;
+   border-bottom-right-radius: 0px;
+ }
+ .panel-footer {
+   background-color: white !important;
+ }
+ .panel-footer h3 {
+   font-size: 32px;
+ }
+ .panel-footer h4 {
+   color: #aaa;
+   font-size: 14px;
+ }
+ .panel-footer .btn {
+   margin: 15px 0;
+   background-color: #f4511e;
+   color: #fff;
+ }
+ .navbar {
+   margin-bottom: 0;
+   background-color: #f9f9f9;
+   z-index: 9999;
+   border: 0;
+   font-size: 12px !important;
+   line-height: 1.42857143 !important;
+   letter-spacing: 4px;
+   border-radius: 0;
+   font-family: Montserrat, sans-serif;
+ }
+ .navbar li a, .navbar .navbar-brand {
+   color: black;
+   font-weight : bold;
+ }
+ 
+ .navbar-brand{
+ padding: 7px;
+ }
+ 
+ .navbar-nav li a:hover, .navbar-nav li.active a {
+   color: #1e72f4 !important;
+   background-color: #fff !important;
+ }
+ .navbar-default .navbar-toggle {
+   border-color: transparent;
+   color: #fff !important;
+ }
+ footer .glyphicon {
+   font-size: 20px;
+   margin-bottom: 20px;
+   color: #f4511e;
+ }
+ .slideanim {visibility:hidden;}
+ .slide {
+   animation-name: slide;
+   -webkit-animation-name: slide;
+   animation-duration: 1s;
+   -webkit-animation-duration: 1s;
+   visibility: visible;
+ }
+ @keyframes slide {
+   0% {
+     opacity: 0;
+     transform: translateY(70%);
+   } 
+   100% {
+     opacity: 1;
+     transform: translateY(0%);
+   }
+ }
+ @-webkit-keyframes slide {
+   0% {
+     opacity: 0;
+     -webkit-transform: translateY(70%);
+   } 
+   100% {
+     opacity: 1;
+     -webkit-transform: translateY(0%);
+   }
+ }
+ @media screen and (max-width: 768px) {
+   .col-sm-4 {
+     text-align: center;
+     margin: 25px 0;
+   }
+   .btn-lg {
+     width: 100%;
+     margin-bottom: 35px;
+   }
+ }
+ @media screen and (max-width: 480px) {
+   .logo {
+     font-size: 150px;
+   }
+ }
+ 
+ 
+/*  여기부터 내가 한겨  */
+
+#logoText{
+   object-fit: fill;
+}
+
+.jumbotron.text-center {
+   height: 900px;
+
+}
+
+#guideText {
+	ont-size: 30px;
+   font-weight: 300;
+}
+
+
+img#mainTitle {
+    width: 800px;
+    margin-top:50px;
+    position:absolute;
+    margin-left : 600px;
+}
+
+.leftText {
+    float: left;
+    position: absolute;
+    margin-top: 120px;
+    margin-left: 200px;
+    font-weight:bolder;
+   }
+   
+   #centerLeft {
+   	float:left;
+   	color: black;
+   }
+   
+   div#about {
+   	height: 680px;
+   }
+   
+   .col-sm-8{
+   	width:40%;
+   }
+
+	#project {
+		width : 200px;
+		margin-top:30px;
+		font-size: 16px;
+		font-weight: bold;
+	}
+	
+	#titleText {
+	position:absolute;
+	margin-left:400px;
+	margin-top:100px;
+	color:black;
+	}
+	
+	#guide {
+		padding:120px 150px;
+		height: 800px;
+	}
+	
+	#step1, #step2, #step4{
+ 	position: absolute;
+    width: 400px;
+    margin-left: 800px;
+    margin-top:30px;
+ 	}
+ 
+ #step2 { 
+   width:450px;
+  	   margin-left: 700px;
+      margin-top: -40px;	 
+   }
+   
+   #step4 {
+   	width: 500px;
+   	margin-left : 700px;
+   }
+
+.step{
+	margin-left:300px;
+	position:absolute;
+}
+
+.step h2 {
+	font-size:30px;
+}
+
+.step p {
+	font-size:20px;
+	color:black;
+}
+
+	#divStep3 {
+	margin-left: 750px;
+   	margin-top: -40px;
+}
+
+#step3 {
+	width: 600px;
+  	    margin-left: 350px;
+} 
+
+#example {
+	background:white;
+}
+
+#pricing{
+	margin-top: -40px;
+	height: 570px;
+}
+
+#payInfoText{
+	
+	margin-bottom: 30px;
+}

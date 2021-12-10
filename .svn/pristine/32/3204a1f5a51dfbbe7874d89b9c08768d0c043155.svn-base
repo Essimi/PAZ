@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.payment.pay.dao.PayDAO">
+
+	<!-- 결제 내역 저장 -->
+	<insert id = "insertPayRecord" parameterType = "PayVO">
+	
+		INSERT INTO PAY_INFO(
+			 PAY_CODE
+			,P_CODE
+			,MEM_ID
+			,PAY_DATE
+			,PAY_AMOUNT
+			,PAY_MONTH
+			,PAY_PROVIDER
+			,PAY_MER_UID
+			,PAY_PGSUCCESS
+		)VALUES(
+			#{payCode,jdbcType=VARCHAR},
+			#{pCode,jdbcType=VARCHAR},
+			#{memId,jdbcType=VARCHAR},
+			SYSDATE,
+			#{payAmount,jdbcType=NUMERIC},
+			#{payMonth,jdbcType=NUMERIC},
+			#{payProvider,jdbcType=VARCHAR},
+			#{payMerUid,jdbcType=VARCHAR},
+			#{payPgSuccess,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 결제 내역 저장이 완료되면 실행되는 상태 업데이트 쿼리 -->
+	<update id = "updateProjectStatus" parameterType = "PayVO">
+	
+		UPDATE PROJECT SET STATUS_CODE = 'PROJECT_STATE006'
+		WHERE P_CODE = #{pCode}
+	
+	</update>
+</mapper>

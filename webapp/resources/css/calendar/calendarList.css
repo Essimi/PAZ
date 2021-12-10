@@ -1,0 +1,16 @@
+#pagingArea {
+	background-color: white;
+}
+
+#content {
+	padding: 30px;
+}
+
+.invoice {
+	padding:50px;
+	border-radius: 10px;
+}
+
+.card-body {
+	overflow-x:hidden;
+}

@@ -1,0 +1,385 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+ <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>   
+
+
+
+    
+    <h3><i class="fas fa-user-cog"></i>  관리자 페이지</h3>
+    
+    <hr><br>
+
+
+	
+	<h4>회원 관리</h4>
+    
+    <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">회원 리스트</h3>
+
+                <div class="card-tools">
+                  <div class="input-group input-group-sm">
+                    <button id="adminMember" type="button" class="btn btn-default" onclick="location.href='${cPath}/admin/adminMemberList.do'"><i class="fas fa-align-justify"></i> 더보기</button>
+
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+					  <th style="width:20%;">아이디</th>
+                      <th>이름</th>
+                      <th>가입일</th>
+                      <th>회원소속</th>
+                      <th>생년월일</th>
+                      <th>성별</th>
+                      <th>탈퇴여부</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>183</td>
+                      <td>John Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-success">Approved</span></td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                    </tr>
+                    <tr>
+                      <td>219</td>
+                      <td>Alexander Pierce</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-warning">Pending</span></td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                    </tr>
+                    <tr>
+                      <td>657</td>
+                      <td>Bob Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-primary">Approved</span></td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                    </tr>
+                    <tr>
+                      <td>175</td>
+                      <td>Mike Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-danger">Denied</span></td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                      <td>Bacon</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        
+        
+        <br><hr><br>
+<!-- 결제/환불 -->        
+        <!-- 결제환불 리스트  -->
+        <div style="margin-top:10px; height: 350px;">
+        
+        
+        	<!-- 결제 환불 -->
+        	<div style="height: 400px; width: 50%; float: left; padding-right:10px;">
+        	
+        		<h4 style="margin-bottom: 20px;">결제 및 환불</h4>
+		        	<div class="row">
+		          <div class="col-12">
+		            <div class="card">
+		              <div class="card-header">
+		                <h4 class="card-title">결제 및 환불 리스트</h4>
+		
+		                <div class="card-tools">
+		                  <div class="input-group input-group-sm">
+		                   <button id="adminPay" type="button" class="btn btn-default" onclick="location.href='${cPath}/admin/payRetrieve/List.do'"><i class="fas fa-align-justify"></i> 더보기</button>
+		                  </div>
+		                </div>
+		              </div>
+		              <!-- /.card-header -->
+		              <div class="card-body table-responsive p-0">
+		                <table class="table table-hover text-nowrap">
+		                  <thead>
+		                    <tr>
+		                      <th>ID</th>
+		                      <th>User</th>
+		                      <th>Date</th>
+		                      <th>Status</th>
+		                      <th>Reason</th>
+		                    </tr>
+		                  </thead>
+		                  <tbody>
+		                    <tr>
+		                      <td>183</td>
+		                      <td>John Doe</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-success">Approved</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                    <tr>
+		                      <td>219</td>
+		                      <td>Alexander Pierce</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-warning">Pending</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                    <tr>
+		                      <td>657</td>
+		                      <td>Bob Doe</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-primary">Approved</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                    <tr>
+		                      <td>175</td>
+		                      <td>Mike Doe</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-danger">Denied</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                  </tbody>
+		                </table>
+		              </div>
+		              <!-- /.card-body -->
+		            </div>
+		            <!-- /.card -->
+		          </div>
+		        </div>
+        	</div>
+        <!-- 틀 그래프 -->
+        
+        	<div style="height: 400px; width: 50%; float: right; padding-left: 10px;">
+        	<h4 style="margin-bottom: 20px;">월별 매출</h4>
+				<!-- BAR CHART 결제/환불 -->
+	           <figure class="payRfund-highcharts-figure">
+				  <div id="payRfund"></div>
+				</figure>
+        	</div>
+        
+        </div>
+  <!-- 라인 기준  -->
+        <div style="margin-top:10px; height: 350px;">
+        
+		<!-- 왼쪽 그래프 -->
+        	<div style="height: 400px; width: 50%; float: left; padding-right:10px;">
+		        <h4 style="margin-bottom: 20px;">남녀 비율 그래프</h4>
+        		<figure class="jender-highcharts-figure">
+				  <div id="jender"></div>
+				</figure>
+   			 </div>
+		<!-- 오른쪽 그래프 -->
+        	<div style="height: 400px; width: 50%; float: right; padding-left: 10px;">
+        	 	<h4 style="margin-bottom: 20px;">결제 및 환불</h4>
+        		<figure class="memderClassification-highcharts-figure">
+				  <div id="memderClassification"></div>
+				</figure>
+        	</div>
+        
+        </div>
+  <!-- 라인 기준  -->
+<!--         <div style="margin-top:10px; height: 350px;"> -->
+        
+		<!-- 왼쪽 그래프 -->
+<!--         	<div style="height: 400px; width: 50%; float: left; padding-right:10px;"> -->
+<!-- 		        <h4 style="margin-bottom: 20px;">남녀 비율 그래프</h4> -->
+<!--         		<p>zzzzz</p> -->
+<!--    			 </div> -->
+		<!-- 오른 그래프 -->
+<!--         	<div style="height: 400px; width: 50%; float: right; padding-left: 10px;"> -->
+<!--         	 	<h4 style="margin-bottom: 20px;">결제 및 환불</h4> -->
+<!--         		<p>zzzzz</p> -->
+<!--         		</div> -->
+        
+<!--         </div> -->
+        
+  <!-- 라인 기준  -->
+<!--         <div style="margin-top:10px; height: 350px;"> -->
+        
+		<!-- 왼쪽 그래프 -->
+<!--         	<div style="height: 400px; width: 50%; float: left; padding-right:10px;"> -->
+<!-- 		        <h4 style="margin-bottom: 20px;">남녀 비율 그래프</h4> -->
+<!--         		<p>zzzzz</p> -->
+<!--    			 </div> -->
+		<!-- 오른 그래프 -->
+<!--         	<div style="height: 400px; width: 50%; float: right; padding-left: 10px;"> -->
+<!--         	 	<h4 style="margin-bottom: 20px;">결제 및 환불</h4> -->
+<!--         		<p>zzzzz</p> -->
+<!--         	</div> -->
+        
+<!--         </div> -->
+
+<!-- 결제 환불 그래프 스크립트 -->        
+<script>
+
+let array= []
+<c:forEach items="${payDataList }" var="AdminDashboard">
+	array.push([
+		'${AdminDashboard.monthDate}월',${AdminDashboard.amountSum}
+	]);
+</c:forEach>
+
+Highcharts.chart('payRfund', {
+	  chart: {
+	    type: 'column'
+	  },
+	  xAxis: {
+	    type: 'category',
+	    labels: {
+	      rotation: -45,
+	      style: {
+	        fontSize: '13px',
+	        fontFamily: 'Verdana, sans-serif'
+	      }
+	    }
+	  },
+	  yAxis: {
+	    min: 0,
+	    title: {
+	      text: '금액'
+	    }
+	  },
+	  legend: {
+	    enabled: false
+	  },
+	  tooltip: {
+	    pointFormat: '이번달 수익: <b>{point.y:f} 원</b>'
+	  },
+	  series: [{
+	    name: 'Population',
+	    data: array,
+	    dataLabels: {
+	      enabled: true,
+	      rotation: -90,
+	      color: '#FFFFFF',
+	      align: 'right',
+	      format: '{point.y:f}', // one decimal
+	      y: 10, // 10 pixels down from the top
+	      style: {
+	        fontSize: '13px',
+	        fontFamily: 'Verdana, sans-serif'
+	      }
+	    }
+	  }]
+	});
+
+
+<!--  남녀 비율 그래프  -->
+Highcharts.chart('jender', {
+	  chart: {
+	    plotBackgroundColor: null,
+	    plotBorderWidth: 0,
+	    plotShadow: false
+	  },
+	  title: {
+	    text: '회원 성별 비율',
+	    align: 'center',
+	    verticalAlign: 'middle',
+	    y: 60
+	  },
+	  tooltip: {
+	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	  },
+	  accessibility: {
+	    point: {
+	      valueSuffix: '%'
+	    }
+	  },
+	  plotOptions: {
+	    pie: {
+	      dataLabels: {
+	        enabled: true,
+	        distance: -50,
+	        style: {
+	          fontWeight: 'bold',
+	          color: 'white'
+	        }
+	      },
+	      startAngle: -90,
+	      endAngle: 90,
+	      center: ['50%', '75%'],
+	      size: '110%'
+	    }
+	  },
+	  series: [{
+	    type: 'pie',
+	    name: 'Browser share',
+	    innerSize: '50%',
+	    data: [
+	      ['남성', ${genderDataList[0].countGender}],
+	      ['여성', ${genderDataList[1].countGender}],
+	  
+	    ]
+	  }]
+	});
+	
+
+<!-- 프로젝트 분야 -->
+let memClassificationList=[]
+let rand = null;
+
+
+<c:forEach items="${classification }" var="memClassification">
+
+
+rand = Math.floor(Math.random() * 1000)+3000;
+
+
+
+memClassificationList.push({
+	name : '${memClassification.memCompanylist }',
+	value : ${memClassification.memCompanycount},
+	color: '#EC' + rand
+});
+</c:forEach>
+
+
+Highcharts.chart('memderClassification', {
+	  series: [{
+	    type: "treemap",
+	    layoutAlgorithm: 'stripes',
+	    alternateStartingDirection: true,
+	    levels: [{
+	      level: 1,
+	      layoutAlgorithm: 'sliceAndDice',
+	      dataLabels: {
+	        enabled: true,
+	        align: 'left',
+	        verticalAlign: 'top',
+	        style: {
+	          fontSize: '15px',
+	          fontWeight: 'bold'
+	        }
+	      }
+	    }],
+	    
+	    data : memClassificationList
+	    
+	  }],
+	  title: {
+	    text: '소속별'
+	  }
+	});
+</script>
+
+
+
+
+

@@ -1,0 +1,32 @@
+package kr.or.ddit.issue.controller;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.issue.service.IssueService;
+import kr.or.ddit.vo.IssueVO;
+
+@Controller
+public class IssueSelectController {
+	
+	@Inject
+	private IssueService issueService;
+	
+	@RequestMapping("project/{pCode}/issue/issueSelect.do")
+	public String issueSelect(
+			@PathVariable("pCode") String pCode,
+			@ModelAttribute("issueVO") IssueVO issue,
+			Model model
+			) {
+		issue.setpCode(pCode);
+		IssueVO issueResult= issueService.retrieveIssue(issue);
+		model.addAttribute("issue", issueResult);
+		
+		return "issue/issueSelect";
+	}
+}

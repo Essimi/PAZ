@@ -1,0 +1,551 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
+
+  <security:authorize access="isAuthenticated()">
+     <security:authentication property="principal.authMember" var="authMember"/>
+     ${authMember.memId }
+  </security:authorize>
+
+<!-- PRE script 파일에 등록시 적용이 안됨. -->
+<!-- 임시로 현재 jsp 파일에 등록했습니다. -->
+<!-- 결제 관련 script -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+
+
+<style>
+#requestListDiv {
+	height: 300px;
+	overflow-y: overlay;
+}
+
+::-webkit-scrollbar {
+	width: 3px;
+	background: none;
+}
+
+#requestListText {
+	padding-left: 25px;
+	padding-top: 20px;
+	margin-bottom: -15px;
+}
+
+.pTitle {
+	font-size: 25px;
+}
+
+.sender {
+	font-size: 15px;
+}
+
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+	{
+	margin-left: 0px;
+}
+
+#content {
+	padding: 50px;
+}
+
+#plus {
+	font-size: 50px;
+	color: #ffc107;
+	text-shadow: 0px 1px 1px #cbc8c8;
+}
+</style>
+
+	<!-- 내 프로젝트 요청 리스트 -->
+	<div id="requestListText">
+		<h3>프로젝트 요청 리스트</h3>
+		<hr style="margin-left: -25px;">
+	</div>
+	<div id="requestListDiv">
+		<div class="card-body pb-0">
+			<c:set var="requestList" value="${requestList}"></c:set>
+			<c:choose>
+				<c:when test="${not empty requestList }">
+					<c:forEach items="${requestList}" var="request">
+						<div class="card bg-light d-flex flex-fill">
+							<div class="card-header text-muted border-bottom-0">프로젝트 요청
+							</div>
+							<div class="card-body pt-0">
+								<div class="row">
+									<div class="col-7">
+										<h2 class="lead pTitle">
+											<b>${request.pTitle }</b>
+										</h2>
+									</div>
+								</div>
+							</div>
+							<div class="card-footer">
+								<ul class="ml-4 mb-0 fa-ul text-muted">
+									<li class="small sender"><span class="fa-li"><i class="fas fa-hand-holding-heart"></i></span> 요청 발신자 : ${request.sender }</li>
+									<li class="small sender"><span class="fa-li"><i class="fas fa-id-card"></i></span> 역할 : ${request.position }</li>
+								</ul>
+								
+								<div class="text-right">
+
+									<!-- 수락 거절 -->
+									<a data-value="${request.pCode },${request.reqCode },${request.position}" class="btn btn-sm bg-teal requestBtn requestOk"> <i
+										class="fas fa-check"></i></a> 
+									<a data-value="${request.pCode },${request.reqCode }" class="btn btn-sm bg-red requestBtn requestFaild"> <i class="fas fa-times"></i></a>
+
+									<!-- 팀 구성원 뽑아오기 -->
+									<a href="#" title="Member List" data-toggle="popover" data-placement="top" data-content="Content"
+										class="btn btn-sm btn-primary"> <i class="fas fa-user"></i>Member</a>
+								</div>
+							</div>
+						</div>
+					</c:forEach>
+				</c:when>
+
+				<c:otherwise>
+					<p style="text-align: center; margin-top: 100px; color: gray;">
+						프로젝트 초대 요청이 없습니다.</p>
+				</c:otherwise>
+
+			</c:choose>
+
+		</div>
+	</div>
+	
+	<br>
+	<br>
+	
+	<!-- 프로젝트 요청 리스트 끝 -->
+	
+	<!-- 내 프로젝트 리스트 -->
+	<div class="content-wrapper" style="padding: 20px;">
+		<section class="content-header">
+			<div class="container-fluid">
+				<div class="row mb-2">
+					<div class="col-sm-6">
+						<h1>나의 프로젝트 리스트</h1>
+					</div>
+				</div>
+			</div>
+		</section> 
+		<div class="card">
+			<div class="card-header">
+				<h3 class="card-title">Projects</h3>
+			</div>
+			<div class="card-body p-0">
+				<table class="table table-striped projects">
+					<thead>
+						<tr>
+							<th style="width: 1%">No</th>
+							<th style="width: 20%">프로젝트 명</th>
+							<th style="width: 50%">팀원</th>
+							<th style="width: 8%" class="text-center">현황</th>
+							<th style="width: 20%"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<c:choose>
+							<c:when test="${not empty dataList}">
+								<c:forEach items="${dataList }" var="project">
+									<c:if test="${project.statusCode ne 'PROJECT_STATE004' }">
+										<c:if test="${project.statusCode ne 'PROJECT_STATE003' }">
+											<tr>
+												<td class = "testPCode">${project.pCode}</td>
+												<td><a> ${project.pTitle} </a></td>
+												<td>
+													<ul class="list-inline">
+														<c:forEach items="${project.projectMember }" var="member">
+															<li class="list-inline-item"><img alt="Avatar" class="table-avatar" src="${cPath }/resources/adminLTE3/dist/img/avatar2.png"><br>
+																<span class="badge badge-success">${member.memId}</span>
+															</li>
+														</c:forEach>
+													</ul>
+												</td>
+
+												<!-- 프로젝트 상태 조건문 출력 -->
+												<td class="project-state">
+												<%-- <c:choose>
+												<c:when test = "${project.statusCode ne 'PROJECT_STATE005'}">
+														<span class="badge badge-success">${project.statusName}</span>
+												</c:when>		
+												<c:when test="${project.statusCode eq 'PROJECT_STATE005'}">
+													    <!-- 클릭시 결제 모달창 출력 -->
+														<span class="badge badge-danger payBadge" data-toggle="modal" data-target="#modal-lg" data-value="${project.pCode }">미결제</span>
+												</c:when>
+												</c:choose>  --%>
+												<c:choose>
+													<c:when test="${project.statusCode eq 'PROJECT_STATE001'}">
+														<button class="btn btn-success">
+															<span class="spinner-border spinner-border-sm" ></span>진행중
+														</button>	
+													</c:when>
+													<c:when test="${project.statusCode eq 'PROJECT_STATE002'}">
+														<button class="btn btn-primary">
+															<span class="spinner-border spinner-border-sm" ></span>프로젝트 완료
+														</button>	
+													</c:when>
+													<c:when test="${project.statusCode eq 'PROJECT_STATE006'}">
+														<button class="btn btn-warning" value = "">결제 완료</button>
+													</c:when>
+													<c:when test="${project.statusCode eq 'PROJECT_STATE005'}">
+													    <!-- 클릭시 결제 모달창 출력 -->
+													    <button type="button" class="btn btn-outline-danger paymentBtn" data-toggle="modal" data-target="#modal-lg" 
+													    		data-pCode="${project.pCode }" data-term="${project.monthTerm}">결제하기</button>
+													</c:when>
+												</c:choose> 
+												</td>
+												
+												<td class="project-actions text-right"><a data-value="${project.pCode }" class="btn btn-primary btn-sm projectView"> <i
+														class="fas fa-folder"> </i> View</a> 
+												<c:choose>
+													<c:when test="${not empty plList}">
+														<c:forEach items="${plList }" var="plCode">
+															<c:set var="plText" value="${plCode.pCode }"/>
+															<c:if test="${project.pCode eq plText}">
+																<a data-value="${project.pCode}" class="btn btn-info btn-sm projectEdit"> <i class="fas fa-pencil-alt"></i> Edit</a>
+																<a data-value="${project.pCode}" class="btn btn-danger btn-sm projectDelete"> <i class="fas fa-trash"></i> Delete</a>
+															</c:if>
+														</c:forEach>
+													</c:when>
+												</c:choose>
+												<form class="viewForm" action="${cPath }/project/${project.pCode}/projectView.do" method="post">
+													<input type="hidden" name="memId" class="memIdValue" /> <input type="hidden" name="pCode" class="pCodeValue" />
+												</form></td>
+											</tr>
+										</c:if>
+									</c:if>
+								</c:forEach>
+							</c:when>
+						</c:choose>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div style="text-align: center;">
+			<a href="${cPath }/project/projectInsert.do" id="plus"> <i
+				class="fas fa-plus-square"></i>
+			</a>
+		</div>
+	</div>
+	
+	<form id="updateForm" action="${cPath }/project/projectUpdate.do"
+		method="post">
+		<input type="hidden" name="value" id="updateValue" />
+	</form>
+	
+	<!-- 결제 modal -->
+	<div class="modal fade" id="modal-lg">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">결제하기!</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			
+				<br>
+
+				<div id="pricing" class="container-fluid">
+					<div class="text-center">
+						<h3>결제수단을 선택해주세요</h3>
+						<h6>현재 프로젝트의 설정 기간은 <span class = "monthInfo"></span> 개월 입니다.</h6>
+					</div>
+					<div class="row slideanim">
+						<div class="col-sm-4 col-xs-12">
+							<div class="panel panel-default text-center">
+								<div class="panel-heading">
+									<h1>PAYCO</h1>
+								</div>
+								<br>
+								
+								<div class="panel-body">
+									<button type="button" class="btn btn-block btn-outline-danger payInfo" value="payco">
+										<p><strong class = "monthTerm"></strong></p>
+									    <p><strong class = "monthTermCost"></strong></p>										
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4 col-xs-12">
+							<div class="panel panel-default text-center">
+								<div class="panel-heading">
+									<h1>KAKAO</h1>
+								</div>
+								
+								<br>
+								
+								<div class="panel-body">
+									<button type="button" class="btn btn-block btn-outline-warning payInfo" value="kakao">
+										<p><strong class = "monthTerm"></strong></p>
+										<p><strong class = "monthTermCost"></strong></p>
+									</button>
+								</div>
+								<div class="panel-footer"></div>
+							</div>
+						</div>
+						<div class="col-sm-4 col-xs-12">
+							<div class="panel panel-default text-center">
+								<div class="panel-heading">
+									<h1>TOSS</h1>
+								</div>
+								<br>
+								<div class="panel-body">
+									<button type="button" class="btn btn-block btn-outline-primary payInfo" value="uplus">
+										<p><strong class = "monthTerm"></strong></p>
+										<p><strong class = "monthTermCost"></strong></p>
+									</button>
+								</div>
+							</div>
+						</div>					
+					</div>
+					
+					<br> 
+					<br>
+	
+					</div>
+					<div class="modal-footer justify-content-between">
+						<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+	
+<script>
+
+// 해당 프로젝트의 프로젝트 코드 변수
+let Procode = null;
+
+// 해당 프로젝트의 기간 변수
+let monthTerm = null;
+
+// 해당 프로젝트의 결제 금액 변수
+let monthCost = 0;
+
+// Project 코드를 리스트에서 받아와 변수명에 저장해줍니다.
+$('.paymentBtn').on('click', function () {
+	
+	// modal 창 닫기와 나가기 클릭시 값 중첩을 막기 위한 금액 변수 초기화
+	monthCost = 0
+	
+	// 정규표현식을 위한 금액 형변환
+	let monthCostStr = null;
+	
+	// 리스트들중 선택한 값의 pCode 와 monthTerm 변수 지정
+	Procode = $(this).attr('data-pCode');
+	monthTerm = $(this).attr('data-term');
+	
+	// 결제 개월 안내문구 추가
+	$('.monthInfo').html(monthTerm)
+		
+	// 금액 계산을 위한 타입 변환
+ 	monthTerm = parseInt(monthTerm);
+
+	// modal 창에 동적으로 달 생성
+	$('.monthTerm').html(monthTerm);
+	$('.monthTerm').append(" 개월")
+		
+	// 받아온 달 수를 이용하여 총 금액 계산
+	for(let i = 1; i <= monthTerm; i++){
+		// 현재 1 달 =  4900 원 입니다.
+		monthCost += 4900;
+	}
+	
+	// 금액 표현을 위한 금액 할당
+	monthCostStr = monthCost;
+	
+	// 정규표현식을 위한 String 타입 변환
+	monthCostStr = monthCostStr.toString();
+	
+	// 정규표현식(금액 단위마다 , 추가)
+	monthCostStr = monthCostStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	
+	$('.monthTermCost').html(monthCostStr);
+	$('.monthTermCost').append(" $");
+})
+
+/* 결제 관련 script */
+$('.payInfo').click(function() {
+
+	let platform = $(this).val() // 플랫폼 이름 지정
+	
+	let IMP = window.IMP; // 문서에는 생략 가능이라는데 생략할 경우 실행이 안됩니다.
+	IMP.init('imp23458695');
+
+	IMP.request_pay({
+		pg : platform, // 동적인 플랫폼 이름
+		merchant_uid : 'merchant_' + new Date().getTime(),
+		name : '프로젝트 결제',
+		amount : monthCost, // 동적인 가격
+		buyer_email : 'daeduck@PAZ.LASTPROJECT',
+		buyer_name : 'PAZ',
+		buyer_tel : '010-1234-5678',
+		buyer_addr : '대전 대덕인재개발원',
+		buyer_postcode : '123-456'
+	}, function(resp) {
+		
+		console.log(resp);
+		
+		// 결제검증
+		$.ajax({
+        	type : "POST",
+        	url : "${cPath}/project/PayController.do/" + resp.imp_uid 
+        }).done(function(data) {
+        	
+        	console.log(data);
+        	
+        	// 위의 resp.paid_amount 와 data.response.amount를 비교한후 로직 실행 (import 서버검증)
+        	
+        	if(resp.paid_amount == data.response.amount){
+        		
+        		// 검증이 완료되었다면, 데이터베이스에 해당 결제 정보를 저장합니다.
+	        	
+	        	$.ajax({
+	        		url : "${cPath}/project/payInsert.do",
+	        		method : 'POST',
+	        		data : {
+	        			"payCode" : data.response.impUid,
+	        			"pCode" : Procode,
+						"payAmount" : data.response.amount,
+						"payMonth" : monthTerm,
+	        			"payProvider" : data.response.pgProvider,
+	        			"payMerUid" : data.response.merchantUid,
+	        			"payPgSuccess" : data.response.pgTid
+	        		},
+	        		success : function(message) {
+	        			
+	        			alert(message);
+	        			
+	        			location.replace(location.href);			
+	        		},
+	        		error : function(xhr, jQuery, error) {
+	        			
+	        			alert("결제가 실패했습니다..");
+	        			console.log(jQuery);
+	        			console.log(error);
+	        			location.replace(location.href);		
+	        		}
+	        	})
+	        
+        	} else {
+        		alert("결제가 실패하였습니다.(검증 실패)");
+        		location.replace(location.href);	
+        	}
+        });
+	});
+})
+</script>	
+	
+	
+	
+
+<script>
+		$(document).ready(function() {
+			$('[data-toggle="popover"]').popover();
+		});
+
+		$(".requestOk").on("click", function() {
+
+			console.log($(this).attr('data-value'));
+
+			$.ajax({
+				url : "${cPath}/project/requestProject.do",
+				data : {
+					"value" : $(this).attr('data-value'),
+					"memId" : "${requestList.get(0).getMemId()}",
+					"msg" : "ok"
+				},
+				success : function(resp) {
+					alert("프로젝트 초대 요청을 수락하셨습니다.");
+					location.reload();
+				},
+				error : function(xhr, jQuery, error) {
+					console.log(jQuery);
+					console.log(error);
+				}
+
+			})
+		})
+
+		$(".requestFaild").on("click", function() {
+
+			$.ajax({
+				url : "${cPath}/project/requestProject.do",
+				data : {
+					"value" : $(this).attr('data-value'),
+					"memId" : "${requestList.get(0).getMemId()}",
+					"msg" : "faild"
+				},
+				success : function(resp) {
+					alert("프로젝트 요청을 거절했습니다. ");
+					location.reload();
+					console.log(resp);
+				},
+				error : function(xhr, jQuery, error) {
+					console.log(jQuery);
+					console.log(error);
+				}
+
+			})
+		})
+	
+		$(".projectDelete").on("click", function() {
+
+			if (confirm("정말 삭제하시겠습니까?")) {
+
+				$.ajax({
+					url : "${cPath }/project/projectDelete.do",
+					data : {
+						"value" : $(this).attr('data-value')
+					},
+					success : function(resp) {
+						alert("프로젝트가 삭제되었습니다.");
+						location.reload();
+						console.log(resp);
+					},
+					error : function(xhr, jQuery, error) {
+						console.log(jQuery);
+						console.log(error);
+					}
+
+				})
+			}
+
+		})
+
+		$(".projectEdit").on("click", function() {
+
+			console.log("누름 ");
+
+			var dataValue = $(this).attr('data-value');
+
+			console.log(dataValue);
+
+			$("#updateValue").attr("value", dataValue);
+
+			console.log($("#updateValue").attr('value'));
+
+			$("#updateForm").submit();
+
+		})
+
+		$(".projectView").on("click", function() {
+
+			var dataValue = $(this).attr('data-value');
+			var form = $(this).siblings('form');
+
+			console.log('${authMember.memId}');
+			console.log(dataValue);
+
+			form.children(".memIdValue").attr("value", '${authMember.memId}');
+			form.children(".pCodeValue").attr("value", dataValue);
+
+			form.submit();
+
+		})
+		
+		
+	</script>

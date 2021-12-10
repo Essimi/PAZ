@@ -6,10 +6,10 @@
     <!-- 로그인한 회원의 정보를 기반으로 Git 정보를 불러옵니다. -->
 	<select id = "selectGitSetting" resultType = "kr.or.ddit.vo.GitVO" parameterType = "kr.or.ddit.vo.GitVO">
 	
-		SELECT *
+		SELECT P_CODE, REPOSITORY, TOKEN, USER_NAME, MEM_ID, TO_CHAR(GIT_DATE, 'YYYY-MM-DD') GIT_DATE
 		FROM GITHUB_INFO
-		WHERE P_CODE = 'PROJECT00004'
-		AND MEM_ID = 'aa002'
+		WHERE P_CODE = #{pCode}
+		
 	
 	</select>
 	
@@ -23,27 +23,17 @@
 			,MEM_ID
 			,GIT_DATE
 		)VALUES(
-			'PROJECT00004'
+			#{pCode}
 			,#{repository,jdbcType=VARCHAR}
-			,'TOKEN'
+			,#{token,jdbcType=VARCHAR}
 			,#{userName,jdbcType=VARCHAR}
-			,'aa002'
+			,#{memId}
 			,SYSDATE)
 	</insert>
 
 	<delete id = "deleteGitRepo" parameterType = "String">
 		DELETE GITHUB_INFO
-		WHERE P_CODE = 'PROJECT00004'
+		WHERE P_CODE = #{pCode}
 
 	</delete>
-
-
-
-
-
-
-
-
-
-
 </mapper>

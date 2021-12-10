@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.issue.dao.IssueDAO">
+
+	<select id="selectTotalRecord" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM ISSUE
+	</select>
+
+	<select id="selectIssueList" parameterType="PagingVO" resultType="IssueVO">
+		SELECT A.*
+		FROM (
+			SELECT
+			    ISSUE_CODE
+			  , P_CODE
+			  , A.MEM_ID
+			  , WORK_CODE
+			  , ISSUE_TYPE_CODE
+			  , ISSUE_NAME
+			  , ISSUE_CONTENTS
+			  , IMPORTANCE
+			  , B.MEM_NICKNAME
+			  , ROWNUM RNUM
+			FROM ISSUE A, MEMBER B
+			WHERE A.MEM_ID = B.MEM_ID 
+			  AND P_CODE = #{detailSearch.pCode}
+		) A
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+</mapper>

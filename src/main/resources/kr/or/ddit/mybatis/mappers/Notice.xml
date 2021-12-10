@@ -45,7 +45,6 @@
 
 
 <resultMap type="kr.or.ddit.vo.NoticeVO" id="noticeMap" autoMapping="true">
-
 	<id property="noticeCode" column="NOTICE_CODE"/>
 	<association property="attatch" autoMapping="true" />
 </resultMap>
@@ -70,11 +69,19 @@
 	,ATTATCH.P_CODE
 	
 	FROM
-	NOTICE,ATTATCH
+	
+	NOTICE LEFT OUTER JOIN ATTATCH
+	ON(NOTICE.NOTICE_CODE  = ATTATCH.POST_CODE)
+	
 	<![CDATA[
 		WHERE NOTICE_CODE = #{noticeCode}
 	]]>
-	AND NOTICE.NOTICE_CODE = ATTATCH.POST_CODE
+	
+</select>
+
+<select id="selectNoticeCode" resultType="string">
+
+	SELECT 'NOTICE' || LPAD(NOTICE_SEQ.NEXTVAL, 5, '0') FROM DUAL
 
 </select>
 
@@ -98,5 +105,31 @@
 	)
 
 </insert>
+
+<update id="updateNotice">
+
+UPDATE NOTICE
+SET 
+
+NOTICE_TITLE = #{noticeTitle,jdbcType=VARCHAR}
+,NOTICE_CONTENTS = #{noticeContents,jdbcType=CLOB}
+
+<![CDATA[
+	WHERE NOTICE_CODE = #{noticeCode}
+]]>
+
+</update>
+
+
+<delete id="deleteNotice" parameterType="string">
+
+DELETE 
+FROM NOTICE
+
+<![CDATA[
+	WHERE NOTICE_CODE = #{noticeCode}
+]]>
+
+</delete>
 
 </mapper>

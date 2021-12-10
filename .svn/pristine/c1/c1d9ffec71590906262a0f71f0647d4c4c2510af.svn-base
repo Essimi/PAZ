@@ -1,0 +1,17 @@
+package kr.or.ddit.dashboardPl.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class EXDashboardContoller {
+	@RequestMapping("exdashboard.do")
+	public String Access(
+			Model model 
+			) {
+		
+		
+		return "dashBoard/exdashboard";
+	}
+}

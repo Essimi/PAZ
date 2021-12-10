@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.setting.dao.ProjectSettingDAO">
+
+	<!-- 프로젝트 상태를 변경합니다. -->
+	<update id = "projectComplete" parameterType = "String">
+		UPDATE PROJECT SET STATUS_CODE = 'PROJECT_STATE002'
+		WHERE P_CODE = #{pCode}
+	</update>
+</mapper>

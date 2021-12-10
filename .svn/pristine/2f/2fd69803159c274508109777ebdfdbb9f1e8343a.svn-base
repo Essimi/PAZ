@@ -1,0 +1,31 @@
+package kr.or.ddit.task.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.task.dao.TaskDAO;
+import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.TaskVO;
+
+@Service
+public class TaskServiceImpl implements TaskService{
+	
+	@Inject
+	TaskDAO dao;
+
+	// 업무 리스트 출력
+	@Override
+	public List<TaskVO> retrieveTaskList(PagingVO<TaskVO> pagingVO) {
+		
+		List<TaskVO> taskList = dao.selectTaskList(pagingVO);
+		
+		pagingVO.setTotalRecord(dao.selectTaskTotalRecord(pagingVO));
+		pagingVO.setDataList(taskList);
+		
+		return taskList;
+	}
+
+}

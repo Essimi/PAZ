@@ -1,0 +1,44 @@
+package kr.or.ddit.dashboard.sevice;
+
+import java.util.List;
+
+import kr.or.ddit.vo.DashBoardVO;
+
+public interface PEDashBoardService {
+	
+	/**
+	 * 해당 프로젝트에서의 내 총 업무 수량과, 지금까지 완료한 업무의 수량을 출력합니다.
+	 * @param dashBoard
+	 * @return
+	 */
+	public DashBoardVO projectMyStatus(DashBoardVO dashBoard);
+	
+	/**
+	 * 해당 프로젝트에서의 총 업무 수량과 현재 날짜 기준 일주일 안에 발생한 업무의 수량을 나타냅니다.
+	 * @param dashBoard
+	 * @return
+	 */
+	public DashBoardVO projectAllTaskStatus(DashBoardVO dashBoard);
+	
+	/**
+	 * 최상위업무(LEVEL 1) 와 해당 상위업무들의 이름, 진행도를 나타냅니다.
+	 * @param dashBoard
+	 * @return
+	 */
+	public List<DashBoardVO> topTaskStatus(DashBoardVO dashBoard);
+
+	/**
+	 * 해당 프로젝트의 올해 발생 이슈들의 달 값만 추출한 후 해당 달의 이슈 발생건을 출력합니다.
+	 * @param dashBoard
+	 * @return
+	 */
+	public List<DashBoardVO> projectMonthIssue(DashBoardVO dashBoard);
+	
+	/**
+	 * 최상위업무(LEVEL 1) 의 업무 등록 비율을 나타냅니다.(쿼리 미구현)
+	 * @param dashBoardVO
+	 * @return
+	 */
+	public DashBoardVO projectTaskProportion(DashBoardVO dashBoardVO);
+
+}

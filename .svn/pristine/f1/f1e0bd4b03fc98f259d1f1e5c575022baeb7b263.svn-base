@@ -1,0 +1,71 @@
+package kr.or.ddit.vo;
+
+public class PLDashboardVO {
+
+	private String memId;
+	private String memNickname;
+	private String taskCount;
+	
+	
+	
+	public String getMemId() {
+		return memId;
+	}
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	public String getMemNickname() {
+		return memNickname;
+	}
+	public void setMemNickname(String memNickname) {
+		this.memNickname = memNickname;
+	}
+	public String getTaskCount() {
+		return taskCount;
+	}
+	public void setTaskCount(String taskCount) {
+		this.taskCount = taskCount;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((memId == null) ? 0 : memId.hashCode());
+		result = prime * result + ((memNickname == null) ? 0 : memNickname.hashCode());
+		result = prime * result + ((taskCount == null) ? 0 : taskCount.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PLDashboardVO other = (PLDashboardVO) obj;
+		if (memId == null) {
+			if (other.memId != null)
+				return false;
+		} else if (!memId.equals(other.memId))
+			return false;
+		if (memNickname == null) {
+			if (other.memNickname != null)
+				return false;
+		} else if (!memNickname.equals(other.memNickname))
+			return false;
+		if (taskCount == null) {
+			if (other.taskCount != null)
+				return false;
+		} else if (!taskCount.equals(other.taskCount))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return "PLDashboardVO [memId=" + memId + ", memNickname=" + memNickname + ", taskCount=" + taskCount + "]";
+	}
+	
+	
+	
+}

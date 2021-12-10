@@ -1,0 +1,133 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="security" %>
+    
+    
+<style>
+#content{	
+	padding : 30px;
+}
+
+#monthIssueCardArea{
+	height: 100px;
+}
+
+
+</style>
+
+<!-- 페이지 메인 문구 -->
+<div class="container-fluid">
+	<div class="row mb-2">
+		<div class="col-sm-6">
+			<h1>Main Page</h1>
+		</div>
+	</div>
+</div>
+
+
+<div class="row" id = "monthIssueCardArea">
+	<div class="col-md-12">
+		<div class="card" id = "monthIssueCard">
+			<div class="card-header">
+				<h5 class="card-title">월간 이슈</h5>
+			</div>
+					
+			<div class="card-body">
+				<!-- body 영역 -->
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 메인페이지에서 표시되는 공지사항 시작 -->
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card" id = "monthIssueCard">
+		
+		<div class="card-header">
+		<h5 class="card-title">공지사항</h5>
+		</div>
+		
+		<div class="card-body">
+		<table class="table table-bordered table-striped">
+		
+			<thead>
+				<tr>
+					<th>글번호</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>날짜</th>
+				</tr>
+			</thead>
+			
+			<c:set var="noticeList" value="${pagingVO.dataList}"></c:set>
+			
+			<tbody>
+				<c:choose>
+					<c:when test="${not empty noticeList}">
+						<c:forEach items="${noticeList}" var="notice">
+							<tr>
+							
+							<td>${notice.rnum }</td>
+																					
+							<td>
+							
+								<c:url value="notice.do" var="viewURL">
+								<c:param name="noticeCode" value="${notice.noticeCode }" />
+								</c:url>
+								
+								<a href="${viewURL }">${notice.noticeTitle}</a>
+							
+							</td>
+							
+							<td>${notice.memId }</td>
+							
+							<td>${notice.noticeDate }</td>
+							
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td colspan="6">게시글이 없습니다.</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+			
+			<tfoot>
+				<tr>
+				<td colspan="6">
+					<security:authorize access="isAuthenticated()">
+					<security:authentication property="principal.authMember" var="authMember"/>
+					</security:authorize>
+					
+					<c:set var="memId" value="${authMember.memId }" />
+					
+					<c:if test="${ memId eq 'admin' }">
+					
+					<input type="button"
+					class="linkBtn btn btn-primary" id="noticeButton"
+					value="공지작성" data-gopage="${cPath }/notice/noticeInsert.do">
+					
+					</c:if>
+					<div id="pagingArea" class="card-footer clearfix">${pagingVO.pagingHTML }</div>
+				</td>
+				</tr>
+			</tfoot>
+			
+		</table>
+		</div>
+		
+		</div>
+	</div>
+</div>
+
+<!-- 메인페이지에서 표시되는 공지사항 끝 -->
+   
+    
+    
+ 

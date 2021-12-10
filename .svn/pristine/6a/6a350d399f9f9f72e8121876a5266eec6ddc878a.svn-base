@@ -1,0 +1,68 @@
+package kr.or.ddit.dashboard.controller;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.dashboard.sevice.PEDashBoardService;
+import kr.or.ddit.vo.DashBoardVO;
+import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.ProjectVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+public class PEDashBoard {
+	
+	@Inject
+	private PEDashBoardService service;
+	
+	// 해당 프로젝트에서의 내 총 업무 수량과, 지금까지 완료한 업무의 수량을 출력합니다.
+	@RequestMapping("project/projectPEStatus.do")
+	public String projectMyStatus(@AuthenticationPrincipal(expression="authMember") MemberVO authMember, HttpSession session,
+									Model model) {
+		
+		ProjectVO projectCode = (ProjectVO) session.getAttribute("project");
+
+		// 세션에서 받아온 값들을 전역변수로 지정합니다.
+		String pCode = projectCode.getpCode();
+		String memId = authMember.getMemId();
+		
+		DashBoardVO dashBoard = new DashBoardVO();
+		
+		dashBoard.setpCode(pCode);
+		dashBoard.setMemId(memId);
+		
+		log.info("dash? {}", dashBoard);
+		
+		// 해당 프로젝트에서의 내 총 업무 수량과, 지금까지 완료한 업무의 수량을 출력합니다.
+		DashBoardVO myStatus = service.projectMyStatus(dashBoard);
+		
+		// 해당 프로젝트에서의 총 업무 수량과 현재 날짜 기준 일주일 안에 발생한 업무의 수량을 나타냅니다.
+		DashBoardVO allTask = service.projectAllTaskStatus(dashBoard);
+		
+		// 최상위업무(LEVEL 1) 와 해당 상위업무들의 이름, 진행도를 나타냅니다.
+		List<DashBoardVO> topTaskStatus = service.topTaskStatus(dashBoard);
+		
+		// 해당 프로젝트의 올해 발생 이슈들의 달 값만 추출한 후 해당 달의 이슈 발생건을 출력합니다.
+		List<DashBoardVO> monthIssue = service.projectMonthIssue(dashBoard);
+		
+		log.info("test1 : {}", myStatus);
+		log.info("test2 : {}", allTask);
+		log.info("test3 : {}", topTaskStatus);
+		log.info("test4 : {}", monthIssue);
+		
+		model.addAttribute("myStatus", myStatus);
+		model.addAttribute("allTask", allTask);
+		model.addAttribute("topTaskStatus", topTaskStatus);
+		model.addAttribute("monthIssue", monthIssue);
+
+		return "dashBoard/pedashboard";
+	}
+}

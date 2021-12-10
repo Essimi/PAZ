@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.payment.pay.dao.PayDAO">
+	
+	<!-- 결제 --> 
+	<insert id = "insertPayRecord" parameterType = "PayVO">
+	
+		INSERT INTO PAY_INFO(
+			 PAY_CODE
+			,MEM_ID
+			,PAY_DATE
+			,PAY_AMOUNT
+			,PAY_MONTH
+			,PAY_PROVIDER
+			,PAY_MER_UID
+			,PAY_PGSUCCESS
+		)VALUES(
+			#{payCode,jdbcType=VARCHAR},
+			#{memId,jdbcType=VARCHAR},
+			SYSDATE,
+			#{payAmount,jdbcType=NUMERIC},
+			#{payMonth,jdbcType=NUMERIC},
+			#{payProvider,jdbcType=VARCHAR},
+			#{payMerUid,jdbcType=VARCHAR},
+			#{payPgSuccess,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 회원의 결제 상태코드 변경 -->
+	<update id = "updateMemberStatus" parameterType="PayVO">
+		UPDATE MEMBER
+		SET PAYMENT = 'Y'
+		WHERE MEM_ID = #{memId}
+	</update>
+	
+	<!-- 회원이 데드라인 기한 연장 -->
+	<update id = "updateMemberPayDate" parameterType="PayVO">
+		UPDATE MEMBER SET PAY_DEADLINE = ADD_MONTHS(TO_CHAR(SYSDATE,'YYYY-MM-DD'), + #{payMonth})
+		WHERE MEM_ID = #{memId}
+	</update>
+	
+	<!-- 회원의 추가 결제 기록 저장 -->
+	<insert id = "createPlusPayRecord" parameterType = "PayVO">
+	
+		INSERT INTO PAY_INFO(
+			 PAY_CODE
+			,MEM_ID
+			,PAY_DATE
+			,PAY_AMOUNT
+			,PAY_MONTH
+			,PAY_PROVIDER
+			,PAY_MER_UID
+			,PAY_PGSUCCESS
+		)VALUES(
+			#{payCode,jdbcType=VARCHAR},
+			#{memId,jdbcType=VARCHAR},
+			SYSDATE,
+			#{payAmount,jdbcType=NUMERIC},
+			#{payMonth,jdbcType=NUMERIC},
+			#{payProvider,jdbcType=VARCHAR},
+			#{payMerUid,jdbcType=VARCHAR},
+			#{payPgSuccess,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 회원의 데드라인 기한 연장 -->
+	<update id="updateMemberPayPlusDate" parameterType="PayVO">
+		UPDATE MEMBER SET PAY_DEADLINE = TO_CHAR(ADD_MONTHS(PAY_DEADLINE, +#{payMonth}))
+		WHERE MEM_ID = #{memId}
+	</update>
+	
+</mapper>

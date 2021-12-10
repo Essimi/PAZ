@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- 프로젝트 상태코드 변경 Scheduling -->
+	<bean id="ProjectStatusChange" class="kr.or.ddit.common.authentication.controller.ProjectStatusChange"/>
+
+	<bean id="projectStatusChangebin" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="ProjectStatusChange" />
+		<property name="targetMethod" value="projectStatusChangeMet" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="projectStatusChangeTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="projectStatusChangebin" />
+		<property name="startDelay" value="0" /> <!-- 즉시 시작 -->
+		<property name="cronExpression" value="* 0/5 * * * ?"/><!-- 5분 마다 실행 -->
+		<!-- <property name="cronExpression" value="0 0 12 * * ?"/> --><!-- 매일 오전 정오에 시작되는 Cron 표현식 -->
+	</bean>
+	
+	<!-- 스케쥴링한 작업 시작 -->
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="projectStatusChangeTrigger" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

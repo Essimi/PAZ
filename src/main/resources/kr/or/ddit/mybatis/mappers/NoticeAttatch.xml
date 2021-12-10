@@ -28,6 +28,34 @@
 		
 </insert>
 
+<select id="selectAttatch" parameterType="string" resultType="kr.or.ddit.vo.AttatchVO">
+
+	SELECT
+	
+	FILE_CODE
+	,REAL_NAME
+	,SAVE_NAME
+	,FILE_MIME
+	,FILE_SIZE
+	,P_CODE
+	,POST_CODE
+	
+	FROM ATTATCH
+	
+	<![CDATA[
+		WHERE POST_CODE = #{noticeCode}
+	]]>
+
+</select>
+
+<delete id="deleteNoticeAttatche">
+
+DELETE FROM ATTATCH
+<![CDATA[
+	WHERE POST_CODE = #{noticeCode}
+]]>
+
+</delete>
 
 
 </mapper>

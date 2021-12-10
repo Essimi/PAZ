@@ -1,0 +1,29 @@
+package kr.or.ddit.payment.pay.dao;
+
+import org.springframework.stereotype.Repository;
+
+import kr.or.ddit.vo.PayVO;
+
+/**
+ * 결제 정보 저장
+ * @author essimi
+ *
+ */
+@Repository
+public interface PayDAO {
+	
+	/**
+	 * 결제 기록 저장
+	 * @param pay
+	 * @return
+	 */
+	public int insertPayRecord(PayVO pay);
+	
+	/**
+	 * 결제 완료 후 프로젝트의 상태코드 변경
+	 * @param pay
+	 * @return
+	 */
+	public int updateProjectStatus(PayVO pay);
+
+}

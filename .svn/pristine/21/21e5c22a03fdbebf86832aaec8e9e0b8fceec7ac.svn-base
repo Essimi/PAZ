@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.member.dao.MemberDAO">
+
+	<resultMap type="kr.or.ddit.vo.MemberVO" id="simpleMemberMap" autoMapping="true">
+		<id property="memId" column="MEM_ID"/>
+		<collection property="memRoles" ofType="string" javaType="list">
+			<result column="MEM_ROLES"/>
+		</collection>
+	</resultMap>
+
+	<select id="selectMemberForAuth" parameterType="string" resultMap="simpleMemberMap">
+		SELECT A.MEM_ID, MEM_PASS, MEM_NICKNAME, ROLE_CODE MEM_ROLES           
+		FROM MEMBER A, MEM_MAPPING B
+		WHERE A.MEM_ID = B.MEM_ID(+)
+		AND A.MEM_ID = #{memId} AND OUT_CODE != '1'
+	</select>
+	
+	<select id="selectMember" parameterType="kr.or.ddit.vo.MemberVO" resultType="kr.or.ddit.vo.MemberVO">
+		SELECT 
+			MEM_ID
+		  , MEM_PASS
+		  , MEM_NICKNAME
+		  , MEM_MAIL
+		  , MEM_TEL
+		  , MEM_BIRTH
+		  , MEM_GENDER
+		  , MEM_COMPANY
+		  , JOIN_DATE
+		  , OUT_DATE
+		  , SURVEY_STATUS
+		FROM MEMBER
+		WHERE MEM_ID = #{memId}
+	</select>
+
+	<insert id="insertMember" parameterType="kr.or.ddit.vo.MemberVO">
+		 INSERT INTO MEMBER (
+			    MEM_ID
+			  , MEM_PASS
+			  , MEM_NICKNAME
+			  , MEM_MAIL
+			  , MEM_TEL
+			  , MEM_BIRTH
+			  , MEM_GENDER
+			  , MEM_COMPANY
+			  , JOIN_DATE
+			  , SURVEY_STATUS
+			  , OUT_CODE
+			) VALUES (
+			  	#{memId, jdbcType=VARCHAR},
+				#{memPass, jdbcType=VARCHAR},
+				#{memNickname, jdbcType=VARCHAR},
+				#{memMail, jdbcType=VARCHAR},
+				#{memTel, jdbcType=NUMERIC},
+				TO_DATE(#{memBirth, jdbcType=DATE}, 'YYYY-MM-DD'),
+				#{memGender, jdbcType=CHAR},
+				#{memCompany, jdbcType=VARCHAR},
+				SYSDATE,
+				'REVIEW_STATUS002',
+				'0'
+			)
+	</insert>
+	<insert id="insertMemberRole" parameterType="MemberVO">
+		INSERT INTO mem_mapping (
+		    MEM_ID
+		  , ROLE_CODE
+		) VALUES (
+		   	#{memId, jdbcType=VARCHAR}
+		  , 'IS_AUTHENTICATED_FULLY'
+		)
+	</insert>
+	
+	<select id="selectMemberEmail" parameterType="MemberVO" resultType="MemberVO">
+		SELECT MEM_ID,
+			   MEM_MAIL,
+			   JOIN_DATE
+		  FROM MEMBER
+		 WHERE MEM_MAIL = #{memMail, jdbcType=VARCHAR}
+		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(memId)">
+		   AND MEM_ID = #{memId, jdbcType=VARCHAR}
+		 </if>
+		   AND OUT_CODE != '1'
+	</select>
+	
+	<update id="updateMember" parameterType="MemberVO">
+		UPDATE MEMBER
+		   SET 
+			  MEM_PASS = #{memPass, jdbcType=VARCHAR}
+			, MEM_NICKNAME = #{memNickname, jdbcType=VARCHAR}
+			, MEM_MAIL = #{memMail, jdbcType=VARCHAR}
+			, MEM_TEL = #{memTel, jdbcType=VARCHAR}
+			, MEM_BIRTH = #{memBirth, jdbcType=DATE}
+			, MEM_GENDER = #{memGender, jdbcType=CHAR}
+			, MEM_COMPANY = #{memCompany, jdbcType=VARCHAR}
+		 WHERE MEM_ID = #{memId, jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updatePassword" parameterType="MemberVO">
+		UPDATE MEMBER
+		   SET 
+			  MEM_PASS = #{memPass, jdbcType=VARCHAR}
+		 WHERE MEM_ID = #{memId, jdbcType=VARCHAR}
+	</update>
+</mapper>

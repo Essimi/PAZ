@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.projectmain.notice.dao.ProjectNoticeDAO">
+
+	
+	<select id="selectTotalRecord" resultType="int" parameterType="kr.or.ddit.vo.PagingVO">
+		SELECT COUNT(*)
+		FROM NOTICE
+		WHERE PART_CODE = #{detailSearch.partCode}
+	</select>
+		
+		
+	<select id="selectProjectNoticeList" resultType="kr.or.ddit.vo.NoticeVO" parameterType="kr.or.ddit.vo.PagingVO">
+	
+		SELECT B.*
+		FROM (
+		SELECT 
+		
+		ROWNUM RNUM
+		,A.PART_CODE
+		,A.MEM_ID
+		,A.NOTICE_CODE
+		,A.NOTICE_TITLE
+		,A.NOTICE_CONTENTS
+		,A.NOTICE_DATE
+		
+		FROM (
+		SELECT
+		PART_CODE
+		,MEM_ID
+		,NOTICE_CODE
+		,NOTICE_TITLE
+		,NOTICE_CONTENTS
+		,NOTICE_DATE
+		FROM NOTICE
+		WHERE PART_CODE = #{detailSearch.partCode}
+		ORDER BY NOTICE_DATE DESC
+		) A  
+		) B
+		
+		<![CDATA[
+			WHERE  RNUM >= #{startRow} AND RNUM <= #{endRow}
+		]]>
+	
+	</select>
+
+</mapper>

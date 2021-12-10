@@ -1,0 +1,222 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<script>
+	$('#multipleChat').click(function() {
+
+		$('#multipleChatModal').modal();
+
+	});
+</script>
+
+<script>
+	// 채팅방이 모두 완성되었을 때 memberList를 비워준다.
+	var memberList = [];
+	var chatTitle;
+
+	$('#nextBtn').click(function() {
+
+		// 선택된 체크박스의 배열을 가져온다.
+
+		$("input[name=checkbox]:checked").each(function() {
+			var member = $(this).val();
+			memberList.push(member);
+		})
+
+		// 선택한 멤버의 수에 따라 모달을 띄운다.
+
+		if (memberList.length <= 0) {
+			$('#chatWarningModal').modal();
+		} else {
+			$('#multipleChatModal').modal("hide");
+			$('#MakeMultipleChatModal').modal();
+		}
+
+	});
+
+	$('#makeChatBtn').click(function() {
+
+		// 채팅방을 만드는 요청 전송
+		// 멤버 리스트와 채팅방의 타이틀을 검색해온다. - memberList,
+
+		chatTitle = $('#chatTitle').val();
+
+		console.log("value가 잘 가져오는지" + chatTitle);
+		console.log("value가 잘 가져오는지" + memberList);
+
+		$.ajax({
+
+			data : {
+				"memberList" : memberList,
+				"chatTitle" : chatTitle
+			},
+			dataType : "json",
+			url : "${cPath}/chat/makeChat.do",
+			method : "POST",
+
+			success : function(resp) {
+
+			},
+			error : function(error) {
+				console.log("실패");
+			}
+
+		});
+
+	});
+</script>
+
+
+
+<script>
+	let webSocket = null;
+
+	$('#startChat')
+			.click(
+					function() {
+
+						let yourId = $('#getMemId').val();
+						let yourNickname = $('#getMemNickname').val();
+
+						$.ajax({
+
+							data : {
+								"yourId" : yourId,
+								"yourNickname" : yourNickname
+							},
+							dataType : "json",
+							url : "${cPath}/chat/oneMakeChat.do",
+							method : "POST",
+
+							success : function(resp) {
+
+								console.log(resp.result)
+
+							},
+							error : function(error) {
+								console.log("실패");
+							}
+
+						});
+
+						// 웹소켓을 연결한다.
+
+						// 채팅방 정보
+						
+						let myId = $('#myId').val();
+						let pCode = $('#pCode').val();
+						
+						console.log("myId가 잘 가져오는지"+ myId);
+						console.log("pCode가 잘 가져오는지"+ pCode);
+
+						webSocket = new WebSocket("ws://192.168.0.163${cPath}/websocket/echo/"+pCode+"/"+myId);
+
+						webSocket.onopen = function(event) {
+
+							console.log(event);
+							console.log("웹소켓이 오픈 될 때 이 함수는 실행된다.");
+
+							// 아이디와 닉네임을 가져오자
+
+							console.log("value가 잘 가져오는지"+ $('#getMemNickname').val());
+							console.log("value가 잘 가져오는지"+ $('#getMemId').val());
+
+						}
+						webSocket.onclose = function(event) {
+							console.log(event);
+						}
+						webSocket.onerror = function(event) {
+							console.log(event);
+						}
+
+						webSocket.onmessage = function(event) {
+
+							// 서버에서 가져오는 메시지의 정보
+							// 서버에서 메시지가 들어올 때 실행된다.
+
+							console.log("메시지를 주고 받을 때 이 메시지가 출력된다. (2)");
+
+							// 화면에 메시지를 표현한다.
+
+							let msg = event.data; // 이벤트에서 가져온 데이터 - json 형식이다.
+
+							console.log("onmessage에서 가져오는 데이터" + msg);
+
+							let obj = JSON.parse(msg); // json 형식의 값을 변환한다.
+
+							let receive = obj.sender + ":" + obj.message; // 문자열로 변환한다.
+
+							messageArea.append($("<p>").addClass("receive").text(receive));
+
+						}
+
+						let messageTag = $("#messageTag");
+						let messageArea = $("#messageArea");
+
+						$("#sendMsg").on("click",function() {
+							
+							// 클라이언트의 메시지를 가장 먼저 가져오는 부분이다.
+							// 클라이언트의 메시지를 서버에게 전달한다.
+
+							let message = messageTag.val();
+
+							if (!message) {
+								return;
+							}
+							
+							console.log("여기에서는 message의 값을 가져간다."+ message);
+
+							webSocket.send(message); // 서버 방향으로 메시지를 보낸다.
+
+							messageTag.val("");
+							
+						});
+
+						// 이후 시간이 될 때 수정하기.
+						$('#profileModal').modal("hide");
+						$('#chatModal').modal();
+
+					});
+</script>
+
+
+
+<script>
+	$('.marginClass').click(function() {
+
+		$('#profileModal').modal();
+
+		var memId = $(this).attr("id");
+
+		$.ajax({
+
+			data : {
+				memId : memId
+			},
+			dataType : "json",
+			url : "${cPath}/chat/chattingProfile.do",
+
+			success : function(resp) {
+
+				console.log(resp.memId);
+				console.log(resp.memNickname);
+
+				$('#getMemNickname').val(resp.memNickname);
+				$('#getMemId').val(resp.memId);
+
+				$('#nameSpace').text(resp.memNickname);
+				$('#aboutSpace').text(resp.pTitle + "/" + resp.position);
+				$('#companySpace').text(resp.memCompany);
+				$('#telSpace').text(resp.memTel);
+
+				console.log("value가 잘 들어가는지" + $('#getMemNickname').val());
+				console.log("value가 잘 들어가는지" + $('#getMemId').val());
+
+			},
+			error : function(error) {
+				console.log("실패");
+			}
+
+		});
+
+	});
+</script>

@@ -1,0 +1,43 @@
+package kr.or.ddit.kanban.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.common.PKNotFoundException;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.kanban.dao.KanbanDAO;
+import kr.or.ddit.vo.TaskVO;
+
+@Service
+public class KanbanServiceImpl implements KanBanService {
+
+	@Inject
+	KanbanDAO kanbanDao;
+	
+	@Override
+	public ServiceResult moveCard(TaskVO kanban) {
+
+		TaskVO droppedCard = kanbanDao.selectCard(kanban); 
+		
+		return ServiceResult.OK;
+	}
+
+	@Override
+	public List<TaskVO> selectKanbanList(TaskVO kanban) {
+		return kanbanDao.selectKanbanList(kanban);
+	}
+
+	@Override
+	public TaskVO selectCard(TaskVO kanban) {
+		
+		TaskVO kanbanOne = kanbanDao.selectCard(kanban);
+		if(kanbanOne == null) {
+			throw new PKNotFoundException(kanban + "없음");
+		}
+		return kanbanOne;
+	}
+
+}

@@ -1,0 +1,110 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+  
+    
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>회원정보</h1>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+		
+	  <form action="${cPath }/mypage/myPageUpdate.do" method="post" enctype="multipart/form-data">
+      <!-- Default box -->
+      <div class="card">
+        <div class="card-body row">
+          <div class="col-5 text-center d-flex align-items-center justify-content-center">
+           <img id="preview-image" class="profile-user-img img-fluid img-circle" 
+           		src="${cPath }/resources/file/profileImage/${memberInfo.memIkon.saveName }"
+           		onerror="this.src='${cPath }/resources/file/profileImage/profile.jpg'" style="width:250px">
+<%--            <img class="img-circle img-bordered-sm" src="${cPath }/resources/file/proflie.jpg" alt="User Image"> --%>
+<%--            <img src="${cPath }/resources/file/proflie.jpg" class="img-circle elevation-2" alt="User Image"> --%>
+			<input style="display: none;" type="file" id="imageFile" name="imageFile">
+			<br>
+			<button type="button" id="profileChange" class="btn btn-primary">사진 변경</button>
+          </div>
+          <div class="col-7">
+            <label for="inputEmail">아이디</label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+              </div>
+              <input type="text" class="form-control" name="memId" placeholder="ID"  value="${memberInfo.memId }" readonly>
+            </div>
+            <label for="inputEmail">비밀번호</label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+              </div>
+              <input type="text" class="form-control" name="memPass" placeholder="Password">
+            </div>
+            <label for="inputEmail">닉네임</label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-address-card"></i></span>
+              </div>
+              <input type="text" class="form-control" name="memNickname" placeholder="NickName" value="${memberInfo.memNickname }">
+            </div>
+            <label for="inputEmail">이메일</label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+              </div>
+              <input type="email" class="form-control" name="memMail" placeholder="Email" value="${memberInfo.memMail }">
+            </div>
+            <label for="inputEmail">전화번호</label>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
+              </div>
+              <input type="text" class="form-control" name="memTel" placeholder="Tel" value="${memberInfo.memTel }">
+            </div>
+            <div class="form-group">
+              <input type="submit" class="btn btn-primary" value="수정하기">
+              ${message }
+            </div>
+          </div>
+        </div>
+      </div>
+     </form>
+
+    </section>
+    
+    <script>
+    $(function(){
+    	
+    	$("#profileChange").on("click", function(){
+    		$("#imageFile").click();
+    	})
+    	
+    	function readImage(input) {
+		    // 인풋 태그에 파일이 있는 경우
+		    if(input.files && input.files[0]) {
+		        // 이미지 파일인지 검사 (생략)
+		        // FileReader 인스턴스 생성
+		        const reader = new FileReader()
+		        // 이미지가 로드가 된 경우
+		        reader.onload = e => {
+		            const previewImage = document.getElementById("preview-image")
+		            previewImage.src = e.target.result
+		        }
+		        // reader가 이미지 읽도록 하기
+		        reader.readAsDataURL(input.files[0])
+		    }
+		}
+		// input file에 change 이벤트 부여
+		const inputImage = document.getElementById("imageFile")
+		inputImage.addEventListener("change", e => {
+		    readImage(e.target)
+		})
+    })
+    	
+    
+    </script>

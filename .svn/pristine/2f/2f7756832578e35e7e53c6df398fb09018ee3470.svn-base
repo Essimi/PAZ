@@ -1,0 +1,105 @@
+package kr.or.ddit.issue.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import kr.or.ddit.enumpkg.ResultStatus;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.issue.service.IssueService;
+import kr.or.ddit.member.service.MemberService;
+import kr.or.ddit.vo.IssueRecipientVO;
+import kr.or.ddit.vo.IssueVO;
+import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.ProjectVO;
+
+@Controller
+public class IssueSelectController {
+	
+	@Inject
+	private IssueService issueService;
+	
+	@Inject
+	private MemberService memberService;
+	
+	@RequestMapping("project/{pCode}/issue/issueSelect.do")
+	public String issueSelect(
+			@PathVariable("pCode") String pCode,
+			@ModelAttribute("issueVO") IssueVO issue,
+			Model model
+			) {
+		issue.setpCode(pCode);
+		IssueVO issueResult= issueService.retrieveIssue(issue);
+		model.addAttribute("issue", issueResult);
+		
+		return "issue/issueSelect";
+	}
+	
+	@RequestMapping("project/{pCode}/issue/issueModify.do")
+	public String issueModify(
+			@PathVariable("pCode") String pCode,
+			@ModelAttribute("issueVO") IssueVO issue,
+			Model model
+			) {
+		issue.setpCode(pCode);
+		IssueVO issueResult = issueService.retrieveIssue(issue);
+		model.addAttribute("issue", issueResult);
+		
+		ProjectVO project = new ProjectVO();
+		project.setpCode(pCode);
+		List<MemberVO> memList = memberService.projectMemberList(project);
+		model.addAttribute("memList", memList);
+		
+		return "issue/issueWrite";
+	}
+	
+	@RequestMapping(value="project/{pCode}/issue/issueModify.do", method=RequestMethod.POST)
+	public String issueModifyPost(
+			@PathVariable("pCode") String pCode,
+			@ModelAttribute("issueVO") IssueVO issue,
+			@RequestParam("Recipients") String[] Recipients,
+			RedirectAttributes redirect,
+			Model model
+			) {
+		ArrayList<IssueRecipientVO> issueRecipients = new ArrayList<>();
+		for(String memId : Recipients) {
+			IssueRecipientVO recipient = new IssueRecipientVO();
+			recipient.setMemId(memId);
+			issueRecipients.add(recipient);
+		}
+		issue.setIssueRecipients(issueRecipients);
+		issue.setpCode(pCode);
+		ServiceResult result =  issueService.modifyIssue(issue);
+		String viewName = null;
+		ResultStatus status = ResultStatus.FAIL;
+		switch (result) {
+		case OK:
+			viewName = "redirect:/project/" + pCode + "/issue/issueList.do";
+			status = ResultStatus.UPDATE;
+			break;
+		default:
+			viewName = "issue/issueWrite";
+			break;
+		}
+		
+		redirect.addFlashAttribute("status", status);
+		model.addAttribute("status", status);
+		
+		return viewName;
+	}
+	
+	@RequestMapping("project/{pCode}/issue/issueDelete.do")
+	public String issueDelete() {
+		return "issue/issueSelect";
+	}
+}

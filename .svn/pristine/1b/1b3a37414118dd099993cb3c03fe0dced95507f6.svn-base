@@ -1,0 +1,74 @@
+package kr.or.ddit.news.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.news.service.NewsReplyService;
+import kr.or.ddit.vo.NewsReplyVO;
+
+@Controller
+public class NewsReplyController {
+	
+	@Inject
+	private NewsReplyService service;
+	
+	@ResponseBody
+	@RequestMapping(value = "/news/newsReplyList.do")
+	private List<NewsReplyVO> newsReplyList(
+			@RequestParam("newsCode") String newsCode
+			) {
+		
+		NewsReplyVO newsReply = new NewsReplyVO();
+		newsReply.setNewsCode(newsCode);
+		
+		return service.newsReplyList(newsReply);
+		
+			
+		
+		
+	}
+	
+	
+	@RequestMapping(value = "/news/newsReplyInsert.do", method=RequestMethod.POST)
+	public String replyInsert(
+			@ModelAttribute("newsReply") NewsReplyVO newsReply
+			){
+		
+		service.createReply(newsReply);
+		return "redirect:/news/newsReplyList.do?newsCode=" + newsReply.getNewsCode();
+		
+		/*Map<String, Object> resultMap = new HashMap<>();
+		
+		ServiceResult result = service.createReply(newsReply);
+		
+		if(ServiceResult.FAILED.equals(result)) {
+			resultMap.put("message", "서버 오류");
+		}
+		resultMap.put("result", result.name());
+		resultMap.put("newsReply", newsReply);
+		
+		return resultMap;*/
+	}
+
+	
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.payment.refund.dao.PayRefundDAO">
+
+
+	<!-- 가장 최근의 결제 정보만 가져옵니다. -->
+	<select id = "payInfo" parameterType = "String" resultType = "PayVO">
+	   SELECT PAY_CODE, P_CODE, MEM_ID, TO_CHAR(PAY_DATE, 'YYYY"년 "MM"월" DD"일 "') PAY_DATE, PAY_AMOUNT, PAY_MONTH, PAY_PROVIDER,
+      		  PAY_MER_UID, PAY_PGSUCCESS, PAY_ADDITION FROM
+   		 (SELECT *
+     		 FROM PAY_INFO
+      		 WHERE P_CODE = 'PROJECT00012'
+      		 ORDER BY PAY_DATE DESC
+    	 )	
+		 WHERE ROWNUM = 1
+	</select>
+
+
+
+</mapper>

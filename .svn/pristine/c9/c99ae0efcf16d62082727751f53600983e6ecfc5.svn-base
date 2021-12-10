@@ -1,0 +1,5 @@
+attatchPath=D:/A_TeachingMaterial/7.LastProject/workspace/PAZ/webapp/resources/file
+
+meetingImages=
+spring.mvc.converters.preferred-json-mapper=gson
+member.profile.image=D:/A_TeachingMaterial/7.LastProject/workspace/PAZ/webapp/resources/file/profileImage

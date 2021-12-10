@@ -13,45 +13,75 @@
    <resultMap type="kr.or.ddit.vo.ProjectVO" id="projectMap" autoMapping="true">
    		<id property="pCode" column="P_CODE"/>
    		<collection property="projectMember" ofType="kr.or.ddit.vo.MemberVO" autoMapping="true">
+   			<id property="memId" column="MEM_ID"/>
+   			<association property="memIkon" javaType="MemberIkonVO" autoMapping="true">
+   			</association>
    		</collection>
    </resultMap>
 
    <select id="selectMyProjectList" parameterType="kr.or.ddit.vo.ProjectVO" resultMap="projectMap">
-       SELECT A.MEM_ID, A.P_CODE, B.P_TITLE, A.POSITION, B.STATUS_CODE
-		FROM
-		( SELECT * FROM P_MEM WHERE P_CODE IN (SELECT A.P_CODE
-		                                        FROM PROJECT A, P_MEM B
-		                                        WHERE A.P_CODE = B.P_CODE
-		                                        AND B.MEM_ID = 'aa002')
-		ORDER BY P_CODE
-		) A, PROJECT B
+		SELECT 	A.MEM_ID, A.P_CODE, B.P_TITLE, A.POSITION, B.STATUS_CODE, P.STATUS_NAME,
+				A.SAVE_NAME, A.MEM_NICKNAME,
+				ROUND(REPLACE(MONTHS_BETWEEN(B.P_START_DATE, B.P_END_DATE), '-', '')) AS MONTH_TERM,
+				REPLACE(TO_DATE(B.P_START_DATE, 'YYYY-MM-DD') - TO_DATE(B.P_END_DATE, 'YYYY-MM-DD'), '-', '') AS DAY_TERM
+		FROM (SELECT C.MEM_ID, C.P_CODE, 
+		            C.POSITION, D.MEM_NICKNAME,
+		            E.SAVE_NAME
+		    FROM P_MEM C, MEMBER D, MEMBER_IKON E
+		    WHERE C.MEM_ID = D.MEM_ID
+		    AND D.MEM_ID = E.MEM_ID(+)
+		    AND OUT_STATUS = '0'
+		    AND P_CODE IN (SELECT A.P_CODE
+		                     FROM PROJECT A, P_MEM B
+		                     WHERE A.P_CODE = B.P_CODE
+		                     AND B.MEM_ID = #{memId}
+		                     AND OUT_STATUS = '0')
+		    ORDER BY P_CODE) A, PROJECT B
+		LEFT OUTER JOIN PROJECT_STATE P on B.STATUS_CODE = P.STATUS_CODE
 		WHERE A.P_CODE = B.P_CODE
-
    </select>
    
-   <insert id="insertMyProject" parameterType="kr.or.ddit.vo.ProjectVO">
-   		<selectKey keyProperty="pCode" resultType="int" order="BEFORE">
-			SELECT PROJECT_SEQ.NEXTVAL
-			FROM DUAL
+   <insert id="insertMyProject" parameterType="ProjectVO">
+   		<selectKey keyProperty="pCode" resultType="String" order="BEFORE">
+			SELECT 'PROJECT'||LPAD(NVL(to_number(SUBSTR(MAX(P_CODE), 8)), 0) + 1, 5, '0')
+			FROM PROJECT
 		</selectKey>
-		
-		INSERT INTO project (
-		p_code,
-		p_title,
-		p_content,
-		p_create_date,
-		p_start_date,
-		p_end_date,
-		p_part_code,
-		) VALUES (
-		#{pCode, jdbcType=VARCHAR},
-		#{pTitle, jdbcType=VARCHAR},
-		#{pContent, jdbcType=CLOB},
-		#{pCreateDate, jdbcType=DATE},
-		#{pStartDate, jdbcType=DATE},
-		#{pEndDate, jdbcType=DATE},
-		#{pPartCode, jdbcType=VARCHAR},
-		);
+		INSERT ALL 
+			INTO project (
+				p_code,
+				p_title,
+				p_content,
+				p_create_date,
+				p_start_date,
+				p_end_date,
+				p_part_code,
+				status_code
+			) VALUES (
+				#{pCode, jdbcType=VARCHAR},
+				#{pTitle, jdbcType=VARCHAR},
+				#{pContent, jdbcType=CLOB},
+				SYSDATE,
+				#{pStartDate, jdbcType=DATE},
+				#{pEndDate, jdbcType=DATE},
+				#{pPartCode, jdbcType=VARCHAR},
+				'PROJECT_STATE001'
+
+			)
+			INTO P_MEM (
+				MEM_ID, 
+				P_CODE, 
+				WORK_TIME, 
+				POSITION, 
+				OUT_STATUS
+			) VALUES (
+				#{memId},
+				#{pCode, jdbcType=VARCHAR},
+				0,
+				'PL',
+				'0'
+			)
+		SELECT *
+     	FROM DUAL
    </insert>
    
    <!-- 이건 머야!! 언냐 써줭  -->
@@ -80,17 +110,19 @@
    <!-- 프로젝트 상세 조회 -->
    <select id="selectProject" parameterType="kr.or.ddit.vo.ProjectVO" resultType="kr.or.ddit.vo.ProjectVO">
    
-	   SELECT
-		     P_TITLE
-		    ,P_CONTENT 
-		    ,P_CREATE_DATE
-		    ,P_START_DATE 
-		    ,P_END_DATE
-		    ,P_PART_CODE 
-		    ,STATUS_CODE 
-		FROM
-		    PROJECT
-		WHERE P_CODE = #{pCode} 
+	     SELECT
+    		 A.P_TITLE
+		    ,A.P_CONTENT
+		    ,TO_CHAR(A.P_CREATE_DATE, 'YYYY-MM-DD') P_CREATE_DATE
+		    ,TO_CHAR(A.P_START_DATE, 'YYYY-MM-DD') P_START_DATE
+		    ,TO_CHAR(A.P_END_DATE, 'YYYY-MM-DD') P_END_DATE
+		    ,A.P_PART_CODE
+            ,B.PART_NAME
+		    ,A.STATUS_CODE
+			FROM
+			    PROJECT A, PROJECT_PART B
+			WHERE A.P_PART_CODE = B.PART_CODE
+			  AND A.P_CODE = #{pCode}
    		
    </select>
    
@@ -116,7 +148,7 @@
    
    <!-- 프로젝트 멤버 정보 리스트 -->
    <select id="listProjectMember" parameterType="kr.or.ddit.vo.ProjectVO" resultType="kr.or.ddit.vo.ProjectVO">
-	   	SELECT B.MEM_ID, B.MEM_NICKNAME, B.MEM_MAIL, A.POSITION, A.WORK_TIME
+	   	SELECT B.MEM_ID, B.MEM_NICKNAME, B.MEM_MAIL, A.POSITION, A.WORK_TIME, A.OUT_STATUS
 		FROM P_MEM A, MEMBER B
 		WHERE A.MEM_ID = B.MEM_ID
 		  AND A.P_CODE = #{pCode}
@@ -125,9 +157,33 @@
    
    <!-- 프로젝트 멤버 삭제 -->
    <update id="deleteProjectMember" parameterType="kr.or.ddit.vo.ProjectVO">
-   	DELETE FROM P_MEM
-	 WHERE MEM_ID = #{memId}
-	   AND P_CODE = #{pCode}
+	   	UPDATE P_MEM
+	   	   SET OUT_STATUS = '1'
+		 WHERE MEM_ID = #{memId}
+		   AND P_CODE = #{pCode}
+   
+   </update>
+   
+   
+   <!-- 프로젝트 PL 권한 이양 - p_mem position 변경 -->
+   <update id="updatePosition" parameterType="kr.or.ddit.vo.ProjectVO">
+   		UPDATE P_MEM
+   		   SET POSITION = #{position}
+   		 WHERE MEM_ID = #{memId}
+   		   AND P_CODE = #{pCode}
+   </update>
+   
+   
+   <!-- 프로젝트 PL 권한 이양 - mem_mapping role_code 변경 -->
+   <update id="updateMemMapping" parameterType="kr.or.ddit.vo.ProjectVO">
+   		UPDATE MEM_MAPPING
+   		   SET ROLE_CODE = #{roleCode}
+   		 WHERE MEM_ID = #{memId}
+           AND ROLE_CODE = 
+	           (SELECT  ROLE_CODE
+	             FROM MEM_MAPPING
+	             WHERE ROLE_CODE LIKE ('%' || SUBSTR(#{roleCode}, 3))
+	             AND MEM_ID = #{memId})
    
    </update>
    

@@ -1,0 +1,82 @@
+package kr.or.ddit.news.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.news.service.NewsService;
+import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.NewsVO;
+import kr.or.ddit.vo.ProjectVO;
+
+@Controller
+public class NewsDeleteController {
+
+
+		@Inject
+		private NewsService service;
+	
+		@ResponseBody
+		@RequestMapping(value = "/news/newsDelete.do", method=RequestMethod.GET)
+		public Map<String, Object> getCalendarRemoveForm(
+				NewsVO news,
+				Model model,
+				HttpSession session,
+				@AuthenticationPrincipal(expression="authMember") MemberVO authMember
+				){
+			
+			ProjectVO projectCode = (ProjectVO) session.getAttribute("project");
+			news.setMemId(authMember.getMemId());
+			news.setpCode(projectCode.getpCode());
+			
+			ServiceResult result = service.removeNews(news);
+			
+			model.addAttribute("news", news);
+			
+			String message = null;
+			
+			Map<String, Object> res = new HashMap<>();
+			res.put("result", result);
+			
+			if(result == ServiceResult.OK) {
+			res.put("redirect", "/news/newsList.do");	
+			message = "성공하였습니다.";
+			}else {
+			message = "실패하였습니다.";
+			}
+			res.put("message", message);
+			return res;
+			
+		
+		}
+		
+		@RequestMapping(value = "/news/newsDelete.do", method=RequestMethod.POST)
+		public String Access(
+				NewsVO news,
+				Model model,
+				HttpSession session,
+				@AuthenticationPrincipal(expression="authMember") MemberVO authMember
+				
+				) {
+			
+			ProjectVO projectCode = (ProjectVO) session.getAttribute("project");
+			news.setMemId(authMember.getMemId());
+			news.setpCode(projectCode.getpCode());
+			
+			ServiceResult result = service.removeNews(news);
+			
+			model.addAttribute("news", news);
+			return "news/newsList";
+			
+		}
+	}

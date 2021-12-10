@@ -1,0 +1,22 @@
+package kr.or.ddit.dashboardPl.dao;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import kr.or.ddit.vo.PLDashboardVO;
+
+@Repository
+public interface PLDashboardDAO {
+	
+	/**
+	 * 업무 담당자별 할당 비율 
+	 * @return
+	 */
+	public List<PLDashboardVO> taskManagerRatio();
+	
+	
+	public List<PLDashboardVO> issueManagement();
+
+
+}

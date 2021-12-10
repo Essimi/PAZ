@@ -1,0 +1,45 @@
+package kr.or.ddit.admin.dashboard.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.admin.dashboard.dao.DashboardDAO;
+import kr.or.ddit.vo.AdminDashboardVO;
+import kr.or.ddit.vo.DataListVO;
+
+@Service
+public class DashboardServiceImpl implements DashboardService {
+	@Inject
+	private DashboardDAO dao;
+
+	@Override
+	public List<AdminDashboardVO> payInfoList(DataListVO<AdminDashboardVO> dataListVO) {
+		List<AdminDashboardVO> payInfo = dao.selectPayDashInfo(dataListVO);
+		return payInfo;
+	}
+
+	@Override
+	public List<AdminDashboardVO> memAgeList(DataListVO<AdminDashboardVO> dataListVO) {
+		List<AdminDashboardVO> memInfo = dao.selectMemAgeDash(dataListVO);
+		return memInfo;
+	}
+
+	@Override
+	public List<AdminDashboardVO> memClassificationList(DataListVO<AdminDashboardVO> dataListVO) {
+		List<AdminDashboardVO> memClassification = dao.selectClassification(dataListVO);
+
+		return memClassification;
+	}
+
+	@Override
+	public List<AdminDashboardVO> memGenderList(DataListVO<AdminDashboardVO> dataListVO) {
+		List<AdminDashboardVO> memGender = dao.selectGenderDashboard(dataListVO);
+		return memGender;
+	}
+	
+	
+	
+}

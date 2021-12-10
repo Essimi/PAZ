@@ -2,53 +2,136 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.news.dao.NewsDAO">
 
-<select id="newsList" parameterType="NewsVO" resultType="NewsVO">
-SELECT
-    news_code,
-    news_contents,
-    news_date,
-    mem_id,
-    p_code
-FROM
-    news
-</select>
+<!-- 	<resultMap id="replyMap" type="NewsVO" autoMapping="true"> -->
+<!-- 		<id property="newsCode" column="NEWS_CODE"/> -->
+<!-- 		<result property="memId" column="MEM_ID" /> -->
+<!-- 		<collection property="replyList" ofType="NewsReplyVO" autoMapping="true"> -->
+<!-- 			<id property="newsCode" column="NEWS_CODE"/> -->
+<!-- 			<result property="memId" column="REPLY_MEM" /> -->
+<!-- 		</collection> -->
+<!-- 	</resultMap> -->
 
-<insert id="insertNews" parameterType="NewsVO" >
+	
+<!-- 	<select id="newsList" parameterType="NewsVO" -->
+<!-- 		resultMap="replyMap"> -->
+
+<!-- 		SELECT -->
+<!-- 		    A.news_code, -->
+<!-- 		    news_contents, -->
+<!-- 		    news_date, -->
+<!-- 		    A.mem_id, -->
+<!-- 		    p_code, -->
+<!-- 		    COMMENT_CODE, -->
+<!-- 		    B.news_code reply_code, -->
+<!-- 		    COMMENT_CONTENT, -->
+<!-- 		    COMMENT_DATE, -->
+<!-- 		    B.MEM_ID reply_mem -->
+<!-- 		FROM NEWS A, NEWS_COMMENT B -->
+<!-- 		WHERE A.NEWS_CODE = B.NEWS_CODE(+) -->
+<!-- 		AND P_CODE = 'PROJECT00008' -->
+<!-- 		order by news_date DESC -->
+
+<!-- 	</select> -->
+
+
+<!-- *************************** -->
+	<resultMap id="replyMap" type="NewsVO" autoMapping="true">
+		<id property="newsCode" column="NEWS_CODE"/>
+		<result property="memId" column="MEM_ID" />
+		<collection property="replyList" ofType="NewsReplyVO" column="NEWS_CODE" select="newsReplyList"/>
+	</resultMap>
+	
+	<select id="newsList" parameterType="NewsVO"
+		resultMap="replyMap">
+
+		SELECT
+    a.news_code,
+    a.news_contents,
+    a.news_date,
+    a.mem_id,
+    a.p_code,
+    b.mem_Nickname
+FROM news a, member b
+where p_code = #{pCode}
+and a.MEM_ID = b.MEM_ID
+		order by news_date DESC
+
+	</select>
+	
+	<select id="newsReplyList" parameterType="NewsReplyVO"
+	resultType="NewsReplyVO">
+	SELECT
+	a.comment_code commentCode,
+	a.news_code newsCode,
+	a.comment_content commentContent,
+	a.comment_date commentDate,
+	a.mem_id memId,
+    b.mem_Nickname memNickname
+	FROM
+	news_comment a, member b
+	where
+	news_code = #{newsCode}
+    and
+    a.mem_id = b.mem_id
+   
+
+	</select>
+	<!-- *************************** -->
+
+
+
+	<select id="selectNews" resultType="NewsVO">
+		SELECT
+		news_code,
+		news_contents,
+		news_date,
+		mem_id,
+		p_code
+		FROM NEWS
+		WHERE P_CODE = #{pCode}
+		AND news_code = #{newsCode}
+		AND mem_id = #{memId}
+	</select>
+
+	<insert id="insertNews" parameterType="NewsVO">
 		<selectKey keyProperty="newsCode" resultType="string"
 			order="BEFORE">
-			SELECT NEWS_SEQ.NEXTVAL
-			FROM DUAL
+			SELECT 'NEWS'||LPAD(NVL(to_number(substr(MAX(NEWS_CODE), 6)), 0) + 1, 5, '0')
+			FROM NEWS
 		</selectKey>
-INSERT INTO news (
-    news_code,
-    news_contents,
-    news_date,
-    mem_id,
-    p_code
-) VALUES (
-    #{newsCode, jdbcType=VARCHAR},
-#{newsContents, jdbcType=CLOB},
-SYSDATE,
-'aa001',
-'PROJECT00008'
-)
-</insert>
+		INSERT INTO news (
+		news_code,
+		news_contents,
+		news_date,
+		mem_id,
+		p_code
+		) VALUES (
+		#{newsCode, jdbcType=VARCHAR},
+		#{newsContents, jdbcType=CLOB},
+		SYSDATE,
+		#{memId},
+		#{pCode}
+		)
+	</insert>
 
-<update id="updateNews">
-SET
-    news_contents = #{newsContents, jdbcType=CLOB},
-    news_date = #{newsDate, jdbcType=DATE}
-WHERE
-news_code = #{newsCode}
-AND p_code = 'PROJECT00008'
+	<update id="updateNews">
+		UPDATE NEWS
+		SET
+		news_contents = #{newsContents, jdbcType=CLOB},
+		news_date = SYSDATE
+		WHERE
+		news_code = #{newsCode}
+		AND p_code = #{pCode}
 
-</update>
+	</update>
 
-<delete id="deleteNews">
-DELETE FROM NEWS
-WHERE
-news_code = #{newsCode}
-AND p_code = 'PROJECT00008'
-</delete>
+	<delete id="deleteNews">
+		DELETE FROM NEWS
+		WHERE
+		news_code = #{newsCode}
+		AND p_code = #{pCode}
+	</delete>
+
+
 
 </mapper>

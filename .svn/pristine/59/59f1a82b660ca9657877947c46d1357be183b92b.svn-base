@@ -1,0 +1,151 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<script>
+/* 결제 관련 script */
+$('.payInfo').click(function() {
+   let cost = $(this).val().split(',');
+
+   let money = cost[0]; // 가격 지정
+   let plat = cost[1]; // 플랫폼 이름 지정
+   let platt = plat.trim() // 공백을 제거한 플랫폼 이름
+   let months = cost[2] // 결제 달 지정
+    
+   let IMP = window.IMP; // 문서에는 생략 가능이라는데 생략할 경우 실행이 안됩니다.
+   IMP.init('imp23458695');
+
+   IMP.request_pay({
+      pg : platt, // 동적인 플랫폼 이름
+      merchant_uid : 'merchant_' + new Date().getTime(),
+      name : '프로젝트 결제',
+      amount : money, // 동적인 가격
+      buyer_email : 'daeduck@PAZ.LASTPROJECT',
+      buyer_name : 'PAZ',
+      buyer_tel : '010-1234-5678',
+      buyer_addr : '대전 대덕인재개발원',
+      buyer_postcode : '123-456'
+   }, function(resp) {
+	  
+      // 결제검증
+      $.ajax({
+           type : "POST",
+           url : "${cPath}/project/PayController.do/" + resp.imp_uid 
+        }).done(function(data) {
+                      
+           // 위의 resp.paid_amount 와 data.response.amount를 비교한후 로직 실행 (import 서버검증)
+           
+           if(resp.paid_amount == data.response.amount){
+              
+              // 검증이 완료되었다면, 데이터베이스에 해당 결제 정보를 저장합니다.              
+              $.ajax({
+                 url : "${cPath}/project/PayAddition.do",
+                 method : 'POST',
+                 data : {
+                	"payCode" : data.response.impUid,
+					"payAmount" : data.response.amount,
+					"payMonth" : months,
+	        		"payProvider" : data.response.pgProvider,
+	        		"payMerUid" : data.response.merchantUid,
+	        		"payPgSuccess" : data.response.pgTid
+                 },
+                 success : function(message) {
+                	 
+                    alert(message);
+                    
+                    location.replace(location.href);         
+                 },
+                 error : function(xhr, jQuery, error) {
+                	 
+                	alert("결제가 실패했습니다..");
+	        		console.log(jQuery);
+	        		console.log(error);
+	        		location.replace(location.href);	
+                 }
+              }) 
+           } else {
+              alert("결제가 실패하였습니다.(검증 실패)");
+      		  location.replace(location.href);	
+           }
+        });
+   });
+})
+
+/* 환불 관련(상세조회) script */
+$('.refundBtn').click(function() {
+	
+	// 초기화를 위한 변수명 지정
+	let lastDate = null;
+	let lastAmount = 0;
+	let lastTool = null;
+		
+	$.ajax({
+		url : '${cPath}/project/payInfo.do',
+		dataType : 'json',
+		method : 'GET',
+		success : function(resp){
+			
+			// 초기화를 위해 비워줍니다.
+			$('#lastDate').empty();
+			$('#lastCost').empty();
+			$('#lastTool').empty();
+			
+			// 마지막 결제일자
+			lastDate = resp.payDate;
+			$('#lastDate').append(lastDate);
+			
+			// 마지막 결제금액
+			lastAmount = resp.payAmount;
+			// 정규표현식을 위한 형변환
+			lastAmount = lastAmount.toString();
+			lastAmount = lastAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			$('#lastCost').append(lastAmount);
+			// 마지막 결제수단
+			lastTool = resp.payProvider;
+			$('#lastTool').append(lastTool);
+			
+		},
+		error : function(xhr, error, msg){
+		
+		},
+	});
+})
+
+// 환불 script
+$('.realRefund').click(function() {
+	
+	// 환불 사유를 받아옵니다.
+	let reason = document.getElementById('refundReason').value
+
+	$.ajax({
+		url : '${cPath}/project/payRefund.do',
+		method : 'POST',
+		data : {
+			"reason" : reason
+		},
+		success: function(resp){
+			
+			// 컨트롤러에서 모든 검증을 마치고 리턴받은 메세지를 출력합니다.
+			alert(resp)			
+			location.replace(location.href);		
+			
+		},	
+		error : function(xhr, error, msg){
+			
+			// 날짜 검증이 실패했다면 에러메세지를 출력합니다.
+			alert(resp.dateError);
+			location.replace(location.href);			
+		},
+	})
+})
+
+// 프로젝트 끝내기 버튼을 눌렀을 경우 입니다.
+
+let projectComplete = $('#projectComplete');
+
+$('#projectCompleteBtn').on('click', function(){
+		
+	projectComplete.submit();
+	
+})
+</script>

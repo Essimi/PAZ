@@ -1,0 +1,45 @@
+
+	#content {
+		padding:30px;
+	}
+	
+	#memberSearch {
+		margin-top : 30px;
+	}
+	
+	#memberList {
+		height : 250px; 
+	}
+	
+	body { overflow : hidden;}
+	
+	#remove {
+		width: 10%;
+	}
+	
+	#addMember {
+	 margin-right: 10px;
+     width: 100px;
+	}
+	
+	.modal-content {
+		width: 500px;
+	}
+	
+	#toast-container {
+		width: 100%; 
+		text-align: -webkit-center;
+	}
+	
+	.modal-title {
+		font-size: 20px;
+	    color: gray;
+	}
+	
+	#memInv{
+		margin-top : 10px;
+	}
+	
+	#inputStatus{
+		text-align:center;
+	}

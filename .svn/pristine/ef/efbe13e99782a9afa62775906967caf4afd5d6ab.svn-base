@@ -1,0 +1,27 @@
+package kr.or.ddit.payment.refund.service;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.common.PKNotFoundException;
+import kr.or.ddit.payment.refund.dao.PayRefundDAO;
+import kr.or.ddit.vo.PayVO;
+
+@Service
+public class PayRefundServiceImpl implements PayRefundService {
+	
+	@Inject
+	private PayRefundDAO payRefundDao;
+
+	@Override
+	public PayVO payInfo(String pCode) {
+		
+		PayVO resultPay = payRefundDao.payInfo(pCode);
+		
+		if(resultPay == null) {
+			throw new PKNotFoundException("결재내역이 없습니다.");
+		}
+		return resultPay;
+	}
+}

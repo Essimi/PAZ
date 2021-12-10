@@ -1,0 +1,40 @@
+package kr.or.ddit.projectmain.notice.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.projectmain.notice.dao.ProjectNoticeDAO;
+import kr.or.ddit.vo.NoticeVO;
+import kr.or.ddit.vo.PagingVO;
+
+@Service
+public class ProjectNoticeServiceImpl implements ProjectNoticeService {
+	
+	@Inject
+	private ProjectNoticeDAO dao;
+
+	@Override
+	public List<NoticeVO> selectProjectNoticeList(PagingVO<NoticeVO> pagingVO, String partCode) {
+		
+		Map<String, Object> data = new HashMap<String, Object>();
+		
+		data.put("pagingVO", pagingVO);
+		data.put("partCode", partCode);
+		
+		List<NoticeVO> noticeList = dao.selectProjectNoticeList(data);
+		pagingVO.setTotalRecord(dao.selectTotalRecord(data));
+		pagingVO.setDataList(noticeList);
+		return noticeList;
+		
+	}
+
+	
+	
+	
+
+}

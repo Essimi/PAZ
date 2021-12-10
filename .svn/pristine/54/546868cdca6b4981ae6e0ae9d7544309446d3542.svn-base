@@ -1,0 +1,48 @@
+@charset "UTF-8";
+
+
+#content {
+	padding: 30px;
+}
+
+.col-md-9 {
+	max-width: none;
+}
+
+.col-md-9 .card{
+	min-height: 700px;
+}
+
+.card-primary.card-outline{
+	border-top: 3px solid #17a2b8;
+}
+
+.card-title {
+	font-size: 25px;
+	font-weight: 500;
+}
+
+.mailbox-read-info, .mailbox-controls, .mailbox-read-message {
+	padding :20px;
+}
+
+.mailbox-controls {
+	min-height: 300px;
+	overflow: auto;
+}
+
+.mailbox-read-message p:first-child {
+	font-size: 20px;
+	font-weight: 500;
+	color: #c3831d;
+}
+
+.memBadge {
+	font-size: 13px;
+    padding: 5px 7px;
+    background-color: #f39c12;
+}
+
+.card-footer {
+	padding: 20px;
+}

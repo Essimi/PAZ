@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.review.dao.ReviewDAO">
+
+
+	<!-- 리부 호출 여부 업데이트 -->
+	<update id="updateReviewStatus">
+		UPDATE MEMBER
+		   SET
+			  REVIEW_STATUS = '1'
+		 WHERE
+			   MEM_NICKNAME IN (SELECT B.MEM_NICKNAME
+			                      FROM REQ_HISTORY A, MEMBER B
+			                     WHERE A.RECIPIENT = B.MEM_ID
+		                           AND A.RESP_DATE = (TO_CHAR(SYSDATE-7,'YYYY-MM-DD'))
+		                           AND B.SURVEY_STATUS = 'REVIEW_STATUS001')
+	</update>
+
+
+	<!-- 리뷰 등록 -->
+	<update id="insertReview" parameterType="kr.or.ddit.vo.ReviewVO">
+	
+		<selectKey keyProperty="reviewCode" resultType="string" order="BEFORE">
+			SELECT REVIEW_SEQ.NEXTVAL
+			FROM DUAL
+		</selectKey>
+	
+		INSERT INTO review (
+		    REVIEW_CODE,
+		    MEM_ID,
+		    CODE_GRADE,
+		    WORK_GRADE,
+		    GANTTCHART_GRADE,
+		    KANBAN_GRADE,
+		    CHAT_GRADE,
+		    FEEDBACK,
+		    GIT_GRADE
+		) VALUES (
+		    #{reviewCode, jdbcType=VARCHAR},
+		    #{memId, jdbcType=VARCHAR},
+		    #{codeGrade, jdbcType=NUMERIC},
+		    #{workGrade, jdbcType=NUMERIC},
+		    #{ganttchartGrade, jdbcType=NUMERIC},
+		    #{kanbanGrade, jdbcType=NUMERIC},
+		    #{chatGrade, jdbcType=NUMERIC},
+		    #{feedback, jdbcType=CLOB},
+		    #{gitGrade, jdbcType=VARCHAR}
+		)
+			
+	</update>
+	
+	<!-- 리뷰 등록한 사람들의 reviewStatus 코드를 1에서 0으로 변경 -->
+	<update id="updateReviewFinish" parameterType="ReviewVO">
+		UPDATE MEMBER
+		   SET REVIEW_STATUS = '0',
+		   	   SURVEY_STATUS = 'REVIEW_STATUS002'
+		 WHERE MEM_ID = #{memId}
+	</update>
+
+
+</mapper>

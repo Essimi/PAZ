@@ -4,9 +4,10 @@
 
 	<!-- 회원에게 온 프로젝트 요청 리스트 출력 -->
 	<select id="selectRequestList" parameterType="kr.or.ddit.vo.MemberVO" resultType="kr.or.ddit.vo.RequestProjectVO">
-		SELECT C.P_TITLE, A.*, B.MEM_ID
-		  FROM REQ_HISTORY A, MEMBER B, PROJECT C
+		SELECT C.P_TITLE, D.PART_NAME, A.*, B.MEM_ID
+		  FROM REQ_HISTORY A, MEMBER B, PROJECT C, PROJECT_PART D
 		 WHERE A.RECIPIENT = B.MEM_ID
+		   AND C.P_PART_CODE = D.PART_CODE
 		   AND C.P_CODE = A.P_CODE
 		   AND B.MEM_ID = #{memId}
 		   AND A.STATUS_CODE = 'REQ_STATUS001'
@@ -32,7 +33,9 @@
 		) VALUES (
 				  #{memId}
 				, #{pCode}
-				, 0
+				, (SELECT WORK_TIME
+				     FROM REQ_HISTORY
+				    WHERE REQ_CODE = #{reqCode} )
 				, #{position}
 		)
 	</update>
@@ -42,7 +45,7 @@
 	<!-- 프로젝트 팀원 초대 시  -->
 	<update id="InsertRequstProjectHistory" parameterType="kr.or.ddit.vo.RequestProjectVO">
 		<selectKey keyProperty="reqCode" resultType="String" order="BEFORE">
-			SELECT 'req_' || LPAD(REQHISTORY_SEQ.NEXTVAL, 2, '0')
+			SELECT 'req_' || LPAD(REQHISTORY_SEQ.NEXTVAL, 5, '0')
 			  FROM DUAL
 		</selectKey>
 		
@@ -53,7 +56,8 @@
 		    RECIPIENT,
 		    REQ_DATE,
 		    STATUS_CODE,
-		    POSITION
+		    POSITION,
+		    WORK_TIME
 		) VALUES (
 		      #{reqCode}
 		    , #{pCode}
@@ -62,6 +66,7 @@
 		    , SYSDATE
 		    , 'REQ_STATUS001'
 		    , #{position}
+		    , #{workTime}
 		)
 	</update>
 	
@@ -70,7 +75,7 @@
 	
 	
 	<!-- 선택한 프로젝트의 멤버 리스트 출력 -->
-	<select id="SelectProjectMemberList" parameterType="kr.or.ddit.vo.RequestProjectVO" resultType="kr.or.ddit.vo.RequestProjectVO">
+	<select id="SelectProjectMemberList" parameterType="kr.or.ddit.vo.RequestProjectVO" resultType="kr.or.ddit.vo.MemberVO">
 		SELECT MEM_ID
           FROM P_MEM
          WHERE P_CODE = #{pCode}
@@ -103,5 +108,14 @@
 		   AND A.P_CODE = #{pCode}
 		   AND A.STATUS_CODE = 'REQ_STATUS001'
 	</select>
+	
+	<!--  프로젝트 탈퇴한 회원이 재 초대 후 요청 수락 시 --> 
+	<update id="updatePmemOutCode" parameterType="kr.or.ddit.vo.ProjectVO">
+		UPDATE P_MEM
+		   SET OUT_STATUS = '0',
+		       WORK_TIME = #{workTime}
+		 WHERE MEM_ID = #{memId}
+		   AND P_CODE = #{pCode}
+	</update>
 
 </mapper>

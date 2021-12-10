@@ -1,0 +1,43 @@
+package kr.or.ddit.member.service;
+
+import java.util.Map;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.MemberVO;
+
+public interface MemberService {
+	/**
+	 * 회원 가입
+	 * @param memberVO
+	 * @return OK, FAILED
+	 * @throws Exception
+	 */
+	public ServiceResult createMember(MemberVO member) throws Exception;
+	
+	/**
+	 * 한 회원의 정보 조회
+	 * @param member
+	 * @return
+	 */
+	public MemberVO selectMember(MemberVO member);
+	
+	/**
+	 * 회원가입시 아이디 중복 체크
+	 * @param member
+	 * @return OK, PKDUPLICATED
+	 */
+	public ServiceResult memberIdCheck(MemberVO member);
+	
+	/**
+	 * 인증 메일 전송
+	 * @param member
+	 */
+	public Map<String, String> sendMail(MemberVO member);
+	
+	/**
+	 * 회원의 이메일 주소 체크
+	 * @param member
+	 * @return
+	 */
+	public ServiceResult memberEmailCheck(MemberVO member); 
+}

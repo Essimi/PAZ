@@ -1,0 +1,35 @@
+@charset "UTF-8";
+
+#pagingArea {
+	background-color: white;
+	float: right
+}
+
+#content {
+	padding:30px;
+}
+
+#searchUI {
+	margin-bottom : 20px;
+}
+
+#createBtn {
+	float : right;
+
+}
+
+.table {
+	text-align: center;
+}
+
+.table td a {
+	color : black;
+}
+
+.table a:hover {
+	color : gray;
+}
+
+.invoice {
+	border-radius: 10px;
+}

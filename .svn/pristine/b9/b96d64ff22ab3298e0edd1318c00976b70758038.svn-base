@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.chat.dao.ChattingDAO">
+
+<select id="selectProjectMember" resultType="MemberProfileVO" parameterType="hashmap">
+
+	SELECT  
+	
+	A.MEM_ID
+	, A.P_CODE
+	, A.WORK_TIME
+	, A.POSITION
+	, B.MEM_NICKNAME
+	, C.REAL_NAME
+	, C.SAVE_NAME
+	
+	FROM 
+	
+	P_MEM A
+	, MEMBER B
+	, MEMBER_IKON C
+	WHERE A.MEM_ID = B.MEM_ID(+)
+	AND B.MEM_ID = C.MEM_ID(+)
+	
+	<![CDATA[
+		AND A.P_CODE = #{pCode}
+	]]>
+	
+	ORDER BY
+	
+	<![CDATA[
+		DECODE(A.MEM_ID, #{memId}, 1),
+	]]>
+	
+	DECODE(A.POSITION, 'PL', 2),
+	A.POSITION ASC
+
+</select>
+
+
+
+<select id="selectMember" resultType="MemberProfileVO" parameterType="hashmap">
+
+	SELECT 
+	
+	A.MEM_ID
+	, A.P_CODE
+	, A.WORK_TIME
+	, A.POSITION
+	, B.P_TITLE
+	, C.MEM_NICKNAME
+	, C.MEM_TEL
+	, C.MEM_COMPANY
+	, D.REAL_NAME
+	, D.SAVE_NAME
+	
+	FROM 
+	
+	P_MEM A
+	, PROJECT B
+	, MEMBER C
+	, MEMBER_IKON D
+	
+	WHERE A.P_CODE = B.P_CODE(+)
+	AND A.MEM_ID = C.MEM_ID(+)
+	AND C.MEM_ID = D.MEM_ID(+)
+	
+	<![CDATA[
+		AND A.MEM_ID = #{memId}
+		AND A.P_CODE = #{pCode}
+	]]>
+
+</select>
+
+<select id="selectChatroomCode" resultType="string">
+
+	SELECT 'CHATROOM' || LPAD(CHATROOM_SEQ.NEXTVAL, 5, '0') FROM DUAL
+
+</select>
+
+
+<insert id="insertChatroom" parameterType="ChatRoomVO">
+
+INSERT INTO 
+
+CHATROOM (
+
+CHATROOM_CODE,
+P_CODE,
+CHATROOM_TITLE,
+CHATROOM_DATE,
+CHATROOM_CREATOR
+
+) 
+
+VALUES (
+
+#{chatroomCode}
+, #{pCode}
+, #{chatroomTitle}
+, SYSDATE
+, #{chatroomCreator}
+
+)
+
+</insert>
+
+
+<insert id="insertChatMem" parameterType="hashmap">
+
+	INSERT ALL
+
+	<foreach collection="memberList" item="member">
+	
+		INTO CHAT_MEM (
+		
+		CHATROOM_CODE,
+		MEM_ID
+		) 
+		
+		VALUES (
+		#{chatroomCode}
+		, #{member}
+		)
+	
+	</foreach>
+	
+	SELECT * FROM DUAL
+
+</insert>
+
+
+</mapper>

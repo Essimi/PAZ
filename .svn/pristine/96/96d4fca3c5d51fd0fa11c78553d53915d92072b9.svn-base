@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.timer.dao.TimerDAO">
+
+
+	<!-- 해당 회원의 출결 상태를 확인합니다. -->
+	<select id="OnOffInfo" parameterType="String" resultType="TimerVO">
+		SELECT WH_CODE, WH_START, WH_END, WH_INFO.P_CODE, MEM_ID, ON_OFF, PROJECT.P_TITLE
+		FROM WH_INFO
+		INNER JOIN  PROJECT ON WH_INFO.P_CODE = PROJECT.P_CODE
+		WHERE WH_START = (SELECT MAX(WH_START)
+		                    FROM WH_INFO
+		                    WHERE MEM_ID = #{memId})
+	</select>
+
+ 	<!-- 회원의 출근시간을 기록합니다. -->
+	<insert id="timerStart" parameterType="TimerVO">
+		INSERT INTO WH_INFO (WH_CODE, WH_START, MEM_ID, P_CODE, ON_OFF)
+		VALUES ('WH_CODE' || LPAD(TIMER_SEQ.NEXTVAL, 5, '0'), TO_DATE(#{whStart}, 'YYYY-MM-DD HH24:MI:SS'), #{memId}, #{pCode}, 'ON')
+	</insert>
+	
+	<!-- 회원의 퇴근시간을 기록합니다. -->
+	<update id="timerEnd" parameterType="TimerVO">
+		UPDATE WH_INFO
+		SET WH_END = TO_DATE(#{whEnd}, 'YYYY-MM-DD HH24:MI:SS'),
+		ON_OFF = 'OFF'
+		WHERE WH_START = (SELECT MAX(WH_START)
+			              FROM WH_INFO
+			              WHERE MEM_ID = #{memId}
+			              AND P_CODE = #{pCode})
+	</update>
+</mapper>

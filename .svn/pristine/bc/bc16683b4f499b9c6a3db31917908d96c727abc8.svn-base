@@ -1,0 +1,50 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+
+    
+    <div class="col-md-4">
+            <!-- Widget: user widget style 2 -->
+            <div class="card card-widget widget-user-2">
+              <!-- Add the bg color to the header using any of the bg-* classes -->
+              <div class="widget-user-header bg-warning">
+                <div class="widget-user-image">
+                  <img class="img-circle elevation-2" src="${cPath }/resources/file/profileImage/${memberInfo.memIkon.saveName }"
+                  		onerror="this.src='${cPath }/resources/file/profileImage/profile.jpg'">
+                </div>
+              	<input type="button" onclick="location.href='${cPath }/mypage/myPageUpdate.do'" value="회원정보수정">
+              	<input type="button" id="memdelete" value="회원탈퇴">
+              </div>
+              <div class="card-footer p-0">
+                <ul class="nav flex-column">
+                  <li class="nav-item">
+                  	<div class="input-group-prepend">	
+	                   	 <span class="input-group-text"><i class="fas fa-user"></i></span>
+	                   	 ${memberInfo.memId }
+                    </div>
+                  </li>
+                  <li class="nav-item">
+                     <div class="input-group-prepend">
+		                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+		              </div>
+		              ${memberInfo.memMail }
+                  </li>
+                  <li class="nav-item">
+                  	<div class="input-group-prepend">
+                    	<span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
+                    </div>
+                    ${memberInfo.memTel }
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!-- /.widget-user -->
+          </div>
+ 
+ <script>
+ 	$("#memdelete").on("click", function(){
+ 		if(confirm("정말로 탈퇴하시겠습니까?")){
+ 			location.href="${cPath }/mypage/memberDelete.do";
+ 		}
+ 	})
+ </script>

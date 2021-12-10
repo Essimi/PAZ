@@ -1,0 +1,30 @@
+@charset "UTF-8";
+
+#repoHeaderInfo{
+	font-size: 35px;
+	margin-left: 25px;
+}
+
+#girFileAreaDiv{
+	border-left: none;
+}
+
+.fileInfo{
+	padding:5px 0px; 
+	border-bottom:1px solid lightgray;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.fileName{
+	margin : 10px 0px;
+}
+
+.callout a:hover {
+	color:red;
+}
+
+
+.callout a {
+	text-decoration:none;
+}

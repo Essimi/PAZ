@@ -1,0 +1,77 @@
+package kr.or.ddit.payment.pay.service;
+
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.payment.pay.dao.PayDAO;
+import kr.or.ddit.vo.PayVO;
+
+@Service
+public class PayServiceImpl implements PayService {
+	
+	@Inject
+	private PayDAO payDao;
+
+	@Transactional
+	@Override
+	public ServiceResult createPayRecord(PayVO pay) {
+		
+		ServiceResult result = null;
+		
+		// 결제정보 추가
+		int rowcnt = payDao.insertPayRecord(pay);
+		
+		if(rowcnt > 0) {
+			
+			// 프로젝트 상태 업데이트
+			int update = payDao.updateProjectStatus(pay);
+			
+			if(update > 0) {
+				
+				result = ServiceResult.OK;
+				
+			}else {
+				
+				result = ServiceResult.FAILED;
+			}
+			
+		}else {
+			result = ServiceResult.FAILED;
+		}
+		
+		return result;
+	}
+
+	@Transactional
+	@Override
+	public ServiceResult additionPayRecord(PayVO pay) {
+		
+		ServiceResult result = null;
+		
+		// 추가결제정보 추가
+		int rowcnt = payDao.additionPayRecord(pay);
+		
+		if(rowcnt > 0) {
+			
+			// 프로젝트 마감기한 업데이트
+			int update = payDao.projectEndDateUpdate(pay);
+			
+			if(update > 0) {
+				
+				result = ServiceResult.OK;
+				
+			}else {
+				
+				result = ServiceResult.FAILED;
+			}
+			
+		}else {
+			result = ServiceResult.FAILED;
+		}
+		return result;
+	}
+}

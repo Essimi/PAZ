@@ -1,0 +1,295 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<style>
+#container1 {
+	overflow: auto;
+	width: 30%;
+}
+
+#container2 {
+	overflow: auto;
+	width: 30%;
+}
+
+#container3 {
+	overflow: auto;
+	width: 30%;
+}
+
+.container-fluid h-100 {
+	width: 2000px;
+}
+</style>
+
+
+<link href="${cPath }/resources/adminLTE3/kanban/dist/dragula.min.css"
+	rel='stylesheet' type='text/css' />
+   <script src="${cPath }/resources/adminLTE3/kanban/dist/dragula.min.js"></script>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper kanban">
+	<section class="content-header">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-sm-6">
+					<h1>Kanban Board</h1>
+				</div>
+				<div class="col-sm-6 d-none d-sm-block">
+					<ol class="breadcrumb float-sm-right">
+						<li class="breadcrumb-item"><a href="#">Home</a></li>
+						<li class="breadcrumb-item active">Kanban Board</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		
+	</section>
+
+	<section class="content pb-3">
+		<div class="container h-100">
+
+			<div id="container1" class="card card-row card-success">
+
+				<div class="card-header">
+					<h3 class="card-title">To Do</h3>
+
+				</div>
+			
+				<c:forEach items="${taskList }" var="tasklist">
+					<c:if test="${tasklist.workStatus eq 'STATUS001'}">
+		
+
+						<div>
+							<div id="${tasklist.workCode }" class="card-body">
+								<div class="card card-light card-outline">
+									<div class="card-header">
+										<h5 class="card-title">${tasklist.workName}</h5>
+									</div>
+									<div class="card-body">
+										<c:if test="${tasklist.workStatus eq 'STATUS001' }">
+											<td><span class="badge bg-primary">TODO</span></td>
+										</c:if>
+										<c:if test="${tasklist.importance eq 'IMPORTANCE001' }">
+											<td><span class="badge bg-dark">긴급</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE002' }">
+											<td><span class="badge bg-danger">높음</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE003' }">
+											<td><span class="badge bg-warning">보통</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE004' }">
+											<td><span class="badge bg-primary">낮음</span></td>
+										</c:if>
+										<div class="progress">
+											<div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+												style="width:${tasklist.progressName}%">${tasklist.progressName}</div>
+
+										</div>
+
+										<span class="progress-description">${tasklist.progressName}% </span>
+										<p>${tasklist.workContents}</p>
+										<div class="work-state"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if>
+				</c:forEach>
+			</div>
+			<div id="container2" class="card card-row card-success">
+
+				<div class="card-header">
+					<h3 class="card-title">ING</h3>
+
+				</div>
+
+				<c:forEach items="${taskList }" var="tasklist">
+					<c:if test="${tasklist.workStatus eq 'STATUS002'}">
+
+
+						<div>
+							<div id="${tasklist.workCode }" class="card-body">
+								<div class="card card-light card-outline">
+									<div class="card-header">
+										<h5 class="card-title">${tasklist.workName}</h5>
+									</div>
+									<div class="card-body">
+										<c:if test="${tasklist.workStatus eq 'STATUS002' }">
+											<td><span class="badge bg-warning">ING</span></td>
+										</c:if>
+										<c:if test="${tasklist.importance eq 'IMPORTANCE001' }">
+											<td><span class="badge bg-dark">긴급</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE002' }">
+											<td><span class="badge bg-danger">높음</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE003' }">
+											<td><span class="badge bg-warning">보통</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE004' }">
+											<td><span class="badge bg-primary">낮음</span></td>
+										</c:if>
+										<div class="progress">
+											<div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+												style="width:${tasklist.progressName}%">${tasklist.progressName}</div>
+
+										</div>
+
+										<span class="progress-description">${tasklist.progressName}%</span>
+										<p>${tasklist.workContents}</p>
+										<div class="work-state"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if>
+				</c:forEach>
+			</div>
+			
+			<div id="container3" class="card card-row card-success">
+
+				<div class="card-header">
+					<h3 class="card-title">DONE</h3>
+
+				</div>
+
+				<c:forEach items="${taskList }" var="tasklist">
+					<c:if test="${tasklist.workStatus eq 'STATUS003'}">
+
+
+						<div>
+							<div id="${tasklist.workCode }" class="card-body">
+								<div class="card card-light card-outline">
+									<div class="card-header">
+										<h5 class="card-title">${tasklist.workName}</h5>
+									</div>
+									<div class="card-body">
+										<c:if test="${tasklist.workStatus eq 'STATUS003' }">
+											<td><span class="badge bg-danger">DONE</span></td>
+										</c:if>
+										<c:if test="${tasklist.importance eq 'IMPORTANCE001' }">
+											<td><span class="badge bg-dark">긴급</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE002' }">
+											<td><span class="badge bg-danger">높음</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE003' }">
+											<td><span class="badge bg-warning">보통</span></td>
+										</c:if>
+
+										<c:if test="${tasklist.importance eq 'IMPORTANCE004' }">
+											<td><span class="badge bg-primary">낮음</span></td>
+										</c:if>
+										 <div class="progress progress">
+											<div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+												style="width:${tasklist.progressName}%">${tasklist.progressName}</div>
+
+										</div>
+
+										<span class="progress-description">${tasklist.progressName}% </span>
+										<p>${tasklist.workContents}</p>
+										<div class="work-state"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</c:if>
+				</c:forEach>
+			</div>
+
+
+
+		</div>
+		</section>
+</div>
+
+
+<script>
+
+$(function() {
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+
+	let one = document.querySelector('#container1')
+	let two = document.querySelector('#container2')
+	let three = document.querySelector('#container3')
+
+	var drake = dragula([ one, two, three ])
+
+	drake
+			.on(
+					'drag',
+					function(el, source) {
+						document.getElementsByTagName('body')[0].style.backgroundColor = '#28a0ef';
+					})
+	drake
+			.on(
+					'drop',
+					function(el, target) {
+						el.style.border = '5px dashed white';
+
+						const work_code = $(el).children('.card-body').prop(
+								'id');
+						var work_state = $(el).find('.work-state').text();
+						
+						var work_progress = $(el).find('.progress').text();
+						
+						console.log($(el).find('.progress').text());
+
+						const con1 = $("#container1").find("#" + work_code).length;
+						const con2 = $("#container2").find("#" + work_code).length;
+						const con3 = $("#container3").find("#" + work_code).length;
+
+						console.log(con1, con2, con3)
+						if(con1 == 1){
+							work_state = 'STATUS001';
+							work_progress = 'PROGRESS0000';
+				   		}else if(con2 == 1){
+				   			work_state = 'STATUS002';
+				   			work_progress = 'PROGRESS0050';				   			
+				   		}else{
+				   			work_state = 'STATUS003';
+				   			work_progress = 'PROGRESS0100';
+				   		}
+						$.ajax({
+						   	type : "post",
+						   	url : "${cPath}/project/{pCode}/kanban/kanban.do",
+						   	data : {
+						   		"con1" : con1,
+						   		"con2" : con2,
+						   		"con3" : con3,
+						   		"workStatus" : work_state,
+						   		"workCode" : work_code,
+						   		"progress" : work_progress
+						   	},
+						   	success : function(data){
+						   		toastr.success("이동완료");
+						   		
+						   	},
+						   	error : function () {
+						   		toastr.error('오류.');
+							}
+						   	
+						   }) 
+						  
+
+						//el.innerText = "Drag MEEEE :)"
+						document.getElementsByTagName('body')[0].style.backgroundColor = 'black';
+					})
+});
+</script>
+

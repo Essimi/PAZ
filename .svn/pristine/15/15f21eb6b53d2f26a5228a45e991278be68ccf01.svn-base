@@ -1,0 +1,39 @@
+package kr.or.ddit.admin;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.admin.dashboard.service.DashboardService;
+import kr.or.ddit.vo.AdminDashboardVO;
+import kr.or.ddit.vo.DataListVO;
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
+@Controller
+public class AdminMain {
+	
+	//결제 대시보드
+	@Inject
+	private DashboardService service;
+	
+	@RequestMapping("admin/adminMain.do")
+	public String adminMain (
+			Model model
+			) {
+		
+		//결제 대시보드 
+		DataListVO<AdminDashboardVO> dataListVO = new DataListVO<>();
+		List<AdminDashboardVO> dataList = service.payInfoList(dataListVO);
+		
+		log.info("test size :{},",dataList.size());
+		model.addAttribute("dataListVO",dataList);
+		
+		return "admin/adminPageStatistic";
+	}
+
+	
+}

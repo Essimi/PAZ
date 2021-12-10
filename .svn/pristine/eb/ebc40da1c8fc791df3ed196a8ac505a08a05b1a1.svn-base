@@ -1,0 +1,40 @@
+package kr.or.ddit.vo;
+
+import java.util.Date;
+
+public class ChatMessageVO {
+	
+	private String receiver; // 받는 사람
+	private String sender; // 보내는 사람
+	private Date chatTime; // 메시지 전송 시간
+	private String content; // 메시지 내용
+	
+	
+	public String getReceiver() {
+		return receiver;
+	}
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
+	}
+	public String getSender() {
+		return sender;
+	}
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
+	public Date getChatTime() {
+		return chatTime;
+	}
+	public void setChatTime(Date chatTime) {
+		this.chatTime = chatTime;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	
+	
+
+}

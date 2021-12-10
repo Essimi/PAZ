@@ -1,0 +1,36 @@
+	.card {
+		width:100%;
+	}
+	
+	#content {
+		padding:30px;
+	}
+	
+	.invoice {
+		padding:30px;
+		border-radius: 10px;
+		border-top : 3px solid #17a2b8;
+	}
+	
+	#inputDescription {
+		min-height: 300px;
+	}
+	
+	.dateForm {
+		width: 250px;
+	}
+	
+	.endDate {
+		margin-bottom: 50px;
+	}
+	
+	.startDate {
+		width: fit-content;
+	    float: left;
+	    margin-right: 30px;
+	}
+	
+	.contentDiv {
+		margin-bottom: 30px;
+	}
+	

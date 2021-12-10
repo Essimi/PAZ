@@ -1,0 +1,194 @@
+@charset "UTF-8";
+/* 관리자 페이지 기본 양식  */
+	#requestListDiv {
+		height: 300px;
+		overflow-y: overlay;
+	}
+	
+	::-webkit-scrollbar {
+		width: 3px;
+		background: none;
+	}
+	
+	#requestListText {
+		padding-left: 25px;
+		padding-top: 20px;
+		margin-bottom: -15px;
+	}
+	
+	.pTitle {
+		font-size: 25px;
+	}
+	
+	.sender {
+		font-size: 15px;
+	}
+	
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+		body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+		body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+		{
+		margin-left: 0px;
+	}
+	
+	#content {
+		padding: 50px;
+	}
+	
+	#plus {
+		font-size: 50px;
+		color: #ffc107;
+		text-shadow: 0px 1px 1px #cbc8c8;
+	}
+
+
+	
+	
+	
+	
+	/* 차트 공통 */
+	.highcharts-background{
+		width: 2000px;
+	}
+	
+	.highcharts-credits{
+		display : none;
+	}
+	
+	.highcharts-root{
+		height: 300px;
+	
+	}
+	
+	/* 결제환불 스타일 */
+	#payRfund {
+	  height: 400px;
+	}
+	
+	.payRfund-highcharts-figure,
+	.payRfund-highcharts-data-table table {
+	  min-width: 310px;
+	  max-width: 800px;
+	  margin: 1em auto;
+	}
+	
+	.payRfund-highcharts-data-table table {
+	  font-family: Verdana, sans-serif;
+	  border-collapse: collapse;
+	  border: 1px solid #ebebeb;
+	  margin: 10px auto;
+	  text-align: center;
+	  width: 100%;
+	  max-width: 500px;
+	}
+	
+	.payRfund-highcharts-data-table caption {
+	  padding: 1em 0;
+	  font-size: 1.2em;
+	  color: #555;
+	}
+
+.payRfund-highcharts-data-table th {
+  font-weight: 600;
+  padding: 0.5em;
+}
+
+.payRfund-highcharts-data-table td,
+.payRfund-highcharts-data-table th,
+.payRfund-highcharts-data-table caption {
+  padding: 0.5em;
+}
+
+.payRfund-highcharts-data-table thead tr,
+.payRfund-highcharts-data-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.payRfund-highcharts-data-table tr:hover {
+  background: #f1f7ff;
+}
+
+
+/* 성별 비율 그래프 스타일 */
+.jender-highcharts-data-table table {
+  font-family: Verdana, sans-serif;
+  border-collapse: collapse;
+  border: 1px solid #ebebeb;
+  margin: 10px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.jender-highcharts-data-table caption {
+  padding: 1em 0;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.jender-highcharts-data-table th {
+  font-weight: 600;
+  padding: 0.5em;
+}
+
+.jender-highcharts-data-table td,
+.jender-highcharts-data-table th,
+.jender-highcharts-data-table caption {
+  padding: 0.5em;
+}
+
+.jender-highcharts-data-table thead tr,
+.jender-highcharts-data-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+.jender-highcharts-data-table tr:hover {
+  background: #f1f7ff;
+}
+
+/* 맴버 소속분야별 대시보드 */
+	.memderClassification-highcharts-figure,
+	.memderClassification-highcharts-data-table table {
+	  min-width: 320px;
+	  max-width: 600px;
+	  margin: 1em auto;
+	}
+	
+	.memderClassification-highcharts-data-table table {
+	  font-family: Verdana, sans-serif;
+	  border-collapse: collapse;
+	  border: 1px solid #ebebeb;
+	  margin: 10px auto;
+	  text-align: center;
+	  width: 100%;
+	  max-width: 500px;
+	}
+	
+	.memderClassification-highcharts-data-table caption {
+	  padding: 1em 0;
+	  font-size: 1.2em;
+	  color: #555;
+	}
+	
+	.memderClassification-highcharts-data-table th {
+	  font-weight: 600;
+	  padding: 0.5em;
+	}
+	
+	.memderClassification-highcharts-data-table td,
+	.memderClassification-highcharts-data-table th,
+	.memderClassification-highcharts-data-table caption {
+	  padding: 0.5em;
+	}
+	
+	.memderClassification-highcharts-data-table thead tr,
+	.memderClassification-highcharts-data-table tr:nth-child(even) {
+	  background: #f8f8f8;
+	}
+	
+	.memderClassification-highcharts-data-table tr:hover {
+	  background: #f1f7ff;
+	}
+
+
+

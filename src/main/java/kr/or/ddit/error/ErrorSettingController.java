@@ -1,0 +1,277 @@
+package kr.or.ddit.error;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.ibatis.binding.BindingException;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.NestedServletException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
+import kr.or.ddit.common.PKNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+
+@ControllerAdvice 
+@Slf4j
+class ErrorSettingController {
+	
+	private static String message;
+	
+//	Spring Exception 처리 입니다.
+	
+	@ResponseBody
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ModelAndView	handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest req) {
+		
+		/**
+	     *  javax.validation.Valid or @Validated 으로 binding error 발생시 발생합니다.
+	     *  HttpMessageConverter 에서 등록한 HttpMessageConverter binding 못할경우 발생합니다.
+	     *  주로 @RequestBody, @RequestPart 어노테이션에서 발생합니다.
+	     */
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		
+		log.info("==============================error end==============================");
+		
+		message = "검증에 실패하였습니다.";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.BAD_REQUEST);
+		re.addObject("codeNumber", "400");
+		re.addObject("url", req.getRequestURL());
+		
+		return re;
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(BindException.class)
+	public ModelAndView handleBindException(BindException e, HttpServletRequest req) {
+		
+		 /**
+	     * @ModelAttribut 으로 bind error 발생시 발생합니다.
+	     */
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "정의되지 않은 ModelAttribute 입니다.";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.BAD_REQUEST);
+		re.addObject("codeNumber", "400");
+		re.addObject("url", req.getRequestURL());
+		
+		return re;
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(BindingException.class)
+	public ModelAndView handleBindingException(BindingException e, HttpServletRequest req) {
+		
+		 /**
+	     * binding error 발생시 발생합니다.
+	     * 발생 상황 : xml 없을 경우 발생
+	     */
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "구성 요소를 찾을 수 없습니다.";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.BAD_REQUEST);
+		re.addObject("codeNumber", "400");
+		re.addObject("url", req.getRequestURL());
+		
+		return re;
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ModelAndView handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest req) {
+		
+		/**
+	     * Enum type 이 일치하지 않아 binding 에 실패했을 경우 발생합니다.
+	     * 주로 @RequestParam Enum 으로 binding 못했을 경우 발생합니다.
+	     */
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "정의되지 않은 Enum 입니다.";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.BAD_REQUEST);
+		re.addObject("codeNumber", "400");
+		re.addObject("url", req.getRequestURL());
+
+		return re;
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ModelAndView handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest req) {
+		
+		/**
+	     * 지원하지 않은 HTTP method 를 호출할 경우 발생합니다.
+	     * 주로 @RequestParam Enum 으로 binding 을 못했을 경우 발생합니다.
+	     */
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "지원하지 않는 HTTP method 입니다.(사용할 수 없습니다.)";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.METHOD_NOT_ALLOWED);
+		re.addObject("codeNumber", "405");
+		re.addObject("url", req.getRequestURL());
+
+		return re;
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(ClassCastException.class)
+	public ModelAndView ClassCastException(ClassCastException e, HttpServletRequest req) {
+		
+		/**
+	     * 클래스 캐스팅 예외 입니다. (Security / User InterFace 관련 예외 입니다.)
+	     * 현 프로젝트에선 주로 서버를 껐다 킨 후(세션이 없는 상태), ID 가 필요한 주소를 요청하였을 경우 발생합니다.
+	     */
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "유저 정보를 찾을 수 없습니다.";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.BAD_REQUEST);
+		re.addObject("codeNumber", "400");
+		re.addObject("url", req.getRequestURL());
+
+		return re;
+	}
+	
+	@ResponseBody
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public ModelAndView NoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest req) {
+		
+		/**
+	     * 404 예외 처리 입니다.
+	     * DispatcherServlet 에서 NoHandlerFoundException 을 던져줍니다.
+	     */
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "알 수 없는 주소입니다.";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.NOT_FOUND);
+		re.addObject("codeNumber", "404");
+		re.addObject("url", req.getRequestURL());
+
+		return re;
+	}
+	
+//	PAZ Business Exception 처리 입니다.
+	
+	
+	@ResponseBody
+	@ExceptionHandler(PKNotFoundException.class)
+	public ModelAndView PKEx(Exception e, HttpServletRequest req) {
+		
+//		수업시간에 생성한 PKNotFoundException 입니다.
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "해당 글번호가 존재하지 않습니다.";
+				
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.NOT_FOUND);
+		re.addObject("codeNumber", "404");
+		re.addObject("url", req.getRequestURL());
+		
+		return re;
+	}
+	
+
+	@ResponseBody
+	@ExceptionHandler(NestedServletException.class)
+	public ModelAndView testEx(Exception e, HttpServletRequest req) {
+		
+//		로그인 세션 관련 에러입니다.
+//      authMember 를 세션에서 받아오는데, 세션이 만료된 경우 null 값이 발생하므로 해당 예외가 발생합니다.
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "로그인 세션이 만료되었습니다.";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.BAD_REQUEST);
+		re.addObject("codeNumber", "400");
+		re.addObject("url", req.getRequestURL());
+
+		return re;
+	}
+	
+	
+	
+	@ResponseBody
+	@ExceptionHandler(Exception.class)
+	public ModelAndView allEx(Exception e, HttpServletRequest req) {
+		
+//		위의 예외들 중 해당하지 않는 모든 예외 처리 입니다.
+		
+		log.info("==============================error log==============================");
+		log.info(e.toString());
+		log.info("==============================error end==============================");
+		
+		message = "알 수 없는 예외가 발생하였습니다. 에러페이지 담당자(TA)한테 현 상황 말씀해주세요";
+		
+		ModelAndView re = new ModelAndView();
+		re.setViewName("errorPage/totalErrorPage");
+		re.addObject("message", message);
+		re.addObject("code", HttpStatus.BAD_REQUEST);
+		re.addObject("codeNumber", "400");
+		re.addObject("url", req.getRequestURL());
+
+		return re;
+	}
+}

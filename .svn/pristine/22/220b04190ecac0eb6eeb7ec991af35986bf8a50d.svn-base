@@ -1,0 +1,46 @@
+package kr.or.ddit.issue.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.issue.dao.IssueDAO;
+import kr.or.ddit.vo.IssueVO;
+import kr.or.ddit.vo.PagingVO;
+
+@Service
+public class IssueServiceImpl implements IssueService{
+
+	@Inject
+	private IssueDAO issueDAO;
+	
+	@Override
+	public List<IssueVO> retrieveIssueList(PagingVO<IssueVO> paging) {
+		paging.setTotalRecord(issueDAO.selectTotalRecord(paging));
+		List<IssueVO> dataList = issueDAO.selectIssueList(paging);
+		paging.setDataList(dataList);
+		return dataList;
+	}
+
+	@Override
+	public ServiceResult createIssue(IssueVO issue) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServiceResult modifyIssue(IssueVO issue) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServiceResult deleteIssue(IssueVO issue) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

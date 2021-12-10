@@ -1,0 +1,15 @@
+package kr.or.ddit.review.dao;
+
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ReviewDAO {
+	
+	
+	/**
+	 * 리뷰 상태 변경 - 상태가 1인 사람들에게 리뷰 요청 보냄 
+	 * @return
+	 */
+	public int updateReviewStatus();
+
+}

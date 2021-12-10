@@ -1,0 +1,22 @@
+package kr.or.ddit.payment.pay.service;
+
+import java.io.Serializable;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.PayVO;
+
+/**
+ * 결제 정보 저장
+ * @author essimi
+ *
+ */
+public interface PayService {
+	
+	/**
+	 * 결제 기록 저장
+	 * @param pay
+	 * @return
+	 */
+	public ServiceResult createPayRecord(PayVO pay);
+
+}

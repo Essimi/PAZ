@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.payment.refund.dao.PayRefundDAO">
+
+
+	<!-- 환불 가능한 결제 리스트 입니다. -->
+	<select id = "payInfo" parameterType = "String" resultType = "PayVO">
+		 SELECT TO_CHAR(PAY_DATE, 'YYYY-MM-DD') PAY_DATE, PAY_AMOUNT, PAY_MONTH, PAY_PROVIDER
+		 FROM PAY_INFO WHERE MEM_ID = 'aa002'
+		 <![CDATA[
+		 AND PAY_DATE + (INTERVAL '1' MONTH) > SYSDATE ORDER BY PAY_DATE DESC
+		 ]]>
+		 AND REFUND IS NULL		 
+	</select>
+	
+	<!-- 환불 데이터를 추가합니다. -->
+	<insert id = "insertRefundInfo" parameterType = "PayRefundVO">
+		INSERT INTO REFUND_INFO (PAY_CODE, REFUND_CODE, REFUND_DETAIL, REFUND_DATE)
+		VALUES (#{payCode},'REQHISTORY'||LPAD(REFUND_SEQ.NEXTVAL, 5, '0'), #{refundDetail}, SYSDATE)
+	</insert>
+	
+	<!-- 환불시 해당 결제를 환불상태로 바꿉니다 -->
+	<update id="updateChangePayStatus" parameterType="PayRefundVO">
+		UPDATE PAY_INFO SET REFUND = 'Y' 
+		WHERE PAY_CODE = #{payCode}
+	</update>
+	
+	<!-- 환불시 환불한 날짜의 달 만큼 데드라인을 수정합니다. -->
+	<update id="updateRefundDeadLine" parameterType="PayRefundVO">
+		UPDATE MEMBER SET PAY_DEADLINE = TO_CHAR(ADD_MONTHS(PAY_DEADLINE, -#{refundMonth}))
+		WHERE MEM_ID = #{memId}
+	</update>
+	
+	<!-- 환불시 데드라인의 날짜를 구해옵니다. -->
+	<select id="memberDeadLineInfo" parameterType="String" resultType="String">
+		SELECT TO_CHAR(PAY_DEADLINE, 'YYYY-MM-DD') PAY_DEADLINE
+		FROM MEMBER
+		WHERE MEM_ID = #{memId}
+	</select>
+	
+	<!-- 데드라인 날짜 검증 후, 현재 날짜보다 적을 경우 실행합니다. -->
+	<update id="memberDeadLineChange" parameterType="String">
+		UPDATE MEMBER SET PAYMENT = 'N'
+		WHERE MEM_ID = #{memId}
+	</update>
+
+	
+</mapper>

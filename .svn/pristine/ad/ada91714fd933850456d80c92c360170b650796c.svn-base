@@ -1,0 +1,31 @@
+package kr.or.ddit.web;
+import javax.servlet.http.*;
+import javax.servlet.*;
+import java.io.*;
+
+public class ImgServlet extends HttpServlet{
+	public void doGet(HttpServletRequest req, HttpServletResponse resp)
+	throws IOException, ServletException
+	{
+		
+		
+		
+		String mime = "image/jpeg;charset=UTF-8";
+		resp.setContentType(mime);
+		
+		ServletOutputStream out = resp.getOutputStream();
+		FileInputStream fis = new FileInputStream("d:/contents/사자.jpg");
+		
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		BufferedOutputStream bos = new BufferedOutputStream(out);
+		
+		int bytes = 0;
+		while((bytes = bis.read()) != -1) {
+			bos.write(bytes);
+		}
+		
+		bis.close();
+		bos.close();
+	}
+	
+}

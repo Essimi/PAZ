@@ -1,0 +1,95 @@
+package kr.or.ddit.websocket;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.MemberVOWrapper;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class EchoWebsocketHandler extends TextWebSocketHandler {
+	
+	private List<WebSocketSession> sessionList = new ArrayList<>();
+	
+	// private List<Map<String, Object>> chatInfoList = new ArrayList<>();
+	
+	@Override
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+		
+		// 웹소켓이 처음 연결될 때 실행된다.
+		
+		log.info("연결완료");
+		
+//		Map<String, Object> map = new HashMap<>();
+//		
+		log.info("세션정보 {}", session);
+//		
+//		map.put("WebSocketSession", session);
+//		채팅방과 채팅 멤버에 대한 정보를 저장시켜둔다. (채팅방에 대한 정보만?)
+		
+		sessionList.add(session);
+		
+	}
+	
+	
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		
+		log.info("연결 종료");
+		
+		sessionList.remove(session); // 전달 된 세션을 삭제한
+		// chatInfoList.remove(session); 삭제할 웹소켓 세션
+		
+	}
+	
+	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+		log.error("연결 에러 발생", exception);
+	}
+	
+	
+	@Override
+	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+		
+		// 서버에서 메시지를 받아서 클라이언트에게 메시지를 보낸다.
+		
+		log.info("이 핸들러를 타고있다 {}", message);
+		
+		Authentication auth = (Authentication) session.getPrincipal();
+		MemberVOWrapper member = (MemberVOWrapper)auth.getPrincipal();
+		
+		MemberVO memberinfo = member.getAuthMember();
+		
+		String sender = memberinfo.getMemId();
+		
+		String receiveMsg = (String) message.getPayload(); // 실제 전달 된 메시지를 가지고 있다.
+		
+		Map<String, String> messageMap = new HashMap<>();
+		
+		messageMap.put("sender", sender);
+		messageMap.put("message", receiveMsg);
+		
+		String jsonMsg = new ObjectMapper().writeValueAsString(messageMap); 
+		// messageMap을 String 타입으로 변환한다.
+		
+		log.info("jsonMsg는 어떤 형식으로 변환되는가 {}", jsonMsg);
+		
+		for(WebSocketSession tmp : sessionList) {
+			tmp.sendMessage(new TextMessage(jsonMsg));		
+		}
+		
+		
+	}
+
+}

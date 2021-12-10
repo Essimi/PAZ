@@ -13,7 +13,7 @@
 	
 	<select id="selectAllResources" resultMap="resourceMap">
 		SELECT
-		    A.RES_CODE,    
+		    A.RES_CODE    
 		    , RESOURCE_NAME
 		    , RESOURCE_PATTERN
 		    , DESCRIPTION
@@ -29,7 +29,7 @@
 		SELECT DISTINCT RES_CODE
 		FROM R_MAPPING
 		WHERE ROLE_CODE IN (
-		SELECT PARENT_CODE
+		SELECT PARENT_ROLE
 		    FROM LAYER
 		    START WITH CHILD_ROLE = #{roleCode}
 		    CONNECT BY PRIOR PARENT_ROLE = CHILD_ROLE

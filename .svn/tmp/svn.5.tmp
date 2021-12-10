@@ -1,0 +1,267 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+	prefix="security"%>
+
+<style>
+#content {
+	padding: 30px;
+}
+
+#monthIssueCardArea {
+	height: 172px;
+}
+
+#monthIssueCardBody {
+	height: 113px;
+}
+
+.leftCard {
+	width: 50%;
+	height: 520px;
+}
+
+.leftCardBody {
+	height: 450px;
+	width: 50%;
+}
+
+.rightCard {
+	width: 50%;
+	height: 520px;
+}
+
+.rightCardBody {
+	height: 450px;
+	width: 50%;
+}
+
+.firstInfo {
+	margin-top: 22px;
+	margin-left: 90px;
+}
+
+.iconCss {
+	border-radius: 60px;
+	height: 56px;
+	margin-top: 23px;
+}
+
+.info-box-text {
+	margin-top: -3px;
+}
+
+.info-box-number {
+	font-size: 45px;
+}
+
+.shadow-none {
+	margin-top: -21px;
+}
+
+.info-box .info-box-number {
+	margin-top: -0.75rem;
+}
+
+.mainText {
+	margin-top: -25px;
+}
+</style>
+
+<security:authorize access="isAuthenticated()">
+	<security:authentication property="principal.authMember" var="authMember" />
+</security:authorize>
+
+<!-- 페이지 메인 문구 -->
+<div class="container-fluid mainText">
+	<div class="row mb-2">
+		<div class="col-sm-6">
+			<h1>Main Page</h1>
+		</div>
+	</div>
+</div>
+
+
+<div class="row" id="monthIssueCardArea">
+	<div class="col-md-12">
+		<div class="card" id="monthIssueCard">
+			<div class="card-header">
+				<h5 class="card-title">프로젝트 업무</h5>
+			</div>
+
+			<div class="row" id="monthIssueCardBody">
+
+				<div class="col-md-3 col-sm-6 col-12 firstInfo">
+					<div class="info-box shadow-none">
+						<span class="info-box-icon bg-info iconCss"><i class="far fa-envelope"></i></span>
+						<div class="info-box-content">
+							<span class="info-box-text">총 업무 수량</span> <span class="info-box-number">${projectWorkCount.workCount }</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-3 col-sm-6 col-12 firstInfo">
+					<div class="info-box shadow-none">
+						<span class="info-box-icon bg-info iconCss"><i class="far fa-envelope"></i></span>
+						<div class="info-box-content">
+							<span class="info-box-text">진행중인 업무 수량</span> <span class="info-box-number">${projectWorkCount.process }</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-3 col-sm-6 col-12 firstInfo">
+					<div class="info-box shadow-none">
+						<span class="info-box-icon bg-info iconCss"><i class="far fa-envelope"></i></span>
+						<div class="info-box-content">
+							<span class="info-box-text">완료된 업무 수량</span> <span class="info-box-number">${projectWorkCount.done }</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card">
+	<div class="card-header">
+		<h3 class="card-title">Projects Detail</h3>
+		<div class="card-tools">
+			<button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+				<i class="fas fa-minus"></i>
+			</button>
+			<button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+				<i class="fas fa-times"></i>
+			</button>
+		</div>
+	</div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-12 col-md-12 col-lg-4 order-1 order-md-2">
+				<div class="row">
+					<div class="col-12">
+						
+						<!-- 프로젝트 참여자들을 불러오는 반복문 입니다. -->
+						
+						<c:forEach items = "${memberList }" var = "memberList">
+							<div class="post">
+								<div class="user-block">
+									<img class="img-circle elevation-2" src="${cPath }/resources/file/profileImage/${memberList.saveName }"onerror="this.src='${cPath }/resources/file/profileImage/profile.jpg'">
+									<span class="username"> 
+										<a href="#">${memberList.memNickName }</a>
+									</span> 
+									<span class="description">${memberList.position }</span>
+								</div>
+								<p>나의 소개를 넣을까.. 무엇을 넣을까...</p>
+							</div>
+						</c:forEach>
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-12 col-md-12 col-lg-8 order-2 order-md-1">
+				<h3 class="text-primary">
+					<i class="fas fa-paint-brush"></i> ${projectAll.pTitle}
+				</h3>
+				<p class="text-muted">${projectAll.pContent }</p>
+				<br>
+				<div class="text-muted">
+					<p class="text-sm">
+						프로젝트 시작 날짜 <b class="d-block">${projectAll.pStartDate }</b>
+					</p>
+					<p class="text-sm">
+						프로젝트 마감 날짜 <b class="d-block">${projectAll.pEndDate }</b>
+					</p>
+				</div>
+
+				<br><br>	
+					
+				<ul class="list-unstyled">
+					<li><a href="" class="btn-link text-secondary"><i class="far fa-fw fa-file-word"></i> ${projectAll.partName }</a> </li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="co1 leftCard">
+		<div class="col-md-12">
+			<div class="card leftCardArea">
+				<div class="card-header">
+					<h5 class="card-title">프로젝트의 참여자</h5>
+				</div>
+
+				<div class="row leftCardBody"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="co1 rightCard">
+		<div class="col-md-12">
+			<div class="card rightCardArea">
+				<div class="card-header">
+					<h5 class="card-title">프로젝트의 공지사항</h5>
+				</div>
+
+				<div class="row rightCardBody"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Project Notice -->
+<div class="row">
+	<div class="col-md-12">
+		<div class="card" id="monthIssueCard">
+			<div class="card-header">
+				<h5 class="card-title">프로젝트 공지사항</h5>
+			</div>
+			<div class="card-body">
+				<table class="table table-bordered table-striped">
+					<thead>
+						<tr>
+							<th>글번호</th>
+							<th>제목</th>
+							<th>작성자</th>
+							<th>날짜</th>
+						</tr>
+					</thead>
+					<c:set var="noticeList" value="${pagingVO.dataList}"></c:set>
+					<tbody>
+						<c:choose>
+							<c:when test="${not empty noticeList}">
+								<c:forEach items="${noticeList}" var="notice">
+									<tr>
+										<td>${notice.rnum }</td>
+										<td><c:url value="notice.do" var="viewURL">
+												<c:param name="noticeCode" value="${notice.noticeCode }" />
+											</c:url> <a href="${viewURL }">${notice.noticeTitle}</a></td>
+										<td>${notice.memId }</td>
+										<td>${notice.noticeDate }</td>
+									</tr>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<tr>
+									<td colspan="6">게시글이 없습니다.</td>
+								</tr>
+							</c:otherwise>
+						</c:choose>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="6"><c:set var="memId" value="${authMember.memId }" />
+								<c:if test="${ memId eq 'admin' }">
+									<input type="button" class="linkBtn btn btn-primary" id="noticeButton" value="공지작성" data-gopage="${cPath }/notice/noticeInsert.do">
+								</c:if>
+								<div id="pagingArea" class="card-footer clearfix">${pagingVO.pagingHTML }</div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,87 @@
+package kr.or.ddit.vo;
+
+import java.util.List;
+
+public class ChatRoomVO {
+	
+	private String chatroomCode; // 채팅방의 번호
+	private String pCode;
+	private String chatroomTitle;
+	private String chatroomDate;
+	private String chatroomCreator;
+	
+	private List<ChatMemberVO> memberList; // 1 대 다 관계 - set 변경
+	private List<ChatMessageVO> messageList; // 1 대 다 관계 - 메시지를 VO에 저장시킬 것 인가.
+	
+	
+	public String getChatroomCode() {
+		return chatroomCode;
+	}
+	public void setChatroomCode(String chatroomCode) {
+		this.chatroomCode = chatroomCode;
+	}
+	public String getpCode() {
+		return pCode;
+	}
+	public void setpCode(String pCode) {
+		this.pCode = pCode;
+	}
+	public String getChatroomTitle() {
+		return chatroomTitle;
+	}
+	public void setChatroomTitle(String chatroomTitle) {
+		this.chatroomTitle = chatroomTitle;
+	}
+	public String getChatroomDate() {
+		return chatroomDate;
+	}
+	public void setChatroomDate(String chatroomDate) {
+		this.chatroomDate = chatroomDate;
+	}
+	public String getChatroomCreator() {
+		return chatroomCreator;
+	}
+	public void setChatroomCreator(String chatroomCreator) {
+		this.chatroomCreator = chatroomCreator;
+	}
+	public List<ChatMemberVO> getMemberList() {
+		return memberList;
+	}
+	public void setMemberList(List<ChatMemberVO> memberList) {
+		this.memberList = memberList;
+	}
+	public List<ChatMessageVO> getMessageList() {
+		return messageList;
+	}
+	public void setMessageList(List<ChatMessageVO> messageList) {
+		this.messageList = messageList;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((chatroomCode == null) ? 0 : chatroomCode.hashCode());
+		return result;
+	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ChatRoomVO other = (ChatRoomVO) obj;
+		if (chatroomCode == null) {
+			if (other.chatroomCode != null)
+				return false;
+		} else if (!chatroomCode.equals(other.chatroomCode))
+			return false;
+		return true;
+	}
+	
+	
+
+}

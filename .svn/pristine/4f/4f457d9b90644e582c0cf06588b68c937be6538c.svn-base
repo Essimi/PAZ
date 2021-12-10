@@ -1,0 +1,34 @@
+package kr.or.ddit.dashboardPl.controller;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import kr.or.ddit.dashboardPl.service.PLDashboardService;
+import kr.or.ddit.vo.PLDashboardVO;
+
+@Controller
+public class PLDashboardController {
+
+	@Inject
+	PLDashboardService service;
+	
+	@RequestMapping("project/projectPLStatus.do")
+	public String Access(
+			Model model
+			) {
+		//업무 담당자별 할당 비율
+		List<PLDashboardVO> taskManagerRatio = service.taskManagerRatio();
+		model.addAttribute("taskManagerRatio",taskManagerRatio);
+		
+		List<PLDashboardVO> issueManagerment = service.issueManagement();
+		model.addAttribute("issueManagerment",issueManagerment);
+		
+		return "dashBoard/pldashboard";
+	}
+}
+

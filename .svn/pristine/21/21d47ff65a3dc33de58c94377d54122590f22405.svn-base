@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.issue.dao.IssueDAO">
+	
+	<sql id="issueFrag">
+		<if test="detailSearch neq null">
+	 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.memId)">
+	 			AND A.MEM_ID = #{detailSearch.memId}
+	 		</if>
+	 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.issueTypeCode)">
+	 			AND ISSUE_TYPE_CODE = #{detailSearch.issueTypeCode}
+	 		</if>
+	 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.importance)">
+	 			AND A.IMPORTANCE = #{detailSearch.importance}
+	 		</if>
+ 		</if>
+	</sql>
+	<sql id="issueRecipientFrag">
+		<if test="detailSearch['issueRecipients'] neq null">
+			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.issueRecipients[0].memId)">
+				 AND ISSUE_CODE IN (SELECT ISSUE_CODE
+	                       FROM ISSUE_RECIPIENT
+	                      WHERE MEM_ID = #{detailSearch.issueRecipients[0].memId})
+			</if>
+		</if>
+	</sql>
+
+	<select id="selectTotalRecord" parameterType="PagingVO" resultType="int">
+		SELECT COUNT(*)
+		FROM ISSUE A
+		WHERE P_CODE = #{detailSearch.pCode}
+		<include refid="issueFrag"></include>
+		<include refid="issueRecipientFrag"></include>
+	</select>
+
+	<resultMap type="IssueVO" id="issueListMap" autoMapping="true">
+		<id property="issueCode" column="ISSUE_CODE"/>
+		<collection property="issueRecipients" ofType="IssueRecipientVO">
+			<id property="issueCode" column="RE_ISSUE_CODE"/>
+			<id property="memId" column="RE_MEM_ID"/>
+			<result property="memNickname" column="RE_MEM_NICKNAME"/>
+			<result property="saveName" column="RE_SAVE_NAME"/>
+		</collection>
+	</resultMap>
+	
+	<select id="selectIssueList" parameterType="PagingVO" resultMap="issueListMap">
+		SELECT A.*
+		FROM (
+			SELECT
+                dense_rank() over(order by A.ISSUE_CODE asc) as RNUM
+			  , A.ISSUE_CODE
+			  , A.P_CODE
+			  , A.MEM_ID
+			  , A.WORK_CODE
+			  , ISSUE_TYPE_CODE
+			  , ISSUE_NAME
+			  , ISSUE_CONTENTS
+			  , A.IMPORTANCE
+			  , B.MEM_NICKNAME
+              , D.SAVE_NAME
+              , F.WORK_NAME
+              , E.MEM_ID AS RE_MEM_ID
+              , E.ISSUE_CODE AS RE_ISSUE_CODE
+              , E.MEM_NICKNAME AS RE_MEM_NICKNAME
+              , E.SAVE_NAME AS RE_SAVE_NAME
+			FROM ISSUE A, MEMBER B, MEMBER_IKON D, WORK F 
+                ,(SELECT F.ISSUE_CODE
+                       , G.MEM_ID 
+                       , G.MEM_NICKNAME 
+                       , H.SAVE_NAME 
+                    FROM ISSUE_RECIPIENT F, MEMBER G, MEMBER_IKON H
+                  WHERE F.MEM_ID = G.MEM_ID
+                    AND G.MEM_ID = H.MEM_ID(+)
+                    <include refid="issueRecipientFrag"></include>
+                    ) E
+			WHERE A.MEM_ID = B.MEM_ID
+              AND B.MEM_ID = D.MEM_ID(+)
+              AND A.WORK_CODE = F.WORK_CODE
+              AND A.ISSUE_CODE = E.ISSUE_CODE
+			  AND A.P_CODE = #{detailSearch.pCode}
+			  <include refid="issueFrag"></include>
+		) A
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<select id="selectIssueBoard" parameterType="IssueVO" resultMap="issueListMap">
+		SELECT   A.ISSUE_CODE
+		       , A.MEM_ID
+		       , B.MEM_NICKNAME
+		       , C.WORK_CODE
+		       , C.WORK_NAME
+		       , ISSUE_TYPE_CODE
+		       , ISSUE_NAME
+		       , ISSUE_CONTENTS
+		       , A.IMPORTANCE
+		       , TO_CHAR(ISSUE_DATE, 'YYYY/MM/DD') AS ISSUE_DATE
+		       , D.ISSUE_CODE AS RE_ISSUE_CODE
+		       , D.MEM_ID AS RE_MEM_ID
+		       , D.MEM_NICKNAME AS RE_MEM_NICKNAME
+		  FROM ISSUE A, MEMBER B, WORK C,
+		        (SELECT F.ISSUE_CODE
+		           , G.MEM_ID 
+		           , G.MEM_NICKNAME  
+		        FROM ISSUE_RECIPIENT F, MEMBER G
+		      WHERE F.MEM_ID = G.MEM_ID
+		      ) D
+		 WHERE A.ISSUE_CODE = D.ISSUE_CODE
+		   AND A.MEM_ID = B.MEM_ID
+		   AND A.WORK_CODE = C.WORK_CODE
+		   AND A.P_CODE = #{pCode}
+		   AND A.ISSUE_CODE = #{issueCode}
+	</select>
+	
+	
+</mapper>

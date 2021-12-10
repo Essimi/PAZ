@@ -1,0 +1,12 @@
+package kr.or.ddit.admin.dashboard.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class LogincountDashboardContoller {
+	@RequestMapping("logincountDashboard.do")
+	public String Access() {
+		return "admin/logincountDashboard";
+	}
+}

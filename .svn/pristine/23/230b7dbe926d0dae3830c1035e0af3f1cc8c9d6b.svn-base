@@ -1,0 +1,20 @@
+package kr.or.ddit.setting.controller;
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import kr.or.ddit.vo.ProjectVO;
+
+@Controller
+public class SettingPageContoller {
+	
+	// 프로젝트 세팅페이지 진입(추가결제, 환불, 프로젝트 완료)
+	@RequestMapping("setting/settingProject.do")
+	public String settingPage(@ModelAttribute("project") ProjectVO project, Model model) {		
+		
+		return "setting/plSetting";
+	}
+
+}

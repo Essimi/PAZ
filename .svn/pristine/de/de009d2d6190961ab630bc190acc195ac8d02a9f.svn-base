@@ -1,0 +1,36 @@
+package kr.or.ddit.dashboardPl.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import kr.or.ddit.dashboardPl.dao.PLDashboardDAO;
+import kr.or.ddit.vo.PLDashboardVO;
+
+@Service
+public class PLDashboardServiceImpl implements PLDashboardService {
+	
+	@Inject
+	private  PLDashboardDAO dao;
+	
+	@Override
+	public List<PLDashboardVO> taskManagerRatio() {
+		List<PLDashboardVO> plDashboard = dao.taskManagerRatio();
+		if(plDashboard == null) {
+			//데이터가 없으면 미출력
+		}
+		return plDashboard;
+	}
+
+	@Override
+	public List<PLDashboardVO> issueManagement() {
+		List<PLDashboardVO> plDashboard = dao.issueManagement();
+		if(plDashboard== null) {
+			
+		}
+		return plDashboard;
+	}
+	
+}

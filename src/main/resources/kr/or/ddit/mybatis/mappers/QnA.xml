@@ -27,9 +27,9 @@
 	   SELECT COUNT(*) FROM
 		(SELECT A.* FROM
     		(SELECT QANDA_CODE ,PARENT_CODE ,LPAD(' re:', (LEVEL-1) * 12) || QANDA_TITLE QANDA_TITLE , MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK , ROWNUM RNUM
-     		FROM (select * from QANDA where PARENT_CODE in (select QANDA_CODE from QANDA where MEM_ID = 'aa001')
+     		FROM (select * from QANDA where PARENT_CODE in (select QANDA_CODE from QANDA where MEM_ID = #{detailSearch.memId})
             union all
-            select * from QANDA where MEM_ID = 'aa001')
+            select * from QANDA where MEM_ID = #{detailSearch.memId})
      	WHERE QANDA_CHECK = 'N'
         START WITH PARENT_CODE IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY QANDA_DATE DESC) A)
 	</select>
@@ -39,7 +39,7 @@
 		SELECT B.* FROM
 			(SELECT A.*, ROWNUM RNUM FROM
 				<![CDATA[
-					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('           re:', (LEVEL-1) * 20, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
+					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
 					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK
 				FROM QANDA START WITH PARENT_CODE
 				IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY
@@ -53,7 +53,7 @@
 	   SELECT B.* FROM
 			(SELECT A.*, ROWNUM RNUM FROM
 				<![CDATA[
-					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('           re:', (LEVEL-1) * 20, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
+					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;:&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
 					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK
 				FROM QANDA START WITH PARENT_CODE
 				IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY
@@ -82,12 +82,13 @@
 	<!-- 개인 회원 입장에서의 개인이 작성한 글(삭제하지 않은 것만) -->
 	<select id = "selectQnAListUser" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "kr.or.ddit.vo.PagingVO">
 	    SELECT A.* FROM
-    		(SELECT QANDA_CODE ,PARENT_CODE ,LPAD(' re:', (LEVEL-1) * 12) || QANDA_TITLE QANDA_TITLE , MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK , ROWNUM RNUM
-     		 FROM (select * from QANDA where PARENT_CODE in (select QANDA_CODE from QANDA where MEM_ID = 'aa001')
+	    <![CDATA[
+    		(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE , MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK , ROWNUM RNUM]]>
+     		 FROM (select * from QANDA where PARENT_CODE in (select QANDA_CODE from QANDA where MEM_ID = #{detailSearch.memId})
              union all
-             select * from QANDA where MEM_ID = 'aa001')
+             select * from QANDA where MEM_ID = #{detailSearch.memId})
      		WHERE QANDA_CHECK = 'N'
-		START WITH PARENT_CODE IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY QANDA_DATE) A
+		START WITH PARENT_CODE IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY QANDA_DATE DESC) A
 		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
 	</select>
 	
@@ -117,7 +118,7 @@
 				,QANDA_CHECK
 			) VALUES(
 				#{qandaCode,jdbcType=VARCHAR},
-				'admin and aa001',
+				#{memId,jdbcType=VARCHAR},
 				#{qandaTitle,jdbcType=VARCHAR},
 				#{qandaContent,jdbcType=CLOB},
 				SYSDATE

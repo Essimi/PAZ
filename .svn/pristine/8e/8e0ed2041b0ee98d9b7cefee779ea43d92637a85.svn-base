@@ -1,0 +1,17 @@
+package kr.or.ddit.payment.refund.dao;
+
+import org.springframework.stereotype.Repository;
+
+import kr.or.ddit.vo.PayVO;
+
+@Repository
+public interface PayRefundDAO {
+	
+	/**
+	 * 최종 결제 정보 조회
+	 * @param pay
+	 * @return
+	 */
+	public PayVO payInfo(String pCode);
+
+}

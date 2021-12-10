@@ -1,0 +1,257 @@
+package kr.or.ddit.payment.refund.controller;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.payment.refund.service.PayRefundService;
+import kr.or.ddit.vo.PayRefundVO;
+import kr.or.ddit.vo.PayVO;
+import kr.or.ddit.vo.ProjectVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+public class RefundController {
+	
+@Inject
+private PayRefundService service;
+	
+public static SimpleDateFormat dtFormat = new SimpleDateFormat("yyyyMMdd");
+public static String message;
+public static String token;
+public static String pCode;
+public static PayVO pay;
+
+	// 마지막 결제내역 조회
+	@RequestMapping("project/payInfo.do")
+	@ResponseBody
+    public PayVO payInfo(Model model, HttpSession session) {
+    	
+		// 세션에서 받아온 프로젝트 코드 값을 넣어줘서 쿼리문 조건절에 사용합니다.
+		ProjectVO projectCode = (ProjectVO) session.getAttribute("project");
+	
+		pCode = projectCode.getpCode();
+		
+		pay = service.payInfo(pCode);
+		
+		return pay;
+    }
+	
+	// 결제를 하기 전 검증
+	@RequestMapping(value = "project/payRefund.do", method = RequestMethod.POST, produces = "application/text; charset=utf8")
+	@ResponseBody
+	public String payRefund(@RequestParam("reason") String reason, Model modal, HttpSession session) throws Exception {
+				
+		// 우선 한 달이 지났는지 안 지났는지 알기위해 검증을 하기 위한 데이터를 부릅니다.
+		// 세션에서 받아온 프로젝트 코드 값을 넣어줘서 쿼리문 조건절에 사용합니다.
+		// 데이터 통신을 완료한 후 환불을 위해 결제코드를 저장합니다.
+		String payCode = pay.getPayCode();
+		
+		// 결제일자를 숫자만 출력되게 변형합니다.
+		String payDate = pay.getPayDate().replaceAll("[^0-9]", "");
+		
+		// 하단의 메소드를 이용하여 달을 더해줍니다.
+		String addPayDate = AddDate(payDate, 1);
+		
+		// 현재 날짜를 형식에 맞게 구해옵니다.
+		String nowDate = dtFormat.format(System.currentTimeMillis());
+		
+		// 비교를 위해 int 형식으로 변환해줍니다.
+		int realPayDate = Integer.parseInt(addPayDate);
+		int realNowDate = Integer.parseInt(nowDate);
+		
+		// 현재일자와, 한 달을 더한 결제일자를 비교해줍니다.
+		if(realNowDate < realPayDate) {
+			
+			// 만약 결제일자가 더 크다면 환불이 가능합니다.
+			HttpURLConnection conn = null;
+			URL url = new URL("https://api.iamport.kr/users/getToken"); // 토큰을 받아올 주소를 입력합니다.
+			conn = (HttpURLConnection)url.openConnection();
+			
+			conn.setRequestMethod("POST"); // POST 로 요청합니다.
+			
+			// Header 를 설정해줍니다.(json 형식으로 데이터 전송)
+			conn.setRequestProperty("Content-Type", "application/json");
+			// 서버로부터 받을 데이터 형식을 json 으로 요청합니다.
+			conn.setRequestProperty("Accept", "application/json");
+			// OutPutStream 으로 POST 데이터를 넘겨주겠다는 옵션을 설정합니다.
+			conn.setDoOutput(true);
+			
+			// 키값들을 JSON 형태로 넣은 후 import 서버로 넘겨줍니다.
+			JSONObject obj = new JSONObject();
+			obj.put("imp_key", "9508002261851383");
+			obj.put("imp_secret", "cb3bd358575287882ecd10bae292935aaf858c3c8f98a12f0bb174bdbd3416f0028e9f485ba52d15");
+			
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+			bw.write(obj.toString());
+			bw.flush();
+			bw.close();
+			
+			// 서버로부터 응답 데이터를 받습니다.
+			int responseCode = conn.getResponseCode(); // 응답 코드
+			
+			if(responseCode == 200) { // 성공할 경우
+				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				StringBuffer sb = new StringBuffer();
+				String line = null;
+				while((line = br.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				
+				br.close();
+				
+				// 결과값 파싱을 위해 결과값을 String 형태로 변환해줍니다.
+				String sbStr = sb.toString();
+				
+				// parser 객체를 생성합니다
+				JSONParser parser = new JSONParser();
+				
+				// String 결과값을 파싱해줍니다.
+				Object sbObj = (JSONObject)parser.parse(sbStr);
+				
+				// 파싱된 데이터는 Object 형태와 Array 형태가 있습니다.
+				// 형태를 구분짓기 위해 조건문을 실행합니다.
+				if(sbObj instanceof JSONArray) {
+					
+					// jsonArray 이용한 처리
+					// 현재 받은 JSON 데이터는 Array 형태가 아니기 때문 해당 조건문을 실행하지 않습니다.
+					JSONArray jsonArray = (JSONArray)sbObj;
+					
+				}else if(sbObj instanceof JSONObject) {
+					
+					// jsonObject 이용한 처리
+					JSONObject jsonObject = (JSONObject)sbObj;
+					
+					// 현재 응답은 오브젝트 안에 오브젝트가 있는 구조기 때문에 오브젝트 형식으로 키값을 요청합니다.
+					// 값이 response 인 오브젝트 값 가져옴
+					JSONObject jsonobject2 = (JSONObject)jsonObject.get("response");
+					
+					// response 오브젝트 안에 있는 키값이 access_token 인 value 값을 String 으로 변환해줍니다.
+					token = (String) jsonobject2.get("access_token");
+					
+				}else {
+					
+					// 다른 타입
+				}
+								
+				// 가져온 토큰값을 환불메소드에 파라메터로 넘겨줍니다.(토큰, 결제코드, 결제사유)
+				message = refundAnswer(token, payCode, reason);
+				return message;
+			}else {
+				log.info("환불 실패 에러코드 : {}", conn.getResponseMessage()); // 환불 실패시 에러코드 반환
+				message = "서버 문제로 실패하였습니다. 나중에 다시 시도해주세요.";
+				return message;
+			}
+		}else {
+			// 결제일자가 더 작다면 한 달이 지난 의미이기 때문에 환불이 불가능해야 합니다.
+			message = "환불기간이 지났기 때문에 환불이 불가능 합니다.(결제 후 한 달 이내에 가능합니다.)";
+			return message;
+		}
+	}
+	
+	// 받아온 토큰값을 토대로 환불을 진행합니다.
+	public String refundAnswer(String token, String payCode, String reason) throws IOException{
+				
+		HttpURLConnection conn = null;
+		URL url = new URL("https://api.iamport.kr/payments/cancel"); // 환불 요청 주소를 입력합니다.
+		conn = (HttpURLConnection)url.openConnection();
+					
+		conn.setRequestMethod("POST"); // POST 로 요청합니다.
+					
+		// Header 를 설정해줍니다.(json 형식으로 데이터 전송)
+		conn.setRequestProperty("Content-Type", "application/json");
+		// 전송받은 토큰을 Authorization 헤더에 실어 넘겨줍니다.
+		conn.setRequestProperty("Authorization", token);
+		// OutPutStream 으로 POST 데이터를 넘겨주겠다는 옵션을 설정합니다.
+		conn.setDoOutput(true);
+					
+		// 요청할 정보를 Body 에 실어 전송합니다.
+		JSONObject obj = new JSONObject();
+		obj.put("reason", "테스트 환불");
+		obj.put("imp_uid", payCode);
+					
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
+		bw.write(obj.toString());
+		bw.flush();
+		bw.close();
+					
+		// 서버로부터 응답 데이터를 받습니다.
+		int responseCode = conn.getResponseCode(); // 응답 코드
+					
+		if(responseCode == 200) { // 성공할 경우
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			StringBuffer sb = new StringBuffer();
+			String line = null;
+			while((line = br.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+						
+			br.close();
+		
+		// 환불이 성공했다면, 서버 데이터에 내역 추가를 위해 데이터 통신을 합니다.
+		PayRefundVO payRefund = new PayRefundVO();
+		payRefund.setRefundCode(payCode);
+		payRefund.setRefundDetail(reason);
+		payRefund.setpCode(pCode);
+		
+		log.info("pCode : {}", pCode);
+		log.info("아니 여기까진 오나???");
+		log.info("payre {}", payRefund);
+		ServiceResult responseResult =  service.createPayRefundInfo(payRefund);
+		
+		if(responseResult.equals(ServiceResult.OK)) {
+			message = "환불이 완료되었습니다(서버)";
+		}else {
+			message = "환불이 실패하였습니다....(서버)";
+		}
+		
+		return message;
+			
+		}else {
+			log.info("환불 실패 에러코드 : {}", conn.getResponseMessage()); // 환불 실패시 에러코드 반환
+			message = conn.getResponseMessage();
+			return message;
+		}
+	}
+	
+	// 날짜계산을 위한 메소드
+	private static String AddDate(String strDate, int month) throws Exception{
+				
+		// Calendar 객체를 생성해줍니다.
+		Calendar cal = Calendar.getInstance();
+		
+		// 파라메터로 받아온 값을 데이터 형식으로 변환해줍니다.
+		Date dt = dtFormat.parse(strDate);
+		
+		// 생성한 Calendar 객체에 변형된 파라메터를 넣어줍니다.
+		cal.setTime(dt);
+		
+		// 객체에 원하는 작업(현재 MONTH 계산만 적용함)을 수행할 로직을 작성합니다.
+		cal.add(Calendar.MONTH, month);
+		
+		return dtFormat.format(cal.getTime());
+	}
+}

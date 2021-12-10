@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.dashboardPl.dao.PLDashboardDAO">
+
+	<select id="taskManagerRatio" resultType="PLDashboardVO">
+	<!-- 업무 담당자별 할당 비율  -->
+		SELECT
+		    a.mem_id,
+		    MEM_NICKNAME,
+		    count(a.mem_id) task_count
+		FROM
+		    work a,
+		    member b
+		where
+		    a.mem_id = b.mem_id
+		and
+		    p_code ='PROJECT00004'
+		group by a.mem_id, MEM_NICKNAME
+	</select>
+
+</mapper>

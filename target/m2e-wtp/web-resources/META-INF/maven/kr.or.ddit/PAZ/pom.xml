@@ -104,18 +104,6 @@
 			<version>2.3.2</version>
 		</dependency>
 		
-		<!-- spring security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-config</artifactId>
-			<version>${org.springframework.security-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-taglibs</artifactId>
-			<version>${org.springframework.security-version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -279,13 +267,64 @@
 			<scope>test</scope>
 		</dependency>
 		
+<!-- 추가 POM은 아래에 주석과 같이 추가 -->		
 		<dependency>
     	    <groupId>javax.annotation</groupId>
    			<artifactId>javax.annotation-api</artifactId>
     	<version>1.3.2</version>
         </dependency>
 		
-<!-- 추가 POM은 아래에 주석과 같이 추가 -->		
+		<!-- email 전송 -->
+		<dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.5.5</version>
+        </dependency>
+		<dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>mail</artifactId>
+		    <version>1.4.7</version>
+		</dependency>
 		
+		<!-- import 결제 -->
+		<dependency>
+		    <groupId>com.github.iamport</groupId>
+		    <artifactId>iamport-rest-client-java</artifactId>
+		    <version>0.2.15</version>
+		</dependency>
+		
+		<!-- import 환불(JSON 데이터 관련, 서버에서의 통신) -->
+		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		    <version>1.1.1</version>
+		</dependency>
+		
+		<!-- RSS -->
+		<dependency>
+		    <groupId>com.rometools</groupId>
+		    <artifactId>rome</artifactId>
+		    <version>1.13.1</version>
+		</dependency>
+		
+		<!-- Gson(카카오 로그인에서 사용)-->
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.7</version>
+		</dependency>
+			
 	</dependencies>
+	
+	<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
 </project>

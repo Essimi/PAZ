@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.dashboardPl.dao.PLDashboardDAO">
+
+	<select id="taskManagerRatio" resultType="PLDashboardVO">
+	<!-- 업무 담당자별 할당 비율  -->
+		SELECT DISTINCT c.mem_id, MEM_NICKNAME,task_count, p_code
+		  FROM
+		        (SELECT
+				    a.mem_id,
+				    MEM_NICKNAME,
+				    count(a.mem_id) task_count		    
+				FROM
+				    work a,
+				    member b
+				where
+				    a.mem_id = b.mem_id
+				group by a.mem_id, MEM_NICKNAME 
+		        )c,
+		        (SELECT
+		            mem_id,
+		            p_code
+		         from
+		            work
+		        )d
+		  where
+		    c.mem_id = d.mem_id
+		   and
+		    p_code = 'PROJECT00004' 
+	
+	</select>
+	
+	<select id="issueManagement" resultType="PLDashboardVO">
+	select DISTINCT c.mem_id, recipient_count, issue_count, p_code
+	  from (
+	        SELECT
+	            count(a.mem_id) recipient_count
+	            , a.mem_id
+	        FROM
+	            issue_recipient a, issue b
+	        where
+	            a.mem_id = b.mem_id
+	        group by a.mem_id
+	        )c,
+	        
+	        (SELECT
+	            count(mem_id)issue_count
+	            ,mem_id    
+	        FROM
+	            issue
+	        group by mem_id
+	        )d,
+	        (
+	        select
+	            mem_id
+	            ,p_code
+	          from
+	            issue           
+	        )e       
+	 where
+	      c.mem_id = d.mem_id
+	   and   
+	      c.mem_id(+) = e.mem_id
+	   and
+	      p_code = 'PROJECT00004'
+	
+	</select>
+</mapper>

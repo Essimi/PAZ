@@ -1,0 +1,236 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+    <style>
+#requestListDiv {
+	height: 300px;
+	overflow-y: overlay;
+}
+
+::-webkit-scrollbar {
+	width: 3px;
+	background: none;
+}
+
+#requestListText {
+	padding-left: 25px;
+	padding-top: 20px;
+	margin-bottom: -15px;
+}
+
+.pTitle {
+	font-size: 25px;
+}
+
+.sender {
+	font-size: 15px;
+}
+
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+	{
+	margin-left: 0px;
+}
+
+#content {
+	padding: 50px;
+}
+
+#plus {
+	font-size: 50px;
+	color: #ffc107;
+	text-shadow: 0px 1px 1px #cbc8c8;
+}
+</style>
+    
+
+
+	<h3>회원 관리</h3>
+    
+    <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">회원 리스트</h3>
+
+                <div class="card-tools">
+                  <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default">
+                        <i class="fas fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>User</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Reason</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>183</td>
+                      <td>John Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-success">Approved</span></td>
+                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                    </tr>
+                    <tr>
+                      <td>219</td>
+                      <td>Alexander Pierce</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-warning">Pending</span></td>
+                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                    </tr>
+                    <tr>
+                      <td>657</td>
+                      <td>Bob Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-primary">Approved</span></td>
+                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                    </tr>
+                    <tr>
+                      <td>175</td>
+                      <td>Mike Doe</td>
+                      <td>11-7-2014</td>
+                      <td><span class="tag tag-danger">Denied</span></td>
+                      <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        
+        
+        <hr>
+        
+        <!-- 결제, 환불 및 그래프 -->
+        <div style="margin-top:10px;">
+        
+        
+        	<!-- 결제 환불 -->
+        	<div style="border:1px solid black; height: 400px; width: 50%; float: left; padding-right:10px;">
+        	
+        		<h3 style="margin-bottom: 20px;">결제 및 환불</h3>
+		        	<div class="row">
+		          <div class="col-12">
+		            <div class="card">
+		              <div class="card-header">
+		                <h3 class="card-title">결제 및 환불 리스트</h3>
+		
+		                <div class="card-tools">
+		                  <div class="input-group input-group-sm" style="width: 150px;">
+		                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+		
+		                    <div class="input-group-append">
+		                      <button type="submit" class="btn btn-default">
+		                        <i class="fas fa-search"></i>
+		                      </button>
+		                    </div>
+		                  </div>
+		                </div>
+		              </div>
+		              <!-- /.card-header -->
+		              <div class="card-body table-responsive p-0">
+		                <table class="table table-hover text-nowrap">
+		                  <thead>
+		                    <tr>
+		                      <th>ID</th>
+		                      <th>User</th>
+		                      <th>Date</th>
+		                      <th>Status</th>
+		                      <th>Reason</th>
+		                    </tr>
+		                  </thead>
+		                  <tbody>
+		                    <tr>
+		                      <td>183</td>
+		                      <td>John Doe</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-success">Approved</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                    <tr>
+		                      <td>219</td>
+		                      <td>Alexander Pierce</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-warning">Pending</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                    <tr>
+		                      <td>657</td>
+		                      <td>Bob Doe</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-primary">Approved</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                    <tr>
+		                      <td>175</td>
+		                      <td>Mike Doe</td>
+		                      <td>11-7-2014</td>
+		                      <td><span class="tag tag-danger">Denied</span></td>
+		                      <td>Bacon </td>
+		                    </tr>
+		                  </tbody>
+		                </table>
+		              </div>
+		              <!-- /.card-body -->
+		            </div>
+		            <!-- /.card -->
+		          </div>
+		        </div>
+		        	
+        	
+        	</div>
+        
+        
+        
+        	<!-- 그래프 -->
+        	<div style="border:1px solid red; height: 400px; width: 50%; float: right; padding-left: 10px;">
+        	
+			<!-- BAR CHART -->
+            <div class="card card-success">
+              <div class="card-header">
+                <h3 class="card-title">Bar Chart</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+        	
+        	</div>
+        
+        
+        
+        </div>
+        
+        

@@ -1,0 +1,56 @@
+package kr.or.ddit.chat.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.or.ddit.chat.service.ChattingService;
+import kr.or.ddit.vo.MemberProfileVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Controller
+public class ChattingMainController {
+	
+	@Inject
+	private ChattingService service;
+	
+	@RequestMapping("chat/chatting.do")
+	public String chattingMain(
+			
+			@RequestParam(value="pCode", required=true) String pCode
+			,Model model
+			
+			) {
+		
+		Map<String, String> info = new HashMap<>();
+		
+		info.put("memId", "aa002");
+		info.put("pCode", pCode);
+		
+		log.info("맵안에 담긴 값 {}", info.get("pCode"));
+		
+		
+		List<MemberProfileVO> memberList = new ArrayList<>();
+		memberList = service.selectProjectMember(info);
+		
+		model.addAttribute("memberList",memberList);
+		//model.addAttribute("memberList",memberList); 이제 채팅방에 대한 정보도 가져와야한다.
+		
+		
+		
+		log.info("멤버리스트안에 담긴 값 {}", memberList.get(1).getMemId());
+		
+		return "chat/chattingMain";
+		
+	}
+	
+}

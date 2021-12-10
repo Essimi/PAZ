@@ -1,0 +1,273 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+
+<style>
+#contents{
+width : 50%;
+height: 30%;
+}
+</style>
+
+<div class="content-wrapper">
+	<!-- Content Header (Page header) -->
+	<section class="content-header">
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h1>NEWS</h1>
+				</div>
+				<div class="col-sm-6">
+					<ol class="breadcrumb float-sm-right">
+						<li class="breadcrumb-item"><a href="#">Home</a></li>
+						<li class="breadcrumb-item active">News</li>
+					</ol>
+				</div>
+				<div>
+					<button class="btn btn-primary btn-block" type="button" onclick="location.href='${cPath }/news/newsInsert.do' ">
+						<i class="fa fa-bell"></i> 새로운 뉴스 등록하기
+					</button>
+
+				</div>
+
+
+			</div>
+		</div>
+		<!-- /.container-fluid -->
+	</section>
+
+	<div class="row">
+		<div class="col-md-6">
+			<!-- Box Comment -->
+			<div class="card card-widget">
+				<div class="card-header">
+
+					<c:set var="NewsList" value="${dataList }"></c:set>
+					<c:choose>
+						<c:when test="${not empty NewsList}">
+							<c:forEach items="${NewsList}" var="news">
+								<div class="user-block">
+									<!-- 프로필 사진  -->
+									<img class="img-circle" src="${pageContext.request.contextPath}/resources/adminLTE3/dist/img/농담곰2.jpg"
+										alt="User Image">
+
+									<!-- 유저 이름  -->
+									<span class="username">${news.memId}</span> <span
+										class="description">${news.newsDate}</span>
+								</div>
+								<div class="card-tools">
+
+									<a class="btn btn-tool"
+										href="${pageContext.request.contextPath}/news/newsUpdate.do?newsCode=${news.newsCode}">
+										<i class="far fa-edit"></i>
+									</a>
+									<a class="btn btn-tool"
+										 data-toggle="modal" data-target="#modal-danger" id="${news.newsCode}" >
+										<i class="fas fa-times"></i>
+									</a>
+									</div>
+								
+								<div class="card-body">
+									<a id="contents">${news.newsContents }</a>
+									
+								</div>
+								<div class="card-footer">
+
+			<form id="replyInsertForm">
+                  <div class="input-group">
+                 	<input type="hidden" id="newsCode" value="${news.newsCode}" />
+                    <input type="text" id="commentContent" placeholder="댓글을 입력하세요 ..." class="form-control">
+                    <span class="input-group-append">
+                    <input type="submit" value="등록" id = "replyInsertBtn" class="btn btn-warning">
+                      
+                    </span>
+                  </div>
+                </form>
+     	</div>
+		<!-- 댓글 자리랑 댓글 다는 폼  -->
+		<c:forEach items="${news.replyList}" var="newsReply">
+			<div id="listBody" class="card-footer card-comments">
+			<!--댓글 달기  -->
+                <div class="card-comment">
+                  <!-- User image -->
+                  <img class="img-circle img-sm" src="${pageContext.request.contextPath}/resources/adminLTE3/dist/img/농담곰2.jpg" alt="User Image">
+			<!-- 댓글 리스트 -->
+                  <div class="comment-text">
+                    <span class="username">
+                     	${newsReply.memId}
+                      <span class="text-muted float-right">${newsReply.commentDate}</span>
+                    </span>
+                    <!-- /.username -->
+                    	${newsReply.commentContent}
+                  </div>
+                  </div>
+                  <!-- /.comment-text -->
+              </div>
+			</c:forEach>
+								
+								
+<br>
+							</c:forEach>
+						</c:when>
+						<c:otherwise>
+							<tr>
+								<td colspan="2">조건에 맞는 게시글이 없음.</td>
+							</tr>
+						</c:otherwise>
+
+
+					</c:choose>
+
+			</div>
+			<!-- /.card-footer -->
+		</div>
+		<!-- /.card -->
+	</div>
+	<!-- /.col -->
+	</div>
+	</div>
+	
+	
+	<div class="modal fade" id="modal-danger">
+	<div class="modal-dialog">
+		<div class="modal-content bg-danger">
+			<div class="modal-header">
+				<h4 class="modal-title">안내!</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+			
+				<p>정말 삭제하시겠습니까?</p>
+			</div>
+			<div class="modal-footer justify-content-between">
+				<button type="button" class="btn btn-outline-light" data-dismiss="modal">취소</button>
+				<button type="button" class="linkBtn btn btn-outline-light" id="realDelBtn">삭제</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+
+
+$('#modal-danger').on("show.bs.modal", function (event) {
+	$(this).data("newsCode", event.relatedTarget.id)
+})
+
+
+
+	$("#realDelBtn").on("click", function(event) {
+		
+	let newsCode = $(this).parents('#modal-danger').data("newsCode")
+
+	$.ajax({
+			url : "${cPath}/news/newsDelete.do",
+
+			data : {
+				"newsCode" : newsCode
+				
+			},
+			dataType: "json",
+			success : function(resp) {
+				
+				alert(resp.message);
+				
+				if(resp.result == "OK"){
+					/*${pageContext.request.contextPath}/calendar/calendarList.do */
+				location.href = $.getContextPath() + resp.redirect;
+				
+				}
+
+			},
+			error : function(xhr, jQuery, error) {
+				console.log(jQuery);
+				console.log(error);
+			}
+		}) 
+	}
+)
+
+
+
+
+$(function () {
+	
+	listReply();
+	
+	$("#replyInsertForm").on("submit", function () {
+		var commentContent = $("#commentContent").val();
+		var memId = "aa001";
+		var newsCode = $("#newsCode").val();
+		
+		var params = {
+				
+				"commentContent" : commentContent,
+				"memberId" : memId,
+				"newsCode" : newsCode
+				
+		};
+		
+		$.ajax({
+			type: "post",
+			url: "${cPath}/news/newsReplyInsert.do",
+			data: params,
+			
+			success: function (data) {
+				alert("댓글이 등록되었습니다");
+				//listReply2();
+			}
+		})
+		return false;
+	})
+	
+	function listReply() {
+		$.ajax({
+			type: "get",
+			url: "${cPath}/news/newsList.do?newsCode=${newsCode}",
+			success: function (result) {
+				$("#listReply").html(result);
+			}
+			
+		})
+		
+		}
+	    
+	        
+	 function listReply2() {
+		$.ajax({
+			type: "get",
+			dataType : "json",
+			url: "${cPath}/news/newsList.do?newsCode=${newsCode}",
+			success: function (result) {
+				console.log(result);
+				let replyList = result.dataList;
+				let trTags = [];
+				
+				if(replyList){
+					$.each(replyList, function(idx, reply){
+						let trTag = $("<div>").append(
+										$("<span>").text(reply.memId),
+										$("<td>").text(reply.commentDate),
+										$("<td>").text(reply.commentContent)
+									);
+						trTags.push(trTag);
+					})
+				}else{
+					let trTag = $("<tr>").append(
+									$("<td>").attr("colspan", "4").text("댓글이 없습니다.")
+								)
+					trTags.push(trTag);
+				}
+				listBody.append(trTags);
+			}
+			
+		})
+	}       
+	  
+	
+})
+
+
+
+</script>

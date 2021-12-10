@@ -1,0 +1,190 @@
+package kr.or.ddit.meeting.service;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kr.or.ddit.common.PKNotFoundException;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.meeting.dao.MeetingAttatchDAO;
+import kr.or.ddit.meeting.dao.MeetingDao;
+import kr.or.ddit.vo.AttatchVO;
+import kr.or.ddit.vo.DataListVO;
+import kr.or.ddit.vo.MeetingVO;
+import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.ProjectMemberVO;
+import lombok.extern.slf4j.Slf4j;
+@Service
+@Slf4j
+public class MeetingServiceImpl implements MeetingService{
+	@Inject
+	private MeetingDao dao;
+	
+	@Inject
+	private MeetingAttatchDAO attatchDAO;
+	
+
+	@Value("#{appInfo.attatchPath}")
+	private File saveFolder;
+	
+	@PostConstruct
+	public void init() throws IOException{
+
+	}
+	
+	private int processAttatches(MeetingVO meeting) {
+		
+		int rowcnt = 0;
+		
+		AttatchVO attatch= meeting.getAttatch();
+		
+		//현재 쓰고있는 글의 글 코드가 들어가야한다
+		attatch.setPostCode(meeting.getMeetingCode());
+		
+		log.info("글 코드를 잘 검색해오는지! 글 코드에 잘 들어가는지{}", meeting.getMeetingCode());
+		
+		if(attatch != null) {
+			
+			rowcnt = attatchDAO.insertMeetingAttatche(attatch);
+			
+		}try {
+			attatch.saveTo(saveFolder);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return rowcnt;
+	}
+	
+	@Transactional
+	@Override
+	public ServiceResult createMeeting(MeetingVO meeting) {
+		ServiceResult result = null;
+		int rowcnt1 = dao.inser1tMeeting(meeting);
+		int rowcnt2 = 0;
+		
+		if(meeting.getMemId() !=null) {
+			String[] memIdArr = meeting.getMemId().split(",");
+			List<MemberVO> memList = null;
+			if(memIdArr!=null) {
+				memList = new ArrayList<>();
+				for(int i=0; i<memIdArr.length; i++) {
+					MemberVO memvo = new MemberVO();
+					memvo.setMemId(memIdArr[i]);
+					memList.add(memvo);
+				}
+				meeting.setMemberList(memList);
+			}
+			rowcnt2 = dao.inser2tMeeting(meeting);
+		}
+		
+		
+		if(rowcnt1>0 || rowcnt2>0) {
+//			rowcnt += processAttatches(meeting);
+			result = ServiceResult.OK;
+		}else {
+			result = ServiceResult.FAILED;
+		}
+		
+		return result;
+		
+	}
+
+
+	@Override
+	public MeetingVO meetingSelect(String meetingCode){
+		MeetingVO meeting = dao.selectMeeting(meetingCode);
+		if(meeting==null)
+			throw new PKNotFoundException(meetingCode + "번 글이 없음 ");
+		Map<String, Object> pMap = new HashMap<>();
+		pMap.put("meetingCode", meetingCode);
+		return meeting;
+	}
+
+	@Override
+	public List<MeetingVO> meetingPageList(PagingVO<MeetingVO> pagingVO) {
+		List<MeetingVO> meetingPageList = dao.selectMeetingList(pagingVO);
+		pagingVO.setTotalRecord(dao.selectTotalRecord(pagingVO));
+		pagingVO.setDataList(meetingPageList);
+		return meetingPageList;
+	}
+	
+	
+	@Override
+	public List<ProjectMemberVO> chackmember(DataListVO<ProjectMemberVO> dataListVO) {
+		List<ProjectMemberVO> projectListMember = dao.chackmember(dataListVO);//여러데이터를 가져오는것
+		dataListVO.setDataList(dao.chackmember(dataListVO));//원래는 널이였지만 데이터 리스트에 n개의 값을 집어 넣음
+		return projectListMember ;
+	}
+
+	@Override
+	public ServiceResult meetingModify(MeetingVO meeting) throws IOException {
+		ServiceResult result = null;
+		int rowcnt1 =0;
+		if(meeting.getMemId() !=null) {
+			rowcnt1 = dao.deleteMeetingMemberList(meeting);
+		}
+		int rowcnt2 = dao.updateMeeting(meeting);
+		
+		int rowcnt3 = 0;
+		if(meeting.getMemId() !=null) {
+			String[] memIdArr = meeting.getMemId().split(",");
+			List<MemberVO> memList = null;
+			if(memIdArr!=null) {
+				memList = new ArrayList<> ();
+				for(int i=0; i<memIdArr.length; i++) {
+					MemberVO memvo = new MemberVO();
+					memvo.setMemId(memIdArr[i]);
+					memList.add(memvo);
+				}
+				meeting.setMemberList(memList);
+			}
+			rowcnt3 = dao.inser2tMeeting(meeting);
+		}
+		
+		if(rowcnt1 > 0 || rowcnt2 >0 || rowcnt3 >0) {
+//			// 올릴 파일 처리
+//			processAttatches(meeting);
+			// 지울 파일 처리
+//			String delAttNos = meeting.getDellAttCode();
+//			if(delAttNos!= null) {
+//				attatchDAO.deleteAttatChes(meeting.getAttatch());
+//				FileUtils.deleteDirectory(new File(saveFolder, meeting.getAttatch().getSaveName()));	
+//			}
+			result = ServiceResult.OK;
+		}else {
+			result = ServiceResult.FAILED;
+		}
+		return result;
+	}
+	
+	
+	@Transactional
+	@Override
+	public ServiceResult meetingDelete(MeetingVO meeting) throws IOException {
+		ServiceResult result = ServiceResult.FAILED;
+		
+		int cnt1 = dao.deleteMeetingMemberList(meeting);
+		int cnt2 = dao.deleteMeeting(meeting.getMeetingCode());
+//		attatchDAO.deleteAttatChes(meeting.getAttatch());
+//		FileUtils.deleteDirectory(new File(saveFolder, meeting.getAttatch().getSaveName()));
+		if(cnt1 > 0 && cnt2 > 0) result = ServiceResult.OK;
+			
+		return result;
+	}
+
+	
+}

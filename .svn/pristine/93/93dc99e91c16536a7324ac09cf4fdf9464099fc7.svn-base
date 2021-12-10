@@ -1,0 +1,40 @@
+package kr.or.ddit.issue.controller;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.or.ddit.issue.service.IssueService;
+import kr.or.ddit.vo.IssueVO;
+import kr.or.ddit.vo.PagingVO;
+
+@Controller
+public class IssueListController {
+	
+	@Inject
+	private IssueService issueService;
+	
+	@RequestMapping("project/{pCode}/issue/issueList.do")
+	public String Access(
+			@PathVariable("pCode") String pCode,
+			@RequestParam(value="page", required=false, defaultValue="1") int currentPage,
+			Model model
+			){
+		IssueVO issue = new IssueVO();
+		issue.setpCode(pCode);
+		
+		PagingVO<IssueVO> pagingVO = new PagingVO<>(10, 5);
+		pagingVO.setCurrentPage(currentPage);
+		pagingVO.setDetailSearch(issue);
+		
+		issueService.retrieveIssueList(pagingVO);
+		
+		model.addAttribute("pagingVO", pagingVO);
+		
+		return "issue/issueList";
+	}
+}

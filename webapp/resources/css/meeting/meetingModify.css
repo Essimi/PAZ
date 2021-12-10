@@ -1,0 +1,59 @@
+@charset "UTF-8";
+
+	.card-primary.card-outline{
+		border-top: 3px solid #17a2b8;
+	}
+	
+	
+	.col-md-9 {
+		max-width: none;
+	}
+
+	.card-title {
+	    font-size: 25px;
+   	    font-weight: 500;
+	}
+	
+	.textSpan {
+		font-size: 20px;
+   		font-weight: 500;
+   		display: block;
+   		margin-bottom: 10px; 
+	}
+	
+	.meetingMem {
+		font-size : 20px;
+		font-weight: 500;
+		display: block;
+		margin-bottom: 10px;
+	}
+	
+	.mailbox-attachment-info{
+		padding :20px;
+		border-radius: 10px;
+	}
+	
+	
+	.fileDiv input {
+		margin-top: 20px;
+	}
+	
+	.fa-paperclip {
+		margin-right: 5px;
+	}
+	
+	.file-upload-button {
+		background: red;
+	}
+	
+	.custom-file-label {
+		display: block;
+		margin-top: 10px;
+		width: 500px;
+	}
+	
+	.newFileForm {
+		margin-top: 30px;
+	}
+
+

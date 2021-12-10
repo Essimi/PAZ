@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.project.dao.ProjectDAO">
+
+	<!-- <select id="selectTotalRecord" parameterType="ProjectVO" resultType="int">
+      SELECT COUNT(*)
+      FROM PROJECT
+      WHERE P_CODE IN (SELECT P_CODE
+      FROM P_MEM
+      WHERE MEM_ID = #{memId})
+   </select> -->
+
+   <resultMap type="kr.or.ddit.vo.ProjectVO" id="projectMap" autoMapping="true">
+   		<id property="pCode" column="P_CODE"/>
+   		<collection property="projectMember" ofType="kr.or.ddit.vo.MemberVO" autoMapping="true">
+   			<id property="memId" column="MEM_ID"/>
+   			<association property="memIkon" javaType="MemberIkonVO" autoMapping="true">
+   			</association>
+   		</collection>
+   </resultMap>
+
+   <select id="selectMyProjectList" parameterType="kr.or.ddit.vo.ProjectVO" resultMap="projectMap">
+		SELECT 	A.MEM_ID, A.P_CODE, B.P_TITLE, A.POSITION, B.STATUS_CODE, P.STATUS_NAME,
+				A.SAVE_NAME, A.MEM_NICKNAME,
+				ROUND(REPLACE(MONTHS_BETWEEN(B.P_START_DATE, B.P_END_DATE), '-', '')) AS MONTH_TERM,
+				REPLACE(TO_DATE(B.P_START_DATE, 'YYYY-MM-DD') - TO_DATE(B.P_END_DATE, 'YYYY-MM-DD'), '-', '') AS DAY_TERM
+		FROM (SELECT C.MEM_ID, C.P_CODE, 
+		            C.POSITION, D.MEM_NICKNAME,
+		            E.SAVE_NAME
+		    FROM P_MEM C, MEMBER D, MEMBER_IKON E
+		    WHERE C.MEM_ID = D.MEM_ID
+		    AND D.MEM_ID = E.MEM_ID(+)
+		    AND OUT_STATUS = '0' 
+		    AND P_CODE IN (SELECT A.P_CODE
+		                     FROM PROJECT A, P_MEM B
+		                     WHERE A.P_CODE = B.P_CODE
+		                     AND B.MEM_ID = #{memId})
+		    ORDER BY P_CODE) A, PROJECT B
+		LEFT OUTER JOIN PROJECT_STATE P on B.STATUS_CODE = P.STATUS_CODE
+		WHERE A.P_CODE = B.P_CODE
+   </select>
+   
+   <insert id="insertMyProject" parameterType="ProjectVO">
+   		<selectKey keyProperty="pCode" resultType="String" order="BEFORE">
+			SELECT 'PROJECT'||LPAD(NVL(to_number(SUBSTR(MAX(P_CODE), 8)), 0) + 1, 5, '0')
+			FROM PROJECT
+		</selectKey>
+		INSERT ALL 
+			INTO project (
+				p_code,
+				p_title,
+				p_content,
+				p_create_date,
+				p_start_date,
+				p_end_date,
+				p_part_code,
+				status_code
+			) VALUES (
+				#{pCode, jdbcType=VARCHAR},
+				#{pTitle, jdbcType=VARCHAR},
+				#{pContent, jdbcType=CLOB},
+				SYSDATE,
+				#{pStartDate, jdbcType=DATE},
+				#{pEndDate, jdbcType=DATE},
+				#{pPartCode, jdbcType=VARCHAR},
+				'PROJECT_STATE005'
+
+			)
+			INTO P_MEM (
+				MEM_ID, 
+				P_CODE, 
+				WORK_TIME, 
+				POSITION, 
+				OUT_STATUS
+			) VALUES (
+				#{memId},
+				#{pCode, jdbcType=VARCHAR},
+				0,
+				'PL',
+				'0'
+			)
+		SELECT *
+     	FROM DUAL
+   </insert>
+   
+   <!-- 이건 머야!! 언냐 써줭  -->
+   <select id="selectMyProject">
+   
+   </select>
+   
+   
+   <!-- 회원이 PL인 프로젝트 리스트 조회 -->
+   <select id="listMyProjectPl" parameterType="kr.or.ddit.vo.MemberVO" resultType="kr.or.ddit.vo.ProjectVO">
+   	   SELECT P_CODE
+         FROM P_MEM
+         WHERE MEM_ID = #{memId}
+           AND POSITION='PL'
+   </select>
+   
+   <!-- 프로젝트 삭제 -->
+   <update id="deleteProject" parameterType="kr.or.ddit.vo.ProjectVO">
+	  UPDATE PROJECT
+	  	 SET
+	       STATUS_CODE = 'PROJECT_STATE004'
+	   WHERE
+	       P_CODE = #{pCode} 
+   </update>
+   
+   <!-- 프로젝트 상세 조회 -->
+   <select id="selectProject" parameterType="kr.or.ddit.vo.ProjectVO" resultType="kr.or.ddit.vo.ProjectVO">
+   
+	   SELECT
+		     A.P_TITLE
+		    ,A.P_CONTENT 
+		    ,A.P_CREATE_DATE
+		    ,A.P_START_DATE
+		    ,A.P_END_DATE
+		    ,A.P_PART_CODE 
+            ,B.PART_NAME
+		    ,A.STATUS_CODE 
+		FROM
+		    PROJECT A, PROJECT_PART B
+		WHERE A.P_PART_CODE = B.PART_CODE
+          AND A.P_CODE = #{pCode}
+   		
+   </select>
+   
+   <!-- 프로젝트 정보 수정 -->
+   <update id="updateProject" parameterType="kr.or.ddit.vo.ProjectVO">
+   		UPDATE PROJECT
+		   SET
+			    P_TITLE = #{pTitle}, 
+			    P_CONTENT = #{pContent},
+			    P_PART_CODE = #{pPartCode}
+		 WHERE
+			    P_CODE = #{pCode}
+   </update>
+   
+   
+   <!-- PL 권한 확인 -->
+   <select id="selectPosition" parameterType="kr.or.ddit.vo.ProjectVO" resultType="kr.or.ddit.vo.ProjectVO">
+   		SELECT POSITION
+		  FROM P_MEM
+		 WHERE MEM_ID = #{memId}
+		   AND P_CODE = #{pCode}
+   </select>
+   
+   <!-- 프로젝트 멤버 정보 리스트 -->
+   <select id="listProjectMember" parameterType="kr.or.ddit.vo.ProjectVO" resultType="kr.or.ddit.vo.ProjectVO">
+	   	SELECT B.MEM_ID, B.MEM_NICKNAME, B.MEM_MAIL, A.POSITION, A.WORK_TIME, A.OUT_STATUS
+		FROM P_MEM A, MEMBER B
+		WHERE A.MEM_ID = B.MEM_ID
+		  AND A.P_CODE = #{pCode}
+   </select>
+   
+   
+   <!-- 프로젝트 멤버 삭제 -->
+   <update id="deleteProjectMember" parameterType="kr.or.ddit.vo.ProjectVO">
+   	UPDATE P_MEM
+   	   SET OUT_STATUS = '1'
+	 WHERE MEM_ID = #{memId}
+	   AND P_CODE = #{pCode}
+   
+   </update>
+
+   
+</mapper>

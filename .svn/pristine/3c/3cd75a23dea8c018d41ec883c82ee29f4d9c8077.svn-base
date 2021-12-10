@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.dashboardPl.dao.PLDashboardDAO">
+
+	<!-- 업무 담당자별 할당 비율  -->
+	<select id="taskManagerRatio" resultType="PLDashboardVO">
+		SELECT DISTINCT c.mem_id, MEM_NICKNAME,task_count, p_code
+		  FROM
+		        (SELECT
+				    a.mem_id,
+				    MEM_NICKNAME,
+				    count(a.mem_id) task_count		    
+				FROM
+				    work a,
+				    member b
+				where
+				    a.mem_id = b.mem_id
+				group by a.mem_id, MEM_NICKNAME 
+		        )c,
+		        (SELECT
+		            mem_id,
+		            p_code
+		         from
+		            work
+		        )d
+		  where
+		    c.mem_id = d.mem_id
+		   and
+		    p_code = 'PROJECT00004' 
+	
+	</select>
+	
+	<!-- 요청받은건 요청한건 에대한 그래프 -->
+	<select id="issueManagement" resultType="PLDashboardVO">
+	select DISTINCT c.mem_id, recipient_count, issue_count, p_code
+	  from (
+	        SELECT
+	            count(a.mem_id) recipient_count
+	            , a.mem_id
+	        FROM
+	            issue_recipient a, issue b
+	        where
+	            a.mem_id = b.mem_id
+	        group by a.mem_id
+	        )c,
+	        
+	        (SELECT
+	            count(mem_id)issue_count
+	            ,mem_id    
+	        FROM
+	            issue
+	        group by mem_id
+	        )d,
+	        (
+	        select
+	            mem_id
+	            ,p_code
+	          from
+	            issue           
+	        )e       
+	 where
+	      c.mem_id = d.mem_id
+	   and   
+	      c.mem_id(+) = e.mem_id
+	   and
+	      p_code = 'PROJECT00004'
+	
+	</select>
+	
+	<!-- 긴급업무 요청 횟수 -->
+	<select id="emergencytask" resultType="PLDashboardVO">
+		SELECT
+		    work_code,
+		    work_name,
+		    work_progress.progress_name,
+		    importance.importance_name,
+		    level
+		FROM
+		    work
+		    INNER JOIN work_progress ON work.progress = work_progress.progress
+		    INNER JOIN importance ON work.importance = importance.importance
+		WHERE
+		    p_code = 'PROJECT00004'
+		    AND   mem_id = 'aa002'
+		    AND   work.importance = 'IMPORTANCE001'
+		START WITH
+		    top_work_code IS NULL
+		CONNECT BY
+		    PRIOR work_code = top_work_code
+		ORDER BY
+		    work_code
+    
+	</select>
+
+	<!-- 업무들의 이름, 진행도, 중요도를 나타냅니다. -->
+	<select id="topTaskStatus" resultType="PLDashboardVO">
+	SELECT
+	    work_code,
+	    work_name,
+	    work_progress.progress_name,
+	    importance.importance_name,
+	    level
+	FROM
+	    work
+	    INNER JOIN work_progress ON work.progress = work_progress.progress
+	    INNER JOIN importance ON work.importance = importance.importance
+	WHERE
+	    p_code = 'PROJECT00004'
+	    AND   mem_id = 'aa002'
+	    AND   work.importance = 'IMPORTANCE001'
+	START WITH
+	    top_work_code IS NULL
+	CONNECT BY
+	    PRIOR work_code = top_work_code
+	ORDER BY
+	    work_code
+	</select>
+	
+	<!-- 사용자 업무별  -->
+	<select id="teamState" resultType="PLDashboardVO">
+		SELECT DISTINCT B.MEM_ID, MEM_NICKNAME, NVL(A.TODO,0) TODO, NVL(C.PROCESS,0) PROCESS , NVL(D.DONE,0) DONE
+			FROM WORK B,
+			    (SELECT MEM_ID, COUNT(*) TODO
+			    FROM WORK
+			    WHERE WORK_STATUS = 'STATUS001'
+			    AND P_CODE = 'PROJECT00004'
+			    GROUP BY MEM_ID) A,
+			    (SELECT MEM_ID, COUNT(*) PROCESS
+			    FROM WORK
+			    WHERE WORK_STATUS = 'STATUS002'
+			    AND P_CODE = 'PROJECT00004'
+			    GROUP BY MEM_ID) C,
+			    (SELECT MEM_ID, COUNT(*) DONE
+			    FROM WORK
+			    WHERE WORK_STATUS = 'STATUS003'
+			    AND P_CODE = 'PROJECT00004'
+			    GROUP BY MEM_ID) D,
+	            (SELECT MEM_ID, MEM_NICKNAME
+	            FROM MEMBER)E
+			WHERE A.MEM_ID(+) = B.MEM_ID
+			AND   C.MEM_ID(+) = B.MEM_ID
+			AND   D.MEM_ID(+) = B.MEM_ID
+	        AND   E.MEM_ID(+) = B.MEM_ID
+			AND   P_CODE = 'PROJECT00004'
+
+
+	</select>
+</mapper>

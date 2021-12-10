@@ -1,0 +1,96 @@
+package kr.or.ddit.vo;
+
+public class IssueVO {
+	
+	private String issueCode;
+	private String pCode;
+	private String memId;
+	private String workCode;
+	private String issueTypeCode;
+	private String issueName;
+	private String issueContents;
+	private String importance;
+	
+	private String memNickname;
+	
+	public String getMemNickname() {
+		return memNickname;
+	}
+	public void setMemNickname(String memNickname) {
+		this.memNickname = memNickname;
+	}
+	public String getIssueCode() {
+		return issueCode;
+	}
+	public void setIssueCode(String issueCode) {
+		this.issueCode = issueCode;
+	}
+	public String getpCode() {
+		return pCode;
+	}
+	public void setpCode(String pCode) {
+		this.pCode = pCode;
+	}
+	public String getMemId() {
+		return memId;
+	}
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	public String getWorkCode() {
+		return workCode;
+	}
+	public void setWorkCode(String workCode) {
+		this.workCode = workCode;
+	}
+	public String getIssueTypeCode() {
+		return issueTypeCode;
+	}
+	public void setIssueTypeCode(String issueTypeCode) {
+		this.issueTypeCode = issueTypeCode;
+	}
+	public String getIssueName() {
+		return issueName;
+	}
+	public void setIssueName(String issueName) {
+		this.issueName = issueName;
+	}
+	public String getIssueContents() {
+		return issueContents;
+	}
+	public void setIssueContents(String issueContents) {
+		this.issueContents = issueContents;
+	}
+	public String getImportance() {
+		return importance;
+	}
+	public void setImportance(String importance) {
+		this.importance = importance;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((issueCode == null) ? 0 : issueCode.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IssueVO other = (IssueVO) obj;
+		if (issueCode == null) {
+			if (other.issueCode != null)
+				return false;
+		} else if (!issueCode.equals(other.issueCode))
+			return false;
+		return true;
+	}
+	
+	
+}

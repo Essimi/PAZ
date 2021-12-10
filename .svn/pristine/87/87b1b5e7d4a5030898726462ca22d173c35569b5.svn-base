@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+	{
+	margin-left: 0px;
+}
+
+#QnA_WriteButton {
+	margin-top: 15px;
+	height: 38px;
+}
+
+#pagingArea {
+	background-color: white;
+	float: right;
+}

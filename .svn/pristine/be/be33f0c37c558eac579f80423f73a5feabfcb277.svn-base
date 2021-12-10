@@ -1,0 +1,41 @@
+package kr.or.ddit.admin.dashboard.dao;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import kr.or.ddit.vo.AdminDashboardVO;
+import kr.or.ddit.vo.DataListVO;
+
+@Repository
+public interface DashboardDAO {
+	
+	/**
+	 * 결제/환불 대시보드
+	 * @param DataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> selectPayDashInfo(DataListVO<AdminDashboardVO> DataListVO);
+	
+	/**
+	 * 연령별 대시보드
+	 * @param dataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> selectMemAgeDash(DataListVO<AdminDashboardVO>dataListVO);
+	
+	/**
+	 * 소속별 대시보드
+	 * @param dataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> selectClassification(DataListVO<AdminDashboardVO>dataListVO);
+
+
+	/**
+	 * 회원 성비 그래프
+	 * @param dataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> selectGenderDashboard(DataListVO<AdminDashboardVO>dataListVO);
+}

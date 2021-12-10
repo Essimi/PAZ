@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.dashboard.dao.PEDashBoardDAO">
+
+	<!-- 해당 프로젝트에서의 내 총 업무 수량과, 지금까지 완료한 업무의 수량을 출력합니다. -->
+	<select id="projectMyStatus" parameterType="DashBoardVO" resultType="DashBoardVO">
+		SELECT A.MY_WORK, B.MY_WORK_DONE
+    	FROM
+		    (SELECT COUNT(*) MY_WORK
+		    FROM WORK
+		    WHERE P_CODE = #{pCode}
+		    AND MEM_ID = #{memId}) A,
+		    (SELECT COUNT(*) MY_WORK_DONE
+		     FROM WORK
+		     WHERE P_CODE = #{pCode}
+		     AND WORK_STATUS = 'STATUS003'
+		     AND MEM_ID = #{memId}) B
+	</select>
+	
+	<!-- 해당 프로젝트에서의 총 업무 수량과 현재 날짜 기준 일주일 안에 발생한 업무의 수량을 나타냅니다. -->
+	<select id="projectAllTaskStatus" parameterType="DashBoardVO" resultType="DashBoardVO">
+		SELECT A.TOTAL_WORK_COUNT, B.WEEK_WORK_COUNT
+		FROM
+		    (SELECT COUNT(*) TOTAL_WORK_COUNT
+		     FROM WORK
+		     WHERE P_CODE = #{pCode}) A,
+		    (SELECT COUNT(*) WEEK_WORK_COUNT
+		     FROM WORK
+		     <![CDATA[
+		     WHERE WORK_START >= TO_CHAR(SYSDATE - 7, 'YYYY-MM-DD')
+		     ]]>
+		     ORDER BY WORK_START) B
+	</select>
+	
+
+	<!-- 업무들의 이름, 진행도, 중요도를 나타냅니다. -->
+	<select id="topTaskStatus" parameterType="DashBoardVO" resultType="DashBoardVO">
+		SELECT WORK_CODE, WORK_NAME, WORK_PROGRESS.PROGRESS_NAME, IMPORTANCE.IMPORTANCE_NAME, LEVEL
+		FROM WORK
+		INNER JOIN WORK_PROGRESS ON WORK.PROGRESS = WORK_PROGRESS.PROGRESS
+		INNER JOIN IMPORTANCE ON WORK.IMPORTANCE = IMPORTANCE.IMPORTANCE
+		WHERE P_CODE = #{pCode}
+		AND MEM_ID = #{memId}
+		START WITH TOP_WORK_CODE IS NULL
+		CONNECT BY PRIOR WORK_CODE = TOP_WORK_CODE
+		ORDER BY WORK_CODE
+	</select>
+	
+	<!-- 해당 프로젝트의 올해 발생 이슈들의 달 값만 추출한 후 해당 달의 이슈 발생건을 출력합니다.(개인) -->
+	<select id="projectMonthIssue" parameterType="DashBoardVO" resultType="DashBoardVO">
+		SELECT TO_CHAR(ISSUE_DATE, 'MM') ISSUE_DATE, COUNT(*) ISSUE_COUNT
+		FROM ISSUE
+		WHERE P_CODE = #{pCode}
+		AND TO_CHAR(SYSDATE, 'YYYY') = TO_CHAR(ISSUE_DATE, 'YYYY')
+		AND MEM_ID = #{memId}
+		GROUP BY TO_CHAR(ISSUE_DATE, 'MM')
+		<![CDATA[
+		HAVING COUNT(*) >= 1
+		]]>
+		ORDER BY ISSUE_DATE
+	</select>
+	
+	<!-- 해당 프로젝트의 올해 진행기간 중 가장 많은 이슈가 발생한 달 순으로(4등 까지) 추출합니다. -->
+	<select id="projectMonthIssueRank" parameterType="DashBoardVO" resultType="DashBoardVO">
+		 SELECT * FROM(
+	        SELECT A.*, ROWNUM RNUM FROM
+	            (SELECT TO_CHAR(ISSUE_DATE, 'MM') ISSUE_DATE, COUNT(*) ISSUE_COUNT
+	            FROM ISSUE
+	            WHERE P_CODE = #{pCode}
+	            AND TO_CHAR(SYSDATE, 'YYYY') = TO_CHAR(ISSUE_DATE, 'YYYY')
+	            AND MEM_ID = #{memId}
+	            GROUP BY TO_CHAR(ISSUE_DATE, 'MM')
+	            <![CDATA[
+	            HAVING COUNT(*) >= 1
+	            ORDER BY ISSUE_COUNT DESC) A)
+	    WHERE RNUM <= 4
+	    ]]>
+	</select>
+	
+	<!-- 해당 프로젝트에서 나의 업무들의 상태를 추출합니다.(상태의 수 가 없다면 0 을 출력합니다.) -->
+	<select id="myTaskStatus" parameterType="DashBoardVO" resultType="DashBoardVO">
+		SELECT A.WORK_STATUS, A.WORK_STATUS_NAME, NVL(B.WORK_STATUS_COUNT, 0) AS WORK_STATUS_COUNT
+    	FROM WORK_STATUS A LEFT OUTER JOIN
+	       (SELECT WORK_STATUS, COUNT(*) WORK_STATUS_COUNT
+	        FROM WORK
+	        WHERE P_CODE = #{pCode}
+	        AND MEM_ID = #{memId}
+	        GROUP BY WORK_STATUS) B ON A.WORK_STATUS = B.WORK_STATUS
+		ORDER BY A.WORK_STATUS
+	</select>
+	
+	<!-- 해당 프로젝트에서 나의 이슈들의 상태 수 를 추출합니다. -->
+	<select id = "myIssueStatus" parameterType="DashBoardVO" resultType="DashBoardVO">
+		 SELECT A.IMPORTANCE, A.IMPORTANCE_NAME, NVL(B.IMPORTANCE_COUNT, 0) AS IMPORTANCE_COUNT
+		 FROM IMPORTANCE A LEFT OUTER JOIN
+		    (SELECT IMPORTANCE, COUNT(*) IMPORTANCE_COUNT
+			 FROM ISSUE
+			 WHERE P_CODE = #{pCode}
+			 AND MEM_ID = #{memId}
+		 GROUP BY IMPORTANCE) B ON A.IMPORTANCE = B.IMPORTANCE
+	</select>
+	
+	<!-- 해당 프로젝트에서 개인의 가장 상위 업무의 이슈 발생건 을 추출합니다. -->
+	<select id = "rootTaskIssue" parameterType="DashBoardVO" resultType="DashBoardVO">
+		SELECT A.WORK_CODE, A.WORK_NAME, COUNT(*) ISSUE_COUNT
+		    FROM ISSUE,
+		    (SELECT WORK_CODE, WORK_NAME
+		    FROM WORK
+		    WHERE P_CODE = #{pCode}
+		    AND MEM_ID = #{memId}
+		    AND TOP_WORK_CODE IS NULL) A
+		WHERE A.WORK_CODE = ISSUE.WORK_CODE
+		GROUP BY A.WORK_CODE, A.WORK_NAME
+		ORDER BY A.WORK_CODE
+	</select>
+</mapper>

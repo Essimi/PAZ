@@ -1,0 +1,140 @@
+package kr.or.ddit.vo;
+
+import java.io.Serializable;
+
+/**
+ * 
+ * ValueObject(DataTransferObject, Model, Bean)
+ * JavaBean 규약
+ *
+ * 1. 값을 가질 수 있는 property 정의
+ * 2. property encpsulation
+ * 3. 캡슐화된 property에 접근할 수 있는 인터페이스 제공 (getter/setter)
+ * 4. property 의 상태를 비교할 수 있는 방법 제공
+ * 5. 정렬의 기준을 제공
+ * 6. property의 상태 확인 방법 제공
+ * 7. Serializable 선언
+ */
+
+public class PayRefundVO implements Comparable<PayRefundVO>, Serializable{
+	
+	public PayRefundVO() {
+		super();
+	}
+	
+	private String pCode; // DB에선 안 쓰는 값
+	
+	private String payCode;
+		
+	private String refundCode;
+	
+	private String refundDetail;
+	
+	private String refundDate;
+
+	
+	
+
+
+	public String getRefundCode() {
+		return refundCode;
+	}
+
+	public void setRefundCode(String refundCode) {
+		this.refundCode = refundCode;
+	}
+
+	public String getpCode() {
+		return pCode;
+	}
+
+	public void setpCode(String pCode) {
+		this.pCode = pCode;
+	}
+
+	public String getPayCode() {
+		return payCode;
+	}
+
+	public void setPayCode(String payCode) {
+		this.payCode = payCode;
+	}
+
+	public String getRefundDetail() {
+		return refundDetail;
+	}
+
+	public void setRefundDetail(String refundDetail) {
+		this.refundDetail = refundDetail;
+	}
+
+	public String getRefundDate() {
+		return refundDate;
+	}
+
+	public void setRefundDate(String refundDate) {
+		this.refundDate = refundDate;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((pCode == null) ? 0 : pCode.hashCode());
+		result = prime * result + ((payCode == null) ? 0 : payCode.hashCode());
+		result = prime * result + ((refundDate == null) ? 0 : refundDate.hashCode());
+		result = prime * result + ((refundDetail == null) ? 0 : refundDetail.hashCode());
+		result = prime * result + ((refundCode == null) ? 0 : refundCode.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PayRefundVO other = (PayRefundVO) obj;
+		if (pCode == null) {
+			if (other.pCode != null)
+				return false;
+		} else if (!pCode.equals(other.pCode))
+			return false;
+		if (payCode == null) {
+			if (other.payCode != null)
+				return false;
+		} else if (!payCode.equals(other.payCode))
+			return false;
+		if (refundDate == null) {
+			if (other.refundDate != null)
+				return false;
+		} else if (!refundDate.equals(other.refundDate))
+			return false;
+		if (refundDetail == null) {
+			if (other.refundDetail != null)
+				return false;
+		} else if (!refundDetail.equals(other.refundDetail))
+			return false;
+		if (refundCode == null) {
+			if (other.refundCode != null)
+				return false;
+		} else if (!refundCode.equals(other.refundCode))
+			return false;
+		return true;
+	}
+
+	
+	@Override
+	public String toString() {
+		return "PayRefundVO [pCode=" + pCode + ", payCode=" + payCode + ", refund_code=" + refundCode
+				+ ", refundDetail=" + refundDetail + ", refundDate=" + refundDate + "]";
+	}
+
+	@Override
+	public int compareTo(PayRefundVO payRefund) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+}

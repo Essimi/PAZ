@@ -1,0 +1,122 @@
+package kr.or.ddit.common.qna.controller;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import kr.or.ddit.common.qna.service.QnAService;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.MemberVO;
+import kr.or.ddit.vo.QnaVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+public class QnAWriteController {
+	
+	@Inject
+	private QnAService service;
+	
+// 고객센터 게시글의 상세조회 입니다.
+	
+	@RequestMapping("project/qnaView.do")
+	public String qnaView(@RequestParam("QnANo") String qandaCode, Model model){
+			
+		QnaVO qna = service.retrieveQnA(qandaCode);
+		
+		log.info("test : {}", qna);
+		
+		model.addAttribute("qna", qna);
+			
+		return "serviceCenter/QnAView";
+	}
+	
+//  글 작성 폼으로 이동 입니다.
+//  글 신규 작성	
+	
+	@RequestMapping("project/qnaWrite.do")
+	public String getQnAWrite(@ModelAttribute("qna") QnaVO qna) {
+	
+		return "serviceCenter/QnAWrite";
+	}
+	
+	@RequestMapping(value = "project/qnaWrite.do", method = RequestMethod.POST)
+	public String postQnAWrite(@Valid @ModelAttribute("qna") QnaVO qna, Errors errors, Model model,
+								@AuthenticationPrincipal(expression="authMember") MemberVO authMember) {
+		
+		String viewName = null;
+		String message = null;
+						
+		qna.setMemId(authMember.getMemId());
+						
+		if(!errors.hasErrors()) {
+			ServiceResult result = service.createQnA(qna);
+			
+			
+			switch (result) {
+			case OK:
+				viewName = "redirect:/project/qnaView.do?QnANo="+qna.getQandaCode();
+				break;
+			default:
+				viewName = "serviceCenter/QnAWrite";
+				message = "알 수 없는 오류입니다. 다시 시도해주세요";
+				break;
+			}
+		}else {
+			viewName = "serviceCenter/QnAWrite";
+		}
+		
+		model.addAttribute("message", message);
+		
+		return viewName;
+	}
+	
+//  글 수정	
+//  글 작성 폼으로 이동 입니다.
+	
+	@RequestMapping("project/qnaUpdate.do")
+	public String getQnAUpdate(@ModelAttribute("qna") QnaVO qna) {
+	
+		return "serviceCenter/QnAWrite";
+	}
+	
+	@RequestMapping(value = "project/qnaUpdate.do", method = RequestMethod.POST)
+	public String postQnAUpdate(@Valid @ModelAttribute("qna") QnaVO qna, Errors errors, 
+			                   @RequestParam("QnANo") String qandaCode, Model model,
+			                   @AuthenticationPrincipal(expression="authMember") MemberVO authMember) {
+				
+		String viewName = null;
+		String message = null;
+		
+		qna.setQandaCode(qandaCode);
+		qna.setMemId(authMember.getMemId());
+				
+		if(!errors.hasErrors()) {
+			ServiceResult result = service.modifyQnA(qna);
+			
+			switch (result) {
+			case OK:
+				viewName = "redirect:/project/qnaView.do?QnANo="+qna.getQandaCode();
+				break;
+			default:
+				viewName = "serviceCenter/QnAWrite";
+				message = "알 수 없는 오류입니다. 다시 시도해주세요";
+				break;
+			}
+		}else {
+			viewName = "serviceCenter/QnAWrite";
+		}
+		
+		model.addAttribute("message", message);
+		
+		return viewName;
+	}
+}

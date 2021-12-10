@@ -1,0 +1,67 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+    
+    
+<style>
+#content{	
+	padding : 30px;
+}
+
+body{
+font-family: 'Black Han Sans', sans-serif;
+
+}
+
+#monthIssueCardArea{
+	height: 100px;
+}
+
+
+</style>
+
+<!-- 페이지 메인 문구 -->
+<div class="container-fluid">
+	<div class="row mb-2">
+		<div class="col-sm-6">
+			<h1>Main Page</h1>
+		</div>
+	</div>
+</div>
+
+
+<div class="row" id = "monthIssueCardArea">
+	<div class="col-md-12">
+		<div class="card" id = "monthIssueCard">
+			<div class="card-header">
+				<h5 class="card-title">월간 이슈</h5>
+			</div>
+					
+			<div class="card-body">
+				<!-- body 영역 -->
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<div class="card" id = "monthIssueCard">
+			<div class="card-header">
+				<h5 class="card-title">월간 이슈</h5>
+			</div>
+					
+			<div class="card-body">
+				<!-- body 영역 -->
+			</div>
+		</div>
+	</div>
+</div>
+   
+    
+    
+ 

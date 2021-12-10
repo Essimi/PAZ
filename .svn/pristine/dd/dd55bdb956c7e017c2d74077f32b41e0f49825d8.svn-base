@@ -1,0 +1,19 @@
+package kr.or.ddit.error;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class AccessDenied {
+	
+	@RequestMapping("error/accessDenied.do")
+	public String accessDenied(Model model) {
+		
+		// security  - accessDenied 관련 Class
+		// 미사용
+	
+		return "errorPage/accessDenied";
+		
+	}
+}

@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+encoding//webapp/WEB-INF/views/dashBoard/pedashboard.jsp=UTF-8
+encoding//webapp/WEB-INF/views/error/accessDenied.jsp=UTF-8
+encoding//webapp/WEB-INF/views/gitHub/gitHubTeam.jsp=UTF-8
+encoding//webapp/resources/tilesData/personalScript/serviceCenter/QnAWritePOST.jsp=UTF-8

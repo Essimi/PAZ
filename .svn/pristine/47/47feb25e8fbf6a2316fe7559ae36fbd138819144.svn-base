@@ -1,0 +1,40 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+
+
+<!-- 페이지 메인 문구 -->
+<div class="container-fluid">
+	<div class="row mb-2">
+		<div class="col-sm-6">
+			<h1>PL BOARD</h1>
+		</div>
+	</div>
+</div>
+
+<div class = "invoice mb-3" id = "firstCard">
+pl 그래프 할꺼니까 아무도 건들지마!!!!
+</div>
+
+ <!-- 라인 기준  -->
+        <div style="margin-top:10px; height: 350px;">
+        
+		<!-- 왼쪽 그래프 -->
+        	<div style="height: 500px; width: 50%; float: left; padding-right:10px;">
+		        	<h4 style="margin-bottom: 20px;">업무 담당자별 할당 비율 그래프</h4>
+					<figure class="plTaskManagement-highcharts-figure">
+					  <div id="plTaskManagement"></div>
+					</figure>
+   			 </div>
+   			 
+		<!-- 오른쪽 그래프 -->
+        	<div style="height: 500px; width: 50%; float: right; padding-left: 10px;">
+        	 	<h4 style="margin-bottom: 20px;">회원 소속별 분야 그래프</h4>
+        		<figure class="highcharts-figure">
+				  <div id="container"></div>
+				</figure>
+        	</div>
+        
+        </div>
+

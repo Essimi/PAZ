@@ -1,0 +1,74 @@
+package kr.or.ddit.project.controller;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.project.service.RequestProjectService;
+import kr.or.ddit.vo.RequestProjectVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+public class RequestProjectController {
+	
+	@Inject
+	RequestProjectService service;
+
+
+	// 프로젝트 요청 수락, 거절 선택 시 오는 페이지 
+	@RequestMapping(value="project/requestProject.do")
+	@ResponseBody
+	public String Access(Model model,
+			@RequestParam("value") String value,
+			@RequestParam("memId") String memId,
+			@RequestParam("msg") String msg
+	) throws Exception{
+		
+		ServiceResult result = ServiceResult.FAILED;
+		
+		String[] array = value.split(",");
+		
+		log.info("array : {}, {}, {} ", array[0], array[1], array[2]);
+		
+		String pCode = array[0];
+		String reqCode = array[1];
+		String position = array[2];
+		
+		RequestProjectVO requestProjectVO = new RequestProjectVO();
+		
+		requestProjectVO.setpCode(pCode);
+		requestProjectVO.setMemId(memId);
+		requestProjectVO.setReqCode(reqCode);
+		requestProjectVO.setPosition(position);
+		
+		String roleCode = position + pCode.substring(7);
+		
+		// 역할 코드 넣는 곳 
+		requestProjectVO.setRoleCode(roleCode);
+		
+		log.info("역할코드 {}" , roleCode);
+		
+		
+		
+		if(msg.equals("ok")) {
+			// 요청 수락
+			requestProjectVO.setStatusCode("REQ_STATUS002");
+			result = service.updateRequestProjecOk(requestProjectVO);
+		}else if (msg.equals("faild")) {
+			// statusCode 거절
+			requestProjectVO.setStatusCode("REQ_STATUS003");
+			// status만 업데이트하는거 하나 만들어
+			result = service.updateRequestProjectStatus(requestProjectVO);
+		}
+		
+		log.info("toString {}" , requestProjectVO.toString());
+		
+		return result.toString();
+	}
+}

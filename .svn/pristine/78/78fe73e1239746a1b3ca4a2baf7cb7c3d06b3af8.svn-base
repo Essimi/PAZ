@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+	{
+	margin-left: 0px;
+}
+
+#QnA_main_Content{
+	
+	height: 500px;
+
+}
+
+
+#content {
+	padding: 50px 70px;
+}
+
+.invoice {
+	border-top: 3px solid #17a2b8;
+    border-radius: 10px;
+}
+
+.fa-chalkboard-teacher {
+	margin-right:10px;
+}
+	
+.col-12 h4 {
+	margin-top: 10px;
+}
+
+.card-primary.card-outline {
+	border-top: none;
+}
+
+.mailbox-read-info, .mailbox-read-message{
+	padding : 20px;
+}

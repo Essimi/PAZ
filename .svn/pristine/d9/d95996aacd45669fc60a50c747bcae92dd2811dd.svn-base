@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.github.dao.GitSettingDAO">
+
+
+    <!-- 로그인한 회원의 정보를 기반으로 Git 정보를 불러옵니다. -->
+	<select id = "selectGitSetting" resultType = "kr.or.ddit.vo.GitVO" parameterType = "kr.or.ddit.vo.GitVO">
+	
+		SELECT *
+		FROM GITHUB_INFO
+		WHERE P_CODE = #{pCode}
+		AND MEM_ID = #{memId}
+	
+	</select>
+	
+	<insert id = "insertGitRepo" parameterType = "kr.or.ddit.vo.GitVO">
+	
+		INSERT INTO GITHUB_INFO (
+			P_CODE
+			,REPOSITORY 
+			,TOKEN
+			,USER_NAME
+			,MEM_ID
+			,GIT_DATE
+		)VALUES(
+			#{pCode}
+			,#{repository,jdbcType=VARCHAR}
+			,'TOKEN'
+			,#{userName,jdbcType=VARCHAR}
+			,#{memId}
+			,SYSDATE)
+	</insert>
+
+	<delete id = "deleteGitRepo" parameterType = "String">
+		DELETE GITHUB_INFO
+		WHERE P_CODE = #{pCode}
+
+	</delete>
+
+
+
+
+
+
+
+
+
+
+</mapper>

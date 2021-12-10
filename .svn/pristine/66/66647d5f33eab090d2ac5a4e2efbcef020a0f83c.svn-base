@@ -1,0 +1,180 @@
+package kr.or.ddit.vo;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 
+ * ValueObject(DataTransferObject, Model, Bean) JavaBean 규약
+ *
+ * 1. 값을 가질 수 있는 property 정의 2. property encpsulation 3. 캡슐화된 property에 접근할 수 있는
+ * 인터페이스 제공 (getter/setter) 4. property 의 상태를 비교할 수 있는 방법 제공 5. 정렬의 기준을 제공 6.
+ * property의 상태 확인 방법 제공 7. Serializable 선언
+ */
+public class DashBoardVO implements Comparable<DashBoardVO>, Serializable {
+
+	public DashBoardVO() {
+		super();
+	}
+
+	private String pCode;
+
+	private String memId;
+
+	private Integer myWork;
+
+	private String workCode;
+
+	private String workName;
+
+	private String progressName;
+
+	private Integer myWorkDone;
+
+	private Integer totalWorkCount;
+
+	private Integer weekWorkCount;
+
+	private Integer issueDate;
+
+	private Integer issueCount;
+	
+	private List<DashBoardVO> dashList;
+	
+	
+
+	public List<DashBoardVO> getDashList() {
+		return dashList;
+	}
+
+	public void setDashList(List<DashBoardVO> dashList) {
+		this.dashList = dashList;
+	}
+
+	public String getpCode() {
+		return pCode;
+	}
+
+	public void setpCode(String pCode) {
+		this.pCode = pCode;
+	}
+
+	public String getMemId() {
+		return memId;
+	}
+
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+
+	public Integer getMyWork() {
+		return myWork;
+	}
+
+	public void setMyWork(Integer myWork) {
+		this.myWork = myWork;
+	}
+
+	public String getWorkCode() {
+		return workCode;
+	}
+
+	public void setWorkCode(String workCode) {
+		this.workCode = workCode;
+	}
+
+	public String getWorkName() {
+		return workName;
+	}
+
+	public void setWorkName(String workName) {
+		this.workName = workName;
+	}
+
+	public String getProgressName() {
+		return progressName;
+	}
+
+	public void setProgressName(String progressName) {
+		this.progressName = progressName;
+	}
+
+	public Integer getMyWorkDone() {
+		return myWorkDone;
+	}
+
+	public void setMyWorkDone(Integer myWorkDone) {
+		this.myWorkDone = myWorkDone;
+	}
+
+	public Integer getTotalWorkCount() {
+		return totalWorkCount;
+	}
+
+	public void setTotalWorkCount(Integer totalWorkCount) {
+		this.totalWorkCount = totalWorkCount;
+	}
+
+	public Integer getWeekWorkCount() {
+		return weekWorkCount;
+	}
+
+	public void setWeekWorkCount(Integer weekWorkCount) {
+		this.weekWorkCount = weekWorkCount;
+	}
+
+	public Integer getIssueDate() {
+		return issueDate;
+	}
+
+	public void setIssueDate(Integer issueDate) {
+		this.issueDate = issueDate;
+	}
+
+	public Integer getIssueCount() {
+		return issueCount;
+	}
+
+	public void setIssueCount(Integer issueCount) {
+		this.issueCount = issueCount;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((pCode == null) ? 0 : pCode.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DashBoardVO other = (DashBoardVO) obj;
+		if (pCode == null) {
+			if (other.pCode != null)
+				return false;
+		} else if (!pCode.equals(other.pCode))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(DashBoardVO dashBoard) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return "DashBoardVO [pCode=" + pCode + ", memId=" + memId + ", myWork=" + myWork + ", workCode=" + workCode
+				+ ", workName=" + workName + ", progressName=" + progressName + ", myWorkDone=" + myWorkDone
+				+ ", totalWorkCount=" + totalWorkCount + ", weekWorkCount=" + weekWorkCount + ", issueDate=" + issueDate
+				+ ", issueCount=" + issueCount + ", dashList=" + dashList + "]";
+	}
+}

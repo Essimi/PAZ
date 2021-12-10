@@ -1,0 +1,23 @@
+package kr.or.ddit.review.controller;
+
+import javax.inject.Inject;
+
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.review.service.ReviewService;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class ReviewController {
+	
+	@Inject
+	ReviewService service;
+	
+	
+	public void updateReviewStatus (){
+		
+		ServiceResult result = service.updateReviewStatus();
+		
+		log.info("***********"+ result.toString() + "****************");
+
+	}
+}

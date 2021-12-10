@@ -1,0 +1,56 @@
+package kr.or.ddit.vo;
+
+public class AlarmRecipientVO {
+	
+	private String alarmCode; // 알람코드
+	private String memId; // 알람을 확인 할 회원의 아이디
+	
+	public String getAlarmCode() {
+		return alarmCode;
+	}
+	public void setAlarmCode(String alarmCode) {
+		this.alarmCode = alarmCode;
+	}
+	public String getMemId() {
+		return memId;
+	}
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((alarmCode == null) ? 0 : alarmCode.hashCode());
+		result = prime * result + ((memId == null) ? 0 : memId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AlarmRecipientVO other = (AlarmRecipientVO) obj;
+		if (alarmCode == null) {
+			if (other.alarmCode != null)
+				return false;
+		} else if (!alarmCode.equals(other.alarmCode))
+			return false;
+		if (memId == null) {
+			if (other.memId != null)
+				return false;
+		} else if (!memId.equals(other.memId))
+			return false;
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return "AlarmRecipientVO [alarmCode=" + alarmCode + ", memId=" + memId + "]";
+	}	
+	
+}

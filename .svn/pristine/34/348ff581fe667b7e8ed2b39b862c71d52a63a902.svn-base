@@ -1,0 +1,13 @@
+package kr.or.ddit.dashboardPl.service;
+
+import java.util.List;
+
+import kr.or.ddit.vo.PLDashboardVO;
+
+public interface PLDashboardService {
+	/**
+	 * 업무 담당자별 할당 비율
+	 * @return
+	 */
+	public List<PLDashboardVO>  taskManagerRatio();
+}

@@ -1,0 +1,59 @@
+package kr.or.ddit.chat.controller;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.chat.service.ChattingService;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.ChatRoomVO;
+import kr.or.ddit.vo.MemberVO;
+import lombok.extern.slf4j.Slf4j;
+
+@Controller
+@Slf4j
+public class ChatRoomMakeController {
+	
+	@Inject
+	private ChattingService service;
+	
+	@RequestMapping(value="chat/makeChat.do", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> chattingMain(
+			@RequestParam(value="memberList[]", required=true)List<String> memberList
+			,@RequestParam(value="chatTitle", required=true) String chatTitle
+			,@AuthenticationPrincipal(expression="authMember") MemberVO authMember
+			,Model model
+			
+			) {
+		
+		// chatVO에 정보를 담아 서비스 단으로 전달한다.
+		
+		ChatRoomVO chat = new ChatRoomVO();
+		
+		chat.setChatroomCreator(authMember.getMemId());
+		chat.setChatroomTitle(chatTitle);
+		chat.setpCode("PROJECT00008");
+		
+		ServiceResult result = service.insertChatRoom(chat, memberList);
+		
+		log.info("결과값 확인 {}",result);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("result", result);
+		
+		return map;
+	}
+
+}

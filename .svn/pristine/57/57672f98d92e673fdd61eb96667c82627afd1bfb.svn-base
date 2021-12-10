@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.news.dao.NewsReplyDAO">
+
+	<insert id="insertNewsReply" parameterType="NewsReplyVO">
+		<selectKey keyProperty="commentCode" resultType="String" order="BEFORE"> 
+			SELECT NVL(MAX(COMMENT_CODE), 0) + 1 
+			FROM NEWS_COMMENT </selectKey>
+		INSERT INTO news_comment (
+		comment_code,
+		news_code,
+		comment_content,
+		comment_date,
+		mem_id
+		) VALUES (
+		#{commentCode, jdbcType=VARCHAR},
+		#{newsCode, jdbcType=VARCHAR},
+		#{commentContent, jdbcType=CLOB},
+		SYSDATE,
+		'aa001'
+		)
+
+	</insert>
+
+	<!-- <select id="newsReplyList" parameterType="NewsReplyVO" -->
+	<!-- resultType="NewsReplyVO"> -->
+	<!-- SELECT -->
+	<!-- comment_code, -->
+	<!-- news_code, -->
+	<!-- comment_content, -->
+	<!-- comment_date, -->
+	<!-- mem_id -->
+	<!-- FROM -->
+	<!-- news_comment -->
+
+	<!-- </select> -->
+
+	<select id="selectNewsReply" resultType="NewsReplyVO">
+		SELECT
+		comment_code,
+		news_code,
+		comment_content,
+		comment_date,
+		mem_id
+		FROM
+		news_comment
+		WHERE
+		COMMENT_CODE = #{commentCode}
+
+	</select>
+
+	<update id="updateNewsReply">
+		UPDATE news_comment
+		SET
+		comment_content =
+		#{commentContent},
+		comment_date = SYSDATE
+		WHERE
+		comment_code =
+		#{commentCode}
+	</update>
+
+	<delete id="deleteNewsReply">
+		DELETE FROM news_comment
+		WHERE
+		comment_code =
+		#{commentCode}
+
+	</delete>
+
+
+
+
+</mapper>

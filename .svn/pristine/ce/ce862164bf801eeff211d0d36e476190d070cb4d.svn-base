@@ -1,0 +1,38 @@
+package kr.or.ddit.admin.dashboard.service;
+
+import java.util.List;
+
+import kr.or.ddit.vo.AdminDashboardVO;
+import kr.or.ddit.vo.DataListVO;
+
+public interface DashboardService {
+
+	/**
+	 * 결제/환불 대시보드 리스트
+	 * @param dataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> payInfoList(DataListVO<AdminDashboardVO> dataListVO);
+
+	/**
+	 * 회원 연령별 대시보드 리스트
+	 * @param dataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> memAgeList(DataListVO<AdminDashboardVO> dataListVO);
+
+	/**
+	 * 회원 소속분류별 대시보드 리스트
+	 * @param dataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> memClassificationList(DataListVO<AdminDashboardVO> dataListVO);
+
+	
+	/**
+	 * 회원 성별 비율 대시보드 리스트
+	 * @param dataListVO
+	 * @return
+	 */
+	public List<AdminDashboardVO> memGenderList(DataListVO<AdminDashboardVO> dataListVO);
+}
