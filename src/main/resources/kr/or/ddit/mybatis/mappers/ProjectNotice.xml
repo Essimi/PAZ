@@ -31,7 +31,7 @@
 		,NOTICE_CODE
 		,NOTICE_TITLE
 		,NOTICE_CONTENTS
-		,NOTICE_DATE
+		,TO_CHAR(NOTICE_DATE, 'YYYY-MM-DD') NOTICE_DATE
 		FROM NOTICE
 		WHERE PART_CODE = #{detailSearch.partCode}
 		ORDER BY NOTICE_DATE DESC
@@ -43,5 +43,86 @@
 		]]>
 	
 	</select>
+	
+	
+	<resultMap type="kr.or.ddit.vo.NoticeVO" id="noticeMap" autoMapping="true">
+		<id property="noticeCode" column="NOTICE_CODE"/>
+		<association property="attatch" autoMapping="true" />
+	</resultMap>
+	
+	
+	<select id="selectProjectNotice" resultMap="noticeMap">
+	
+		SELECT 
+	
+		PART_CODE
+		,NOTICE.MEM_ID
+		,NOTICE.NOTICE_CODE
+		,NOTICE.NOTICE_TITLE
+		,NOTICE.NOTICE_CONTENTS
+		,NOTICE.NOTICE_DATE
+		
+		,ATTATCH.FILE_CODE
+		,ATTATCH.REAL_NAME
+		,ATTATCH.SAVE_NAME
+		,ATTATCH.FILE_MIME
+		,ATTATCH.FILE_SIZE
+		,ATTATCH.P_CODE
+		
+		FROM
+		
+		NOTICE LEFT OUTER JOIN ATTATCH
+		ON(NOTICE.NOTICE_CODE  = ATTATCH.POST_CODE)
+		
+		<![CDATA[
+			WHERE NOTICE_CODE = #{noticeCode}
+		]]>
+		
+	</select>
+	
+	<select id="selectProjectNoticeCode" resultType="string">
+		SELECT 'NOTICE' || LPAD(NOTICE_SEQ.NEXTVAL, 5, '0') FROM DUAL
+	</select>
+	
+	<insert id="insertProjectNotice" parameterType="kr.or.ddit.vo.NoticeVO">
+		INSERT INTO NOTICE (
+		    PART_CODE
+		    ,MEM_ID
+		    ,NOTICE_CODE
+		    ,NOTICE_TITLE
+		    ,NOTICE_CONTENTS
+		    ,NOTICE_DATE
+		) VALUES (
+		    #{partCode,jdbcType=VARCHAR}
+		    ,#{memId,jdbcType=VARCHAR}
+		    ,#{noticeCode,jdbcType=VARCHAR}
+		    ,#{noticeTitle,jdbcType=VARCHAR}
+		    ,#{noticeContents,jdbcType=CLOB}
+		    ,SYSDATE
+		)
+	</insert>
+	
+	<update id="updateProjectNotice">
+	
+		UPDATE NOTICE
+		SET 
+		
+		NOTICE_TITLE = #{noticeTitle,jdbcType=VARCHAR}
+		,NOTICE_CONTENTS = #{noticeContents,jdbcType=CLOB}
+		
+		<![CDATA[
+			WHERE NOTICE_CODE = #{noticeCode}
+		]]>
+	
+	</update>
+	
+	<delete id="deleteProjectNotice" parameterType="string">
+		DELETE 
+		FROM NOTICE
+		
+		<![CDATA[
+			WHERE NOTICE_CODE = #{noticeCode}
+		]]>
+	</delete>
 
 </mapper>

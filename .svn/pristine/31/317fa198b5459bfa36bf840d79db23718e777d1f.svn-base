@@ -1,0 +1,64 @@
+package kr.or.ddit.alarm.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import kr.or.ddit.alarm.service.AlarmService;
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.vo.ProjectVO;
+
+@Controller
+public class AlarmUpdateController {
+	
+	@Inject
+	private AlarmService service;
+	
+	@RequestMapping("alarm/alarmUpdate.do")
+	@ResponseBody
+	public void updateAlarm(
+			
+			@RequestParam(value="myId", required=true) String myId
+			, @RequestParam(value="alarmCode", required=true) String alarmCode
+			, @RequestParam(value="postCode", required=true) String postCode
+			, @RequestParam(value="alarmCheck", required=true) String alarmCheck
+			, Model model
+			, HttpSession session
+			
+			) {
+		
+		ProjectVO project = (ProjectVO) session.getAttribute("project");
+		String pCode = project.getpCode();
+		
+		Map<String, String> info = new HashMap<>();
+		
+		info.put("myId", myId);
+		info.put("alarmCode", alarmCode);
+		
+		if (alarmCheck.equals("1")) {
+			ServiceResult result = service.updateAlarm(info);
+		}
+		
+		String viewName = null;
+		
+		if (postCode.contains("NOTICE")) {
+			viewName = "redirect:/projectNotice/projectNoticeSelect.do?noticeCode=" + postCode;
+		} else if (postCode.contains("WORK")) {
+			viewName = "redirect:/projectNotice/projectNoticeSelect.do?noticeCode=" + postCode;
+		} else if (postCode.contains("ISSUE")) {
+			viewName = "${cPath}/project/${project.pCode}/issue/issueSelect.do?issueCode=" + postCode;
+		} else {
+			
+		}
+		
+	}
+
+}

@@ -18,14 +18,12 @@
 		INSERT INTO GITHUB_INFO (
 			P_CODE
 			,REPOSITORY 
-			,TOKEN
 			,USER_NAME
 			,MEM_ID
 			,GIT_DATE
 		)VALUES(
 			#{pCode}
 			,#{repository,jdbcType=VARCHAR}
-			,#{token,jdbcType=VARCHAR}
 			,#{userName,jdbcType=VARCHAR}
 			,#{memId}
 			,SYSDATE)

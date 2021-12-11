@@ -7,6 +7,16 @@
 	SELECT 'ALARM' || LPAD(ALARM_SEQ.NEXTVAL, 5, '0') FROM DUAL
 </select>
 
+<select id="selectMemberList" parameterType="string" resultType="string">
+	SELECT
+	MEM_ID
+	FROM
+	P_MEM
+	WHERE 
+	P_CODE = #{pCode}
+	AND OUT_STATUS = 0
+</select>
+
 <insert id="insertAlarm" parameterType="AlarmVO">
 
 	INSERT INTO 
@@ -65,5 +75,55 @@
 	SELECT * FROM DUAL
 
 </insert>
+
+<select id="selectAlarmList" parameterType="hashmap" resultType="AlarmVO">
+
+	SELECT
+	
+	ALARM.ALARM_CODE
+	, ALARM.ALARM_TYPE
+	, ALARM.P_CODE
+	, ALARM.ALARM_CONTENTS
+	, ALARM.ALARM_DATE
+	, ALARM.MEM_ID
+	, ALARM.ALARM_TITLE
+	, ALARM.POST_CODE
+	, A.MEM_ID AS RECIPIENT
+    , A.ALARM_CHECK
+	
+	FROM ALARM,
+		(
+		SELECT 
+		ALARM_RECIPIENT.ALARM_CODE
+		, ALARM_RECIPIENT.MEM_ID
+        , ALARM_RECIPIENT.ALARM_CHECK
+		FROM 
+		ALARM_RECIPIENT
+		WHERE ALARM_RECIPIENT.MEM_ID = #{memId}
+		) A
+	WHERE ALARM.ALARM_CODE(+) = A.ALARM_CODE
+	ORDER BY ALARM.ALARM_DATE DESC
+
+</select>
+
+<delete id="deleteAlarm" parameterType="hashmap">
+
+	DELETE FROM ALARM_RECIPIENT
+	WHERE
+	ALARM_CODE = #{alarmCode}
+	AND MEM_ID = #{myId}
+
+</delete>
+
+<update id="updateAlarm" parameterType="hashmap">
+
+	UPDATE ALARM_RECIPIENT
+	SET
+	ALARM_CHECK = '0'
+	WHERE
+	ALARM_CODE = #{alarmCode}
+	AND MEM_ID = #{myId}
+	
+</update>
 
 </mapper>
