@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath }/resources/js/commonjs/custom/jquery.form.min.js"></script>
 
@@ -194,7 +195,7 @@
 
 												<td>${Retrieve.payMonth}개월</td>
 
-												<td>${Retrieve.payAmount}원</td>
+												<td><fmt:formatNumber value="${Retrieve.payAmount}" pattern="#,###"/>원</td>
 											</tr>
 										</c:forEach>
 									</c:when>

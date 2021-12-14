@@ -92,7 +92,7 @@ const gitUserInfo = function(idInfo){
 		method : 'GET',
 		// 토큰값 불필요
 		beforeSend : function(xhr){
-			xhr.setRequestHeader("Authorization", "token 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")	
+			xhr.setRequestHeader("Authorization", "token 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")	
 		},
 		success : function(resp){
 			idCheck = resp;
@@ -140,7 +140,7 @@ const gitUserRepository = function(idInfo, repoInfo){
 		method : 'get',
 		// 토큰값 불필요
 		beforeSend : function(xhr){
-			xhr.setRequestHeader("Authorization", "token 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")	
+			xhr.setRequestHeader("Authorization", "token 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")	
 		},  
 		success : function(resp){
 			repoCheck = resp;

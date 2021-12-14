@@ -112,7 +112,7 @@
 				QANDA_TITLE, 
 				QANDA_CONTENT,
 				QANDA_DATE
-				<if test = "qandaParentCode neq null">
+				<if test = "parentCode neq null">
 				 ,PARENT_CODE 
 				</if>
 				,QANDA_CHECK
@@ -122,8 +122,8 @@
 				#{qandaTitle,jdbcType=VARCHAR},
 				#{qandaContent,jdbcType=CLOB},
 				SYSDATE
-				<if test = "qandaParentCode neq null">
-				 ,#{qandaParentCode,jdbcType=VARCHAR}
+				<if test = "parentCode neq null">
+				 ,#{parentCode,jdbcType=VARCHAR}
 				</if>
 				,'N'
 			)

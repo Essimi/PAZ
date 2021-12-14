@@ -6,6 +6,7 @@
 <select id="selectTotalRecord" resultType="int">
 	SELECT COUNT(*)
 	FROM NOTICE
+	WHERE PART_CODE = '0'
 </select>
 	
 	

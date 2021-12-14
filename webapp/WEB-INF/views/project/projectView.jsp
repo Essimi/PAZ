@@ -3,6 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/security/tags"
 	prefix="security"%>
+	
+<script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/commonjs/custom/jquery.form.min.js">
+</script>	
 
 <security:authorize access="isAuthenticated()">
 	<security:authentication property="principal.authMember"
@@ -13,7 +16,7 @@
 <div class="container-fluid mainText">
 	<div class="row mb-2">
 		<div class="col-sm-6">
-			<h1 style="margin-top: 30px;">Main Page</h1>
+			<h1>Main Page</h1>
 		</div>
 	</div>
 </div>
@@ -141,6 +144,7 @@
 						<!-- 프로젝트의 공지사항 리스트 입니다. -->
 					
 						<table class="table table-bordered table-striped" style="text-align: center;">
+						
 							<thead>
 								<tr>
 									<th>글번호</th>
@@ -148,37 +152,19 @@
 									<th>날짜</th>
 								</tr>
 							</thead>
-							<c:set var="noticeList" value="${pagingVO.dataList}"></c:set>
-							<tbody>
-								<c:choose>
-									<c:when test="${not empty noticeList}">
-										<c:forEach items="${noticeList}" var="notice">
-											<tr>
-												<td>${notice.rnum }</td>
-												<td style="text-align: left;"><c:url value="notice.do" var="viewURL">
-														<c:param name="noticeCode" value="${notice.noticeCode }" />
-													</c:url> 
-													<a href="${viewURL }">${notice.noticeTitle}</a></td>			
-												<td>${notice.noticeDate }</td>
-											</tr>
-										</c:forEach>
-									</c:when>
-									<c:otherwise>
-										<tr>
-											<td colspan="6">게시글이 없습니다.</td>
-										</tr>
-									</c:otherwise>
-								</c:choose>
+							
+							<tbody id="noticeBody">
+								
 							</tbody>
+							
 							<tfoot>
 								<tr>
-									<td colspan="6"><c:set var="memId" value="${authMember.memId }" /> <c:if test="${ memId eq 'admin' }">
-											<input type="button" class="linkBtn btn btn-primary" id="noticeButton" value="공지작성" data-gopage="${cPath }/notice/noticeInsert.do">
-										</c:if>
-										<div id="pagingArea" class="card-footer clearfix">${pagingVO.pagingHTML }</div>
+									<td colspan="6">
+										<div id="pagingArea" class="card-footer clearfix"></div>
 									</td>
 								</tr>
 							</tfoot>
+							
 						</table>
 					</div>
 				</div>

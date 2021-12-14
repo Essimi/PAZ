@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.dashboardPl.dao.PLDashboardDAO">
+
+	<!-- 업무 담당자별 할당 비율  -->
+	<select id="taskManagerRatio" resultType="PLDashboardVO" parameterType="String">
+		SELECT   C.MEM_ID,  B.MEM_NICKNAME, COUNT(A.MEM_ID) TASK_COUNT		    
+		FROM     WORK A, MEMBER B, P_MEM C
+		WHERE    B.MEM_ID(+) = C.MEM_ID
+		AND      A.MEM_ID(+) = C.MEM_ID
+		AND      A.P_CODE(+) = C.P_CODE
+		AND      C.P_CODE = #{pCode}
+		GROUP BY C.MEM_ID, B.MEM_NICKNAME 
+	</select>
+	
+	<!-- 요청받은건 요청한건 에대한 그래프 -->
+	<select id="issueManagement" resultType="PLDashboardVO" parameterType="String">
+		SELECT A.MEM_ID, NVL(RECIPIENT_COUNT,0) RECIPIENT_COUNT, NVL(ISSUE_COUNT,0) ISSUE_COUNT, C.P_CODE, D.MEM_NICKNAME
+		FROM
+		    (SELECT MEM_ID, COUNT(MEM_ID) RECIPIENT_COUNT
+		    FROM ISSUE_RECIPIENT
+		    GROUP BY MEM_ID)A,
+		    (SELECT mem_id, COUNT(MEM_ID) ISSUE_COUNT
+		    FROM issue
+		    WHERE P_CODE=#{pCode}
+		    GROUP BY mem_id)B,
+		    (SELECT MEM_ID, P_CODE
+		    FROM P_MEM
+		    WHERE P_CODE=#{pCode}
+		    GROUP BY mem_id, P_CODE)C,
+		    MEMBER D
+		WHERE A.MEM_ID(+) = C.MEM_ID
+		AND   B.MEM_ID(+) = C.MEM_ID
+		AND   D.MEM_ID(+) = C.MEM_ID
+	
+	</select>
+	
+
+	<!-- 업무들의 이름, 진행도, 중요도를 나타냅니다. -->
+	<select id="topTaskStatus" resultType="PLDashboardVO">
+		SELECT *
+		FROM
+		(SELECT
+		        work_code,
+		        work_name,
+		        b.progress_name,
+		        c.importance_name,
+		        C.IMPORTANCE,
+		        A.P_CODE
+		  FROM work a, work_progress b, importance c
+		  WHERE a.progress = b.progress
+		  and   a.importance = c.importance
+		
+		)A
+		WHERE importance = 'IMPORTANCE001'
+		AND   P_CODE = #{pCode} 
+	</select>
+	
+	<!-- 사용자 업무별  -->
+	<select id="teamState" resultType="PLDashboardVO" parameterType="String">
+		SELECT DISTINCT B.MEM_ID, MEM_NICKNAME, NVL(A.TODO,0) TODO, NVL(C.PROCESS,0) PROCESS , NVL(D.DONE,0) DONE
+			FROM P_MEM B,
+			    (SELECT MEM_ID, COUNT(*) TODO
+			    FROM WORK
+			    WHERE WORK_STATUS = 'STATUS001'
+			    AND P_CODE = #{pCode} 
+			    GROUP BY MEM_ID) A,
+			    (SELECT MEM_ID, COUNT(*) PROCESS
+			    FROM WORK
+			    WHERE WORK_STATUS = 'STATUS002'
+			    AND P_CODE = #{pCode} 
+			    GROUP BY MEM_ID) C,
+			    (SELECT MEM_ID, COUNT(*) DONE
+			    FROM WORK
+			    WHERE WORK_STATUS = 'STATUS003'
+			    AND P_CODE = #{pCode} 
+			    GROUP BY MEM_ID) D,
+	            (SELECT MEM_ID, MEM_NICKNAME
+	            FROM MEMBER)E
+                
+			WHERE A.MEM_ID(+) = B.MEM_ID
+			AND   C.MEM_ID(+) = B.MEM_ID
+			AND   D.MEM_ID(+) = B.MEM_ID
+	        AND   E.MEM_ID(+) = B.MEM_ID
+			AND   P_CODE = #{pCode} 
+	</select>
+	
+	<select id="teamWorkTime" resultType="PLDashboardVO" parameterType="String">
+	SELECT DISTINCT A.*
+		FROM(
+			SELECT A.*, TO_NUMBER(Monday)+TO_NUMBER(Tuesday)+TO_NUMBER(Wednesday)+TO_NUMBER(Thursday)+TO_NUMBER(Friday) AS TOTAL
+			FROM
+			(
+		    
+		    SELECT
+			    A.MEM_ID,
+			    P_CODE,
+			    B.MEM_NICKNAME,
+			    NVL(Monday,0) Monday,
+			    NVL(Tuesday,0) Tuesday,
+			    NVL(Wednesday,0) Wednesday, 
+			    NVL(Thursday,0) Thursday, 
+			    NVL(Friday,0) Friday
+			
+			FROM
+			    WH_INFO A, MEMBER B,
+			     (
+		        SELECT MEM_ID, SUM(NVL(ROUND((WH_END-WH_START)*24),0)) Monday
+			    FROM WH_INFO
+			    WHERE TO_CHAR(WH_START, 'yyyymmdd') = TO_CHAR(TRUNC(sysdate,'iw')-7, 'yyyymmdd')
+			    GROUP BY MEM_ID
+		        )C,
+			     (
+			    SELECT MEM_ID, SUM(NVL(ROUND((WH_END-WH_START)*24),0)) Tuesday
+			    FROM WH_INFO
+			    WHERE TO_CHAR(WH_START, 'yyyymmdd') = TO_CHAR(TRUNC(sysdate,'iw')-6, 'yyyymmdd')
+			    GROUP BY MEM_ID
+			    ) D,
+			     (
+			    SELECT MEM_ID, SUM(NVL(ROUND((WH_END-WH_START)*24),0)) Wednesday
+			    FROM WH_INFO
+			    WHERE TO_CHAR(WH_START, 'yyyymmdd') = TO_CHAR(TRUNC(sysdate,'iw')-5, 'yyyymmdd')
+			    GROUP BY MEM_ID
+			    ) E,
+			     (
+			    SELECT MEM_ID, SUM(NVL(ROUND((WH_END-WH_START)*24),0)) Thursday
+			    FROM WH_INFO
+			    WHERE TO_CHAR(WH_START, 'yyyymmdd') = TO_CHAR(TRUNC(sysdate,'iw')-4, 'yyyymmdd')
+			    GROUP BY MEM_ID
+			    ) F,
+			    (
+			    SELECT MEM_ID, SUM(NVL(ROUND((WH_END-WH_START)*24),0)) Friday
+			    FROM WH_INFO
+			    WHERE TO_CHAR(WH_START, 'yyyymmdd') = TO_CHAR(TRUNC(sysdate,'iw')-3, 'yyyymmdd')
+			    GROUP BY MEM_ID
+			    ) G
+			    
+			WHERE A.MEM_ID = B.MEM_ID
+			  AND A.MEM_ID = C.MEM_ID(+)
+			  AND A.MEM_ID = D.MEM_ID(+)
+			  AND A.MEM_ID = E.MEM_ID(+)
+			  AND A.MEM_ID = F.MEM_ID(+)
+			  AND A.MEM_ID = G.MEM_ID(+)
+			GROUP BY A.MEM_ID, P_CODE, B.MEM_NICKNAME,  NVL(Monday,0), NVL(Tuesday,0), NVL(Wednesday,0), NVL(Thursday,0), NVL(Friday,0)
+			
+		    
+		    )A
+		)A, P_MEM B
+		WHERE A.MEM_ID = B.MEM_ID
+		AND   A.P_CODE = B.P_CODE
+        AND   A.P_CODE = #{pCode} 
+		AND   B.OUT_STATUS='0'
+	
+	</select>
+	
+	
+	<select id="selectTaskList"  parameterType="PagingVO" resultType="TaskVO">
+			  SELECT P.* 
+		    FROM(
+		     SELECT D.*, ROWNUM RNUM
+		            FROM (
+		                SELECT C.*
+		                FROM (
+		                    SELECT B.MEM_NICKNAME
+		                           , A.WORK_CODE
+		                           , A.P_CODE
+		                           , A.MEM_ID
+		                           , A.TOP_WORK_CODE
+		                           , D.WORK_NAME topWorkName
+		                           , A.WORK_STATUS
+		                           , A.WORK_NAME
+		                           , A.WORK_CONTENTS
+		                           , TO_CHAR(A.WORK_START, 'YYYY-MM-DD') WORK_START
+		                           , TO_CHAR(A.WORK_DEADLINE, 'YYYY-MM-DD') WORK_DEADLINE
+		                           , C.PROGRESS_NAME PROGRESS
+		                           , A.IMPORTANCE
+		                           , A.WORK_DELETE
+		                      FROM WORK A, MEMBER B, WORK_PROGRESS C,
+		                    (SELECT WORK_CODE,
+		                            WORK_NAME
+		                       FROM WORK 
+		                      WHERE WORK_CODE IN (SELECT TOP_WORK_CODE
+		                                            FROM WORK)) D
+		                WHERE A.MEM_ID = B.MEM_ID
+		                  AND A.PROGRESS = C.PROGRESS
+		                  AND A.TOP_WORK_CODE = D.WORK_CODE(+)
+		                  AND A.P_CODE = 'PROJECT00004'
+		                  AND A.WORK_DELETE = '0'
+                          AND A.IMPORTANCE = 'IMPORTANCE001'
+		                  
+		                ) C  ORDER BY C.WORK_CODE DESC
+		            ) D
+		           )P 
+	</select>	
+</mapper>

@@ -1,0 +1,33 @@
+<script>
+
+$('.marginClass').click(function(){
+	
+	$('#chatModal').modal();
+	
+	var memId = $(this).attr("id");
+    
+    $('.modal-title').text( memId );  
+    
+    $.ajax({
+    	
+    	data : {memId : memId}, 
+    	dataType : "json",
+    	url : "${cPath}/login/idcheck.do",
+ 
+    	uccess : function(resp) {
+    		
+    		
+    	}
+    	
+    });
+	
+});
+</script>
+
+
+
+
+<div class="modal-footer">
+				<button type="button" class="linkBtn btn btn-primary" data-gopage="#">대화</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+			</div>

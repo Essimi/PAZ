@@ -26,7 +26,7 @@ public class NoticeListController {
 			){
 		
 		
-		PagingVO<NoticeVO> pagingVO = new PagingVO<>(15,5);
+		PagingVO<NoticeVO> pagingVO = new PagingVO<>(10,5);
 		pagingVO.setCurrentPage(currentPage);
 		
 		model.addAttribute("pagingVO",pagingVO);

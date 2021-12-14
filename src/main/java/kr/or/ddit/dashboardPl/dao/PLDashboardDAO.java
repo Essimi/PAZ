@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import kr.or.ddit.vo.DashBoardVO;
 import kr.or.ddit.vo.PLDashboardVO;
+import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.TaskVO;
 
 @Repository
 public interface PLDashboardDAO {
@@ -42,4 +44,11 @@ public interface PLDashboardDAO {
 	 * @return
 	 */
 	public List <PLDashboardVO> teamWorkTime(String pCode);
+	
+	/**
+	 * 긴급업무 리스트 출력
+	 * @param pagingVO
+	 * @return
+	 */
+	public List<TaskVO> selectTaskList(PagingVO<TaskVO> pagingVO); 
 }

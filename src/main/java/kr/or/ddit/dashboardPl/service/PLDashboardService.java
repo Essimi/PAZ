@@ -3,6 +3,8 @@ package kr.or.ddit.dashboardPl.service;
 import java.util.List;
 
 import kr.or.ddit.vo.PLDashboardVO;
+import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.TaskVO;
 
 public interface PLDashboardService {
 	/**
@@ -34,5 +36,6 @@ public interface PLDashboardService {
 	 * @return
 	 */
 	public List<PLDashboardVO> teamWorkTime(String pCode);
-	
+
+	public List<TaskVO> retrieveTaskList(PagingVO<TaskVO> pagingVO);
 }

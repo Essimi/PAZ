@@ -86,6 +86,7 @@ public class RequestProjectController {
 				// requestProjectVO 에 넣어줄 값들
 				projectVO.setStatusCode("REQ_STATUS002");
 				projectVO.setReqCode(reqCode);
+				projectVO.setWorkTime("0");
 			
 				
 				log.info("여기 여기 여기 여기 프로젝트브이오 :{} " , projectVO);

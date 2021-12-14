@@ -181,20 +181,10 @@
   <div class="card">
     <div class="card-body register-card-body">
       <p class="login-box-msg">Register a new membership</p>
-		 <div class="col-5 text-center d-flex align-items-center justify-content-center">
-           <img id="preview-image" class="profile-user-img img-fluid img-circle" 
-           		src="${cPath }/resources/file/profileImage/${memberInfo.memIkon.saveName }"
-           		onerror="this.src='${cPath }/resources/file/profileImage/profile.jpg'" style="width:250px">
-<%--            <img class="img-circle img-bordered-sm" src="${cPath }/resources/file/proflie.jpg" alt="User Image"> --%>
-<%--            <img src="${cPath }/resources/file/proflie.jpg" class="img-circle elevation-2" alt="User Image"> --%>
-			<input style="display: none;" type="file" id="imageFile" name="imageFile">
-			<br>
-			<button type="button" id="profileChange" class="btn btn-primary">사진 변경</button>
-          </div>
 <!-- class="form-control is-valid" -->
 <!-- class="form-control is-invalid" -->
-		<div class="col-7">
       <form:form commandName="member" action="${cPath }/login/join.do" method="post">
+      <c:if test="${empty userInfo}">
         <div class="input-group mb-3">
           <input type="text" id="inputMemId" name="memId" class="form-control" placeholder="Id" 
           autocomplete="off" onkeydown="inputIdCheck()">
@@ -228,8 +218,9 @@
         </div>
          <!-- 비밀번호재확인 경고 메시지 -->
         <p id="passRetypeMsg" class="login-box-msg"></p>
+        </c:if>
         <div class="input-group mb-3">
-          <input type="text" name="memNickname" class="form-control" placeholder="Nickname">
+          <input type="text" name="memNickname" class="form-control" placeholder="Nickname" value="${userInfo.memNickname }">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-address-card"></span>
@@ -239,7 +230,7 @@
          <!-- 닉네임 경고 메시지 -->
         <p id="memNicknameMsg" class="login-box-msg"></p>
          <div class="input-group mb-3">
-          <input type="email" id="inputEmail" name="memMail" class="form-control" placeholder="Email">
+          <input type="email" id="inputEmail" name="memMail" class="form-control" placeholder="Email" value="${userInfo.memMail }">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -322,7 +313,6 @@
       <a href="${cPath}/login/login.do" class="text-center">로그인</a>
     </div>
     <!-- /.form-box -->
-    </div>
   </div><!-- /.card -->
 </div>
 <!-- /.register-box -->

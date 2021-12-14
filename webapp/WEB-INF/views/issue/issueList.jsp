@@ -89,7 +89,7 @@
 	           		</option>
 	           </c:forEach>
            </select>
-           <input type="button" id="searchBtn" value="검색">
+           <input type="button" id="searchBtn" value="확인">
            <input type="button" value="등록" onclick="location.href='${cPath}/project/${project.pCode}/issue/issueWrite.do'">
            </div>
          </div>

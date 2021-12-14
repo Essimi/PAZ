@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import kr.or.ddit.dashboardPl.dao.PLDashboardDAO;
 import kr.or.ddit.vo.PLDashboardVO;
+import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.TaskVO;
 
 @Service
 public class PLDashboardServiceImpl implements PLDashboardService {
@@ -60,5 +62,15 @@ public class PLDashboardServiceImpl implements PLDashboardService {
 		}
 		return plDashboard;
 	}
+
+	@Override
+	public List<TaskVO> retrieveTaskList(PagingVO<TaskVO> pagingVO) {
+		List<TaskVO> taskList = dao.selectTaskList(pagingVO);
+		pagingVO.setDataList(taskList);
+		
+		return taskList;
+	}
+	
+	
 	
 }

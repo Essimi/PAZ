@@ -152,4 +152,44 @@
 		AND   B.OUT_STATUS='0'
 	
 	</select>
+	
+	
+	<select id="selectTaskList"  parameterType="PagingVO" resultType="TaskVO">
+			  SELECT P.* 
+		    FROM(
+		     SELECT D.*, ROWNUM RNUM
+		            FROM (
+		                SELECT C.*
+		                FROM (
+		                    SELECT B.MEM_NICKNAME
+		                           , A.WORK_CODE
+		                           , A.P_CODE
+		                           , A.MEM_ID
+		                           , A.TOP_WORK_CODE
+		                           , D.WORK_NAME topWorkName
+		                           , A.WORK_STATUS
+		                           , A.WORK_NAME
+		                           , A.WORK_CONTENTS
+		                           , TO_CHAR(A.WORK_START, 'YYYY-MM-DD') WORK_START
+		                           , TO_CHAR(A.WORK_DEADLINE, 'YYYY-MM-DD') WORK_DEADLINE
+		                           , C.PROGRESS_NAME PROGRESS
+		                           , A.IMPORTANCE
+		                           , A.WORK_DELETE
+		                      FROM WORK A, MEMBER B, WORK_PROGRESS C,
+		                    (SELECT WORK_CODE,
+		                            WORK_NAME
+		                       FROM WORK 
+		                      WHERE WORK_CODE IN (SELECT TOP_WORK_CODE
+		                                            FROM WORK)) D
+		                WHERE A.MEM_ID = B.MEM_ID
+		                  AND A.PROGRESS = C.PROGRESS
+		                  AND A.TOP_WORK_CODE = D.WORK_CODE(+)
+		                  AND A.P_CODE = 'PROJECT00004'
+		                  AND A.WORK_DELETE = '0'
+                          AND A.IMPORTANCE = 'IMPORTANCE001'
+		                  
+		                ) C  ORDER BY C.WORK_CODE DESC
+		            ) D
+		           )P 
+	</select>	
 </mapper>

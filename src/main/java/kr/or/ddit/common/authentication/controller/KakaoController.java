@@ -9,22 +9,36 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import kr.or.ddit.enumpkg.ServiceResult;
+import kr.or.ddit.member.service.MemberService;
+import kr.or.ddit.vo.MemberVO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 public class KakaoController {
 	
+	@Inject
+	private MemberService memberService;
+	
 	private String authCode;
 	private String access_Token;
+	
+//	@RequestMapping("/login/KakaoLogin.do")
+//	public String kakaoLogin(){
+//		
+//	}
 	
 	@RequestMapping("/login/requestKakaoAuth.do")
 	public String requestKakaoAuth(
@@ -40,15 +54,25 @@ public class KakaoController {
 	@RequestMapping("/login/getKakaoAuthCode.do")
 	public String getKakaoAuthCode(
 			@RequestParam("code") String Code,
-			Model model
+			RedirectAttributes redirectAttributes
 			) {
 		
 		access_Token = getAccessToken(Code);
-		HashMap<String, Object> userInfo = getUserInfo(access_Token);
-		
+		MemberVO userInfo = getUserInfo(access_Token);
 		log.info("userInfo : {}", userInfo);
+		String memId = userInfo.getMemId();
+		MemberVO memberResult = memberService.selectMember(userInfo);
 		
-		return "redirect:/";
+		String viewName = null;
+		if(memberResult != null) {
+			String memPass = memId;
+			viewName = "redirect:/login/login/loginProcess.do?memId=" + memId + "&memPass=" + memPass;
+		}else {
+			viewName = "redirect:/login/join.do";
+			redirectAttributes.addFlashAttribute("userInfo", userInfo);
+		}
+		
+		return viewName;
 	}
 	
 	// 로그아웃
@@ -120,9 +144,9 @@ public class KakaoController {
     }
 	
 	//유저정보조회
-    public HashMap<String, Object> getUserInfo (String access_Token) {
+    public MemberVO getUserInfo (String access_Token) {
 	    //    요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
-	    HashMap<String, Object> userInfo = new HashMap<String, Object>();
+	    MemberVO member = new MemberVO();
 	    String reqURL = "https://kapi.kakao.com/v2/user/me";
 	    try {
 	        URL url = new URL(reqURL);
@@ -149,22 +173,27 @@ public class KakaoController {
 	        JsonObject kakao_account = jsonObj.getAsJsonObject("kakao_account");
 	        JsonObject profile = kakao_account.getAsJsonObject("profile");
 	        
-	        String id = jsonObj.get("id").toString();
-	        String nickname = profile.get("nickname").toString();
-	        String imageUrl = profile.get("profile_image_url").toString();
-	        String eamil = kakao_account.get("email").toString();
+	        String id = jsonObj.get("id").getAsString();
+	        String nickname = profile.get("nickname").getAsString();
+	        String imageUrl = profile.get("profile_image_url").getAsString();
+	        String email = kakao_account.get("email").getAsString();
 //	        String birth = kakao_account.get("birthyear").toString() + kakao_account.get("birthday").toString();
-	        String birthday = kakao_account.get("birthday").toString();
-	        String gender = kakao_account.get("gender").toString();
+//	        String birthday = kakao_account.get("birthday").toString();
+//	        String gender = kakao_account.get("gender").toString();
 //	        String tel = kakao_account.get("phone_number").toString();
 	        
-	        userInfo.put("id", id);
-	        userInfo.put("nickname", nickname);
-	        userInfo.put("imageUrl", imageUrl);
-	        userInfo.put("eamil", eamil );
+	        
+	        member.setMemId(id);
+	        member.setMemNickname(nickname);
+	        
+	        member.setMemMail(email);
+//	        userInfo.put("id", id);
+//	        userInfo.put("nickname", nickname);
+//	        userInfo.put("imageUrl", imageUrl);
+//	        userInfo.put("eamil", email );
 //	        userInfo.put("birth", birth);
-	        userInfo.put("birthday", birthday);
-	        userInfo.put("gender", gender);
+//	        userInfo.put("birthday", birthday);
+//	        userInfo.put("gender", gender);
 //	        userInfo.put("tel", tel);
 //	        JsonParser parser = new JsonParser();
 //	        JsonElement element = parser.parse(result);
@@ -183,7 +212,7 @@ public class KakaoController {
 	        e.printStackTrace();
 	    }
 	
-	    return userInfo;
+	    return member;
     }
 }
 

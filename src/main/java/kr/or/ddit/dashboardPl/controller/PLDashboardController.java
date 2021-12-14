@@ -10,13 +10,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import kr.or.ddit.dashboardPl.service.PLDashboardService;
+import kr.or.ddit.project.service.ProjectService;
 import kr.or.ddit.vo.PLDashboardVO;
+import kr.or.ddit.vo.PagingVO;
+import kr.or.ddit.vo.ProjectVO;
+import kr.or.ddit.vo.TaskVO;
 
 @Controller
 public class PLDashboardController {
 
 	@Inject
 	PLDashboardService service;
+	
 	
 	@RequestMapping("project/{pCode}/projectPLStatus.do")
 	public String Access(
@@ -41,6 +46,14 @@ public class PLDashboardController {
 		//팀 업무 상태 그래프
 		List<PLDashboardVO> teamWorkTime = service.teamWorkTime(pCode);
 		model.addAttribute("teamWorkTime", teamWorkTime);
+		
+		//pl 긴급업무 리스트
+		TaskVO task = new TaskVO();
+		task.setpCode(pCode);
+		PagingVO<TaskVO> pagingVO = new PagingVO<>(10,5);
+		service.retrieveTaskList(pagingVO);
+		model.addAttribute("pagingVO", pagingVO);
+		
 		
 		
 		return "dashBoard/pldashboard";

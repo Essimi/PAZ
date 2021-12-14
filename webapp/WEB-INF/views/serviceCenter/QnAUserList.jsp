@@ -59,7 +59,7 @@
 													<c:forEach items="${QnAList }" var="qna">
 														<tr>
 															<td>${qna.rnum }</td>
-															<td style="text-align: left; padding-left: 50px;"><c:url value="qnaView.do" var="viewURL">
+															<td style="text-align: left; padding-left: 20px;"><c:url value="qnaView.do" var="viewURL">
 																	<c:param name="QnANo" value="${qna.qandaCode}" />
 																</c:url> <a href="${viewURL }">${qna.qandaTitle }</a></td>
 															<td>${qna.memId}</td>

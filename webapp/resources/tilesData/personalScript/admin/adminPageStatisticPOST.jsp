@@ -90,7 +90,7 @@ Highcharts.chart('payRfund', {
 	    enabled: false
 	  },
 	  tooltip: {
-	    pointFormat: '이번달 수익: <b>{point.y:f} 원</b>'
+	    pointFormat: '이번달 수익: <b>{point.y:,f} 원</b>'
 	  },
 	  series: [{
 	    name: 'Population',
@@ -100,7 +100,7 @@ Highcharts.chart('payRfund', {
 	      rotation: -90,
 	      color: '#FFFFFF',
 	      align: 'right',
-	      format: '{point.y:f}', // one decimal
+	      format: '{point.y:,f}', // one decimal
 	      y: 10, // 10 pixels down from the top
 	      style: {
 	        fontSize: '13px',

@@ -83,43 +83,46 @@ Kakao.init('5b19c6ec8a98478119e4e1697a8f9b59'); //발급받은 키 중 javascrip
 console.log("sdk초기화여부 : " + Kakao.isInitialized()); // sdk초기화여부판단
 
 $("#kakaoLogin").on("click", function(){
-	//카카오로그인
-// 	function kakaoLogin() {
-	    Kakao.Auth.login({
-	      success: function (response) {
-	        Kakao.API.request({
-	          url: '/v2/user/me',
-	          success: function (response) {
-	        	  console.log(response)
-	          },
-	          fail: function (error) {
-	            console.log(error)
-	          },
-	        })
-	      },
-	      fail: function (error) {
-	        console.log(error)
-	      },
-	    })
-// 	  }
-	
+	location.href="${cPath}/login/requestKakaoAuth.do"
 })
 
+
+// $("#kakaoLogin").on("click", function(){
+// 	//카카오로그인
+// 	    Kakao.Auth.login({
+// 	      success: function (response) {
+// 	        Kakao.API.request({
+// 	          url: '/v2/user/me',
+// 	          success: function (response) {
+// 	        	  console.log(response)
+// 	          },
+// 	          fail: function (error) {
+// 	            console.log(error)
+// 	          },
+// 	        })
+// 	      },
+// 	      fail: function (error) {
+// 	        console.log(error)
+// 	      },
+// 	    })
+	
+// })
+
 //카카오로그아웃  
-function kakaoLogout() {
-    if (Kakao.Auth.getAccessToken()) {
-      Kakao.API.request({
-        url: '/v1/user/unlink',
-        success: function (response) {
-        	console.log(response)
-        },
-        fail: function (error) {
-          console.log(error)
-        },
-      })
-      Kakao.Auth.setAccessToken(undefined)
-    }
-  }  
+// function kakaoLogout() {
+//     if (Kakao.Auth.getAccessToken()) {
+//       Kakao.API.request({
+//         url: '/v1/user/unlink',
+//         success: function (response) {
+//         	console.log(response)
+//         },
+//         fail: function (error) {
+//           console.log(error)
+//         },
+//       })
+//       Kakao.Auth.setAccessToken(undefined)
+//     }
+//   }  
 </script>
 
 </body>

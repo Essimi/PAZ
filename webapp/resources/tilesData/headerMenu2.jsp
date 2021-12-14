@@ -5,11 +5,28 @@
 
 <security:authorize access="isAuthenticated()">
 	<security:authentication property="principal.authMember" var="authMember"/>
-</security:authorize> 	 
-
-    
+</security:authorize>
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+ 
+
+<style>
+
+	.modalContent {
+		padding: 10px;
+		border-top: 3px solid #3f6791;
+	}
+	
+	.modal-header h4 {
+		font-weight: 600;
+	}
+	
+	#dateSpan {
+		font-weight: 600;
+		color:#3f6791;
+	}
+</style>
+ 
  
   <!-- 상단 메뉴 -->
   <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background:#f9f9f9">
@@ -55,73 +72,60 @@
       
       
 	<!-- ************************************************ --> 
-	<!-- 채팅 -->
 	
+	<!-- 채팅 -->
 	<li class="nav-item dropdown">
 	
-	<!-- 채팅 아이콘 등록(하단 숫자는 채팅 갯수) -->
-		<a class="nav-link" data-toggle="dropdown" href="#">
-			<i class="far fa-comments"></i>
-			<span class="badge badge-danger navbar-badge">0</span>	
-		</a>
-		
-		<!-- 채팅 리스트 div -->
-		<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-		
-		<!-- 하단 버튼  -->
-		<div class="dropdown-divider">
-		</div>
-		<a href="${cPath }/project/${project.pCode}/chat/chatting.do" class="dropdown-item dropdown-footer">CHAT MAIN</a>
-        </div>
+	<a class="nav-link" href="${cPath }/project/${project.pCode}/chat/chatting.do" class="dropdown-item dropdown-footer">
+	<i class="far fa-comments">
+	</i>
+	</a>
 	
 	</li>
 	<!-- ************************************************ --> 
-      
-      
-     <!-- ************************************************ --> 
-     <!-- 알람 --> 
-      <li class="nav-item dropdown">
-        <!-- 알람 아이콘 등록(하단 숫자는 알람 갯수) -->
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">99</span>
-        </a>
-        
-        <!-- 알람 리스트 div -->
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-        
-          <!-- 알람의 총 개수 -->
-          <span class="dropdown-item dropdown-header">999 Notifications</span>
-          
-          
-          <div class="dropdown-divider"></div>
-          
-          <!-- 첫번째 알람 예시 -->
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
-          </a>
-          
-          <div class="dropdown-divider"></div>
-          
-          <!-- 두번째 알람 예시 -->
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          
-          <div class="dropdown-divider"></div>
-          
-          <!-- 세번째 알람 예시 -->
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="${cPath }/project/${project.pCode}/alarm/alarmList.do" class="dropdown-item dropdown-footer">See All Notifications</a>
-        </div>
-      </li>
-       <!-- ************************************************ --> 
+	
+	<!-- 알람 -->
+	<li class="nav-item dropdown">
+	<!-- 알람 아이콘 등록(하단 숫자는 알람 갯수) -->
+	<a class="nav-link" data-toggle="dropdown" href="#">
+	<i class="far fa-bell"></i>
+	<span class="badge badge-warning navbar-badge">99</span>
+	</a>
+	
+	<!-- 알람 리스트 div -->
+	<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+	
+	<!-- 알람의 총 개수 -->
+	<span class="dropdown-item dropdown-header">999 Notifications</span>
+	
+	<div class="dropdown-divider"></div>
+	<!-- 첫번째 알람 예시 -->
+	<a href="#" class="dropdown-item">
+	<i class="fas fa-envelope mr-2"></i> 
+	4 new messages
+	<span class="float-right text-muted text-sm">3 mins</span>
+	</a>
+	
+	<div class="dropdown-divider"></div>
+	
+	<!-- 두번째 알람 예시 -->
+	<a href="#" class="dropdown-item">
+	<i class="fas fa-users mr-2"></i> 8 friend requests
+	<span class="float-right text-muted text-sm">12 hours</span>
+	</a>
+	
+	<div class="dropdown-divider"></div>
+	
+	<!-- 세번째 알람 예시 -->
+	<a href="#" class="dropdown-item">
+	<i class="fas fa-file mr-2"></i> 3 new reports
+	<span class="float-right text-muted text-sm">2 days</span>
+	</a>
+	<div class="dropdown-divider"></div>
+	<a href="${cPath }/project/${project.pCode}/alarm/alarmList.do" class="dropdown-item dropdown-footer">See All Notifications</a>
+	</div>
+	</li>
+	<!-- ************************************************ --> 
        
       <!-- Full Screen -->
       <li class="nav-item">
@@ -134,10 +138,11 @@
     </ul>
   </nav>
   
+  
   <!-- 출근 modal -->
   <div class="modal fade" id="on">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content modalContent">
         <div class="modal-header">
           <h4 class="modal-title">Timer</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -150,7 +155,7 @@
         </div>
         <div class="modal-footer justify-content-between">
           <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-          <button type="button" id = "workStart" class="btn btn-primary">업무 시작</button>
+          <button type="button" id = "workStart" class="btn btn-warning">업무 시작</button>
         </div>
       </div>
     </div>
@@ -159,7 +164,7 @@
   <!-- 퇴근 modal -->
   <div class="modal fade" id="off">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content modalContent">
         <div class="modal-header">
           <h4 class="modal-title">Timer</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -168,13 +173,13 @@
         </div>
         <div class="modal-body">
           <p>출근한 프로젝트 명 :  <span id = "startProjectName"></span></p>
-          <p>출근한 시간 :  <span id = "startTime"></span></p>
-          <p>현재 시간 :  <span id = "nowDate"></span></p>
+          <p style="font-weight: 600;">출근한 시간 :  <span id = "startTime"></span></p>
+          <p style="font-weight: 600;">현재 시간 :  <span id = "nowDate"></span></p>
           <p>퇴근하시겠습니까?</p>
         </div>
         <div class="modal-footer justify-content-between">
           <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-          <button type="button" id = "workEnd" class="btn btn-primary">퇴근</button>
+          <button type="button" id = "workEnd" class="btn btn-warning">퇴근</button>
         </div>
       </div>
     </div>
@@ -318,4 +323,5 @@ $('#workEnd').on('click', function(){
 		}			
 	})
 })
+
 </script>

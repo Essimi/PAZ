@@ -70,10 +70,12 @@
 							   
 								
 								<c:if test="${authMember.memId eq 'admin'}">
-									<c:url value="qnaWrite.do" var="answerQnAURL">
-										<c:param name="qandaParentCode" value="${qna.qandaCode }" />
-									</c:url>
-									<input type="button" class="linkBtn btn btn-info" value="답글 작성" data-gopage="${answerQnAURL }">
+									<c:if test="${empty qna.parentCode}">
+										<c:url value="qnaWrite.do" var="answerQnAURL">
+											<c:param name="parentCode" value="${qna.qandaCode }" />
+										</c:url>
+										<input type="button" class="linkBtn btn btn-info" value="답글 작성" data-gopage="${answerQnAURL }">
+									</c:if>	
 								</c:if>
 							</div>
 						</div>

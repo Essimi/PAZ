@@ -1,10 +1,13 @@
 package kr.or.ddit.project.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.or.ddit.common.noticeProject.Service.ProjectNoticeService;
 import kr.or.ddit.dashboard.sevice.PEDashBoardService;
@@ -49,6 +53,7 @@ public class MyProjectController {
 			@AuthenticationPrincipal(expression = "authMember") MemberVO member
 			){ // 로그인 한 값 세션에 넣고, 나중에 받아올거임.
 		
+		log.info("일단 타는지에 대해서");
 		
 		// 내 프로젝트 리스트 
 	    ProjectVO projectVO = new ProjectVO();
@@ -61,10 +66,11 @@ public class MyProjectController {
 		// 프로젝트 요청 리스트
 		List<RequestProjectVO> requestList = requestService.selectRequestList(member);
 		
-		if(!requestList.isEmpty())
+		if(!requestList.isEmpty()) {
 			// 요청 리스트 model 에 넣기 
-			model.addAttribute("requestList", requestList);
-		
+			model.addAttribute("requestListList", requestList);
+		}
+	
 		log.info("iuhiuh{}", requestList);
 		
 		
@@ -72,9 +78,10 @@ public class MyProjectController {
 		List<ProjectVO> plList = service.listMyProjectPl(member);
 		
 		
-		if(!plList.isEmpty())
+		if(!plList.isEmpty()) {
 			model.addAttribute("plList", plList);
-
+		}
+		
 		for(int i = 0; i < plList.size(); i++) {
 			log.info("plList : {}", plList.get(i).getpCode());
 		}
@@ -111,20 +118,7 @@ public class MyProjectController {
 		session.setAttribute("position", position);
 		session.setAttribute("project", projectAll);
 		
-		// 메인페이지에 공지사항을 출력하기 위해서******************** 시작
-		
-		NoticeVO noticeVO = new NoticeVO();
-		noticeVO.setPartCode(pCode);
-		
-		PagingVO<NoticeVO> pagingVO = new PagingVO<>(5,5);
-		pagingVO.setCurrentPage(currentPage);
-		pagingVO.setDetailSearch(noticeVO);
-				
-		noticeService.selectProjectNoticeList(pagingVO);
-		
-		model.addAttribute("pagingVO",pagingVO);
-		
-		// 메인페이지에 공지사항을 출력하기 위해서******************** 종료
+
 		
 //		 ----------- 프로젝트 메인페이지 정보 관련 Code 입니다.
 //		사용한 VO - DashBoard / Issue / Calendar
@@ -161,7 +155,32 @@ public class MyProjectController {
 		return "project/projectView";
 			
 	}
+	
+	@RequestMapping(value="project/{pCode}/projectView.do", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@ResponseBody
+	public PagingVO<NoticeVO> projectNoticeList(
+			
+			@RequestParam(value="page", required = false, defaultValue="1") int currentPage
+			, @PathVariable("pCode") String pCode
+			, Model model
+			
+			) {
+		
+		// 메인페이지에 공지사항을 출력하기 위해서******************** 시작
+		
+		NoticeVO noticeVO = new NoticeVO();
+		noticeVO.setPartCode(pCode);
+		
+		PagingVO<NoticeVO> pagingVO = new PagingVO<>(5,5);
+		pagingVO.setCurrentPage(currentPage);
+		pagingVO.setDetailSearch(noticeVO);
+				
+		noticeService.selectProjectNoticeList(pagingVO);
+		
+		// 메인페이지에 공지사항을 출력하기 위해서******************** 종료
+				
+		return pagingVO;
+		
+	}
+	
 }
-
-
-

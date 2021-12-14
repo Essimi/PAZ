@@ -121,7 +121,7 @@ function conWebsocket(chatroomCode){
 	webSocket = new WebSocket("ws://192.168.0.52${cPath}/websocket/echo/" + chatroomCode + "/" + myId);
 
 	webSocket.onopen = function(event) {
-
+	
 		console.log(event);
 		console.log("웹소켓 오픈");
 		webSocket.send(myId + " 님이 들어왔습니다."); 

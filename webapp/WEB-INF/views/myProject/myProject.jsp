@@ -361,13 +361,6 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 
 
 
-
-
-
-
-
-
-
 	<!-- 내 프로젝트 요청 리스트 -->
 	<div id="requestListText">
 		<h3>프로젝트 요청 리스트</h3>
@@ -375,47 +368,35 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 	</div>
 	<div id="requestListDiv">
 		<div class="card-body pb-0">
-			<c:set var="requestList" value="${requestList}"></c:set>
+			<c:set var="requestList" value="${requestListList}"></c:set>
 			<c:choose>
 				<c:when test="${not empty requestList }">
-					<c:forEach items="${requestList}" var="request">
+					<c:forEach items="${requestList}" var="request1">
 						<div class="card bg-light d-flex flex-fill">
-							<div class="card-header text-muted border-bottom-0">${request.partName }
+							<div class="card-header text-muted border-bottom-0">${request1.partName }
 							</div>
 							<div class="card-body pt-0">
 								<div class="row">
 									<div class="col-7">
 										<h2 class="lead pTitle">
-											<b>${request.pTitle }</b>
+											<b>${request1.pTitle }</b>
 										</h2>
 									</div>
 								</div>
 							</div>
 							<div class="card-footer">
 								<ul class="ml-4 mb-0 fa-ul text-muted">
-									<li class="small sender"><span class="fa-li"><i class="fas fa-hand-holding-heart"></i></span> 요청 발신자 : ${request.sender }</li>
-									<li class="small sender"><span class="fa-li"><i class="fas fa-id-card"></i></span> 역할 : ${request.position }</li>
-<%-- 									<li class="small sender"><span class="fa-li"><i class="fas fa-users"></i></span> 
-									
-									여기!!!
-											<c:choose>
-													<c:when test="${not empty memList}">
-														<c:forEach items="${memList }" var="member">
-															<c:set var="memId" value="${member.memId }"/>
-																${memId } ,
-														</c:forEach>
-													</c:when>
-												</c:choose>
-									
-									</li> --%>
+									<li class="small sender"><span class="fa-li"><i class="fas fa-hand-holding-heart"></i></span> 요청 발신자 : ${request1.sender }</li>
+									<li class="small sender"><span class="fa-li"><i class="fas fa-id-card"></i></span> 역할 : ${request1.position }</li>
+
 								</ul>
 								
 								<div class="text-right">
 
 									<!-- 수락 거절 -->
-									<a data-value="${request.pCode },${request.reqCode },${request.position}" class="btn btn-sm bg-teal requestBtn requestOk" style="width:100px;"> <i
+									<a data-value="${request1.pCode },${request1.reqCode },${request1.position}" class="btn btn-sm bg-teal requestBtn requestOk" style="width:100px;"> <i
 										class="fas fa-check"></i></a> 
-									<a data-value="${request.pCode },${request.reqCode },${request.position}" class="btn btn-sm bg-red requestBtn requestFaild" style="width:100px;"> <i class="fas fa-times"></i></a>
+									<a data-value="${request1.pCode },${request1.reqCode },${request1.position}" class="btn btn-sm bg-red requestBtn requestFaild" style="width:100px;"> <i class="fas fa-times"></i></a>
 
 									<!-- 팀 구성원 뽑아오기 -->
 									<!-- a href="#" title="프로젝트 멤버" data-toggle="popover" data-placement="top" data-content=""
@@ -493,8 +474,8 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 												<td class="project-state">
 													<c:choose>
 														<c:when test="${project.statusCode eq 'PROJECT_STATE001'}">
-															<button class="btn btn-success">
-																<span class="spinner-border spinner-border-sm" ></span>진행중
+															<button class="btn btn-success" >
+																진행중
 															</button>	
 														</c:when>
 														<c:when test="${project.statusCode eq 'PROJECT_STATE002'}">

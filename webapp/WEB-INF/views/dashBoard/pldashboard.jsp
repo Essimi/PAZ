@@ -13,7 +13,7 @@
 	</div>
 </div>
 
-<div class = "invoice mb-3" id = "firstCard">
+<%-- <div class = "invoice mb-3" id = "firstCard">
 	<!-- 자신의 업무 목록을 나타냅니다. -->
 		<div class="card" id = "monthIssueCard">
 			<div class="card-header">
@@ -47,7 +47,110 @@
 				</c:forEach>
 			</div>
 	</div>
-</div>
+</div> --%>
+
+<!--  <div class = "invoice mb-3" id = "firstCard"> -->
+		<div class="card" id = "monthIssueCard">
+			<div class="card-header">
+				<h5 class="card-title">긴급 업무 리스트</h5>
+			</div>
+			<div class="row">
+			
+				<div class="card-body p-0">
+	                <table class="table">
+	                  <thead>
+	                    <tr>
+	                      <th style="width:30%;">업무명</th>
+	                      <th>담당자</th>
+	                      <th>현황</th>
+	                      <th>중요도</th>
+	                      <th>시작기한</th>
+	                      <th>마감기한</th>
+	                      <th style="width:20%;">진척도</th>
+	                    </tr>
+	                  </thead>
+	                  <tbody>
+	                  
+	                  <c:set var="dataList" value="${pagingVO.dataList }"></c:set>
+	                  
+	                  <c:choose>
+	                  	<c:when test="${not empty dataList }">
+	                  		<c:forEach items="${dataList }" var="data">
+	                  		
+	                  		
+	                  			<tr class="selectTask">
+			                      <td class="workNam" style="text-align: left; padding-left: 50px; padding-right: 50px;">${data.workName }</td>
+			                      <td><span>${data.memNickname }</span></td>
+			                      
+			                      <!-- 현황 -->
+			                      <c:if test="${data.workStatus eq 'STATUS001' }">
+			                      	<td><span class="badge bg-light">TO DO</span></td>
+			                      </c:if>
+			                      
+			                      <c:if test="${data.workStatus eq 'STATUS002' }">
+			                      	<td><span class="badge bg-success">IN PROCESS</span></td>
+			                      </c:if>
+			                      
+			                      <c:if test="${data.workStatus eq 'STATUS003' }">
+			                      	<td><span class="badge bg-secondary">DONE</span></td>
+			                      </c:if>
+			                      
+			                      
+			                      <!-- 중요도 -->
+			                      <c:if test="${data.importance eq 'IMPORTANCE001' }">
+			                      	<td><span class="badge bg-danger">긴급</span></td>
+			                      </c:if>
+			                      
+			                      <td><span>${data.workStart }</span></td>
+			                      <td><span>${data.workDeadline }</span></td>
+			                      
+			                      <td style=" vertical-align:middle;">
+			                      
+			                        <div class="progress progress-xs">
+			                        
+			                         <c:if test="${data.workStatus eq 'STATUS001' }">
+			                         	<div class="progress-bar progress-bar-danger" style="width: ${data.progress}%; background-color: #f8f9fa; color:black;">${data.progress}%</div>
+			                         </c:if>
+			                         
+			                         <c:if test="${data.workStatus eq 'STATUS002' }">
+			                         	<div class="progress-bar progress-bar-danger" style="width: ${data.progress}%; background-color: #28a745; ">${data.progress}%</div>
+			                         </c:if>
+			                         
+			                         <c:if test="${data.workStatus eq 'STATUS003' }">
+			                         	<div class="progress-bar progress-bar-danger" style="width: ${data.progress}%; background-color: #6c757d; ">${data.progress}%</div>
+			                         </c:if>
+			                       	 
+			                        </div>
+			                        
+			                      </td>
+			                    </tr>  
+			                    
+			          
+			                    
+	                  		</c:forEach>
+	
+	                  	</c:when>
+	                  	
+	                  	<c:otherwise>
+	                  		<tr>
+	                  			<td colspan="8">등록된 업무 리스트가 없습니다. </td>
+	                  		</tr>
+	                  	</c:otherwise>
+	                  </c:choose>                    
+	                  </tbody>
+	                </table>
+	              </div>
+			</div>
+	</div>
+<!-- </div>               -->
+              
+              
+  
+  
+  
+  
+  
+              
 
 <!-- donut Task Area 입니다. -->
 <div class="row">

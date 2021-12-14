@@ -8,10 +8,6 @@
 	src="${pageContext.request.contextPath }/resources/js/commonjs/custom/paging.js">
 </script>
 
-<script type="text/javascript">
-	let searchForm = $("#searchForm").paging();
-</script>
-
 <script>
 window.addEventListener('load', function () {
 
@@ -32,5 +28,66 @@ $("#listBody").on("click", "tr", function(){
 		
 	location.href = "${cPath}/project/${project.pCode}/issue/issueSelect.do?issueCode=" + issueCode;
 })
+
+</script>
+
+<script>
+
+let noticeBody = $("#noticeBody");
+let pagingArea = $("#pagingArea");
+
+let searchForm = $("#searchForm").paging()
+	.ajaxForm({
+		url : '${cPath}/project/${project.pCode}/projectView.do',					
+		dataType : 'json',                              
+		success : function(resp){                       
+			noticeBody.empty();                            
+			pagingArea.empty();
+			
+			let noticeList = resp.dataList;                    
+			let pagingHTML = resp.pagingHTML;          
+			let trTags=[];
+			
+			if (noticeList) {
+				
+				$.each(noticeList,function(idx,notice){
+					
+					let trTag = $("<tr>").append(
+							$("<td>").text(notice.rnum),
+							$("<td>").text(notice.noticeTitle).attr({
+								class : "checkBtn",
+								id : notice.noticeCode,
+								style : "color: #007bff;"
+							}),	
+							$("<td>").text(notice.noticeDate)
+					)
+					trTags.push(trTag); 
+				});
+				
+			} else {
+				let trTag = $("<tr>").html(
+						$("<td>").text("공지사항이 존재하지 않음.")		
+				);
+				trTags.push(trTag);
+			}                                                  
+			                                                   
+			noticeBody.append(trTags);                          
+			pagingArea.html(pagingHTML);                       
+		},                                                     
+		error:function(xhr, jQuery, error){                                
+			console.log(error);                                 
+		}                                                       
+	}).submit();                                           
+
+</script>
+
+<script>
+
+	$(document).on("click",".checkBtn",function() {
+		let noticeId = $(this).attr("id");
+		let viewURL = "${cPath }/project/${project.pCode }/projectNotice/projectNoticeSelect.do?noticeCode="+noticeId;
+		
+		location.href = viewURL;
+	});
 
 </script>

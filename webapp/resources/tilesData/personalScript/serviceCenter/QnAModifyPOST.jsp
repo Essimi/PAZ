@@ -1,24 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
 <!-- Summernote -->
 <script src="${cPath }/resources/adminLTE3/summernote/summernote-bs4.min.js"></script>
 
 
-<script> 
+<script>
 $(function () {
 	//Add text editor
     $('#compose-textarea').summernote();
+	
+	console.log("${status}")
+	
+	var Toast = Swal.mixin({
+		toast : true,
+		position : 'top-end',
+		showConfirmButton : false,
+		timer : 3000
+	});
+	
+	var message = "${status}";
+	if (message == "FAIL") {
+		toastr.error("등록에 실패하셨습니다. 다시 시도해주세요.");
+	};
 })
-
-// summerNotest 의 값을 전송합니다.
-$('#checkQna').on('click', function(){
-		
-	$('#qandaTitle').val($('#ttitle').val());
-	
-	$('#qandaCode').val('${qnaCode}');
-	
-	$('#qandaContent').val($('#compose-textarea').val());
-	
-	$('#qnaWrite').get(0).submit();
-	 
-})
-
 </script>	

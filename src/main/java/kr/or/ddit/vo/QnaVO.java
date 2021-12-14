@@ -3,7 +3,10 @@ package kr.or.ddit.vo;
 import java.io.Serializable;
 import java.util.Set;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+
+import kr.or.ddit.validate.groups.InsertGroup;
 
 /**
  * 
@@ -27,11 +30,11 @@ public class QnaVO implements Comparable<QnaVO>, Serializable{
 	
 	private String qandaCode;
 	
-	private String qandaParentCode;
+	private String parentCode;
 	
-	@NotEmpty
+	@NotBlank(message = "제목을 입력해주세요", groups = InsertGroup.class)
 	private String qandaTitle;
-	@NotEmpty
+	@NotBlank(message = "내용을 입력해주세요")
 	private String qandaContent;
 	
 	private String qandaDate;
@@ -66,14 +69,6 @@ public class QnaVO implements Comparable<QnaVO>, Serializable{
 
 	public void setQandaCode(String qandaCode) {
 		this.qandaCode = qandaCode;
-	}
-
-	public String getQandaParentCode() {
-		return qandaParentCode;
-	}
-
-	public void setQandaParentCode(String qandaParentCode) {
-		this.qandaParentCode = qandaParentCode;
 	}
 
 	public String getQandaTitle() {
@@ -139,13 +134,22 @@ public class QnaVO implements Comparable<QnaVO>, Serializable{
 		return 0;
 	}
 
+	public String getParentCode() {
+		return parentCode;
+	}
+
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
+	}
+
 	@Override
 	public String toString() {
-		return "QnaVO [qandaCode=" + qandaCode + ", qandaParentCode=" + qandaParentCode + ", qandaTitle=" + qandaTitle
+		return "QnaVO [qandaCode=" + qandaCode + ", parentCode=" + parentCode + ", qandaTitle=" + qandaTitle
 				+ ", qandaContent=" + qandaContent + ", qandaDate=" + qandaDate + ", qandaCheck=" + qandaCheck
 				+ ", rnum=" + rnum + ", memId=" + memId + "]";
 	}
-
 	
+	
+ 
 	
 }

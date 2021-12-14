@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     
 <style>
 #requestListDiv {
@@ -147,7 +147,7 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-w
 	                      		<a href="${viewURL }">${Retrieve.memId }</a>
 	                      </td>
 	                      <td>${Retrieve.payMonth }</td>
-	                      <td>${Retrieve.payAmount }</td>
+	                      <td><fmt:formatNumber value="${Retrieve.payAmount}" pattern="#,###"/>원</td>
 	                      
 	                    </tr>
 	                    
