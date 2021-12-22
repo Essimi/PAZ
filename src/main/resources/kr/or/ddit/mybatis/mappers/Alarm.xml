@@ -2,6 +2,64 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.or.ddit.alarm.dao.AlarmDAO">
 
+<select id="selectTotalAlarm" parameterType="hashmap" resultType="int">
+
+	SELECT COUNT(ALARM.ALARM_CODE) 
+	FROM ALARM, 
+	( 
+	SELECT 
+	ALARM_RECIPIENT.ALARM_CODE 
+	, ALARM_RECIPIENT.MEM_ID 
+	, ALARM_RECIPIENT.ALARM_CHECK 
+	
+	FROM ALARM_RECIPIENT 
+	WHERE ALARM_RECIPIENT.MEM_ID = #{memId} 
+	AND ALARM_CHECK = '1'
+	) 
+	A WHERE ALARM.ALARM_CODE(+) = A.ALARM_CODE 
+	AND P_CODE = #{pCode}
+
+</select>
+
+<select id="selectAlarmPreview" parameterType="hashmap" resultType="AlarmVO">
+
+    SELECT B.*
+    FROM
+    (
+    SELECT
+    
+    ROWNUM RNUM
+	, ALARM.ALARM_CODE
+	, ALARM.ALARM_TYPE
+	, ALARM.P_CODE
+	, ALARM.ALARM_CONTENTS
+	, ALARM.ALARM_DATE
+	, ALARM.MEM_ID
+	, ALARM.ALARM_TITLE
+	, ALARM.POST_CODE
+	, A.MEM_ID AS RECIPIENT
+    , A.ALARM_CHECK
+	
+	FROM ALARM,
+		(
+		SELECT 
+		ALARM_RECIPIENT.ALARM_CODE
+		, ALARM_RECIPIENT.MEM_ID
+        , ALARM_RECIPIENT.ALARM_CHECK
+		FROM 
+		ALARM_RECIPIENT
+		WHERE ALARM_RECIPIENT.MEM_ID = #{memId}
+		AND ALARM_CHECK = '1'
+		) A
+	WHERE ALARM.ALARM_CODE(+) = A.ALARM_CODE
+	AND P_CODE = #{pCode}
+    ORDER BY ALARM.ALARM_DATE ASC
+    ) B
+    <![CDATA[
+		WHERE  RNUM >= 1 AND RNUM <= 3
+	]]>
+
+</select>
 
 <select id="selectAlarmCode" resultType="string">
 	SELECT 'ALARM' || LPAD(ALARM_SEQ.NEXTVAL, 5, '0') FROM DUAL
@@ -102,6 +160,7 @@
 		WHERE ALARM_RECIPIENT.MEM_ID = #{memId}
 		) A
 	WHERE ALARM.ALARM_CODE(+) = A.ALARM_CODE
+	AND P_CODE = #{pCode}
 	ORDER BY ALARM.ALARM_DATE DESC
 
 </select>
@@ -125,5 +184,63 @@
 	AND MEM_ID = #{myId}
 	
 </update>
+
+<resultMap type="kr.or.ddit.vo.TaskVO" id="resultModify" autoMapping="true">
+
+	<id property="workCode" column="WORK_CODE"/>
+	<result property="topWorkCode" column="TOP_WORK_CODE" />
+	<result property="workStatus" column="WORK_STATUS" />
+	<result property="workName" column="WORK_NAME" />
+	<result property="workContents" column="WORK_CONTENTS" />
+	<result property="workStart" column="WORK_START" />
+	<result property="workDeadline" column="WORK_DEADLINE" />
+	<result property="progress" column="PROGRESS" />
+	<result property="importance" column="IMPORTANCE" />
+	
+	<collection property="modifyHistoryList"  ofType="kr.or.ddit.vo.ModifyHistoryVO" autoMapping="true">
+		<id property="modifyCode" column="MODIFY_CODE" />
+		<result property="modifyDate" column="MODIFY_DATE" />
+		<result property="columnKey" column="COLUMN_KEY" />
+		<result property="beforeValue" column="BEFORE_VALUE" />
+		<result property="afterValue" column="AFTER_VALUE" />
+		<result property="modifierId" column="MODIFIER_ID" />
+	</collection>
+
+</resultMap>
+
+<select id="selectTask" resultMap="resultModify" parameterType="hashmap">
+
+     SELECT
+	    A.MEM_ID,
+	    A.TOP_WORK_CODE,
+	    A.WORK_STATUS,
+	    A.WORK_NAME,
+	    A.WORK_CONTENTS,
+	    TO_CHAR(A.WORK_START, 'YYYY-MM-DD') WORK_START,
+	    TO_CHAR(A.WORK_DEADLINE, 'YYYY-MM-DD') WORK_DEADLINE,
+	    A.PROGRESS,
+	    A.IMPORTANCE,
+           B.MODIFY_CODE,
+           B.WORK_CODE,
+           TO_CHAR(B.MODIFY_DATE, 'YYYY-MM-DD') MODIFY_DATE,
+           B.COLUMN_KEY,
+           B.BEFORE_VALUE,
+           B.AFTER_VALUE,
+           B.MODIFIER_ID
+	FROM
+	    WORK A, MODIFY_HISTORY B
+	WHERE A.WORK_CODE = B.WORK_CODE(+)
+	  AND A.WORK_CODE = #{workCode}
+	  AND A.P_CODE = #{pCode}
+	  ORDER BY B.MODIFY_CODE DESC
+
+</select>
+
+<delete id="deleteAlarmAOP" parameterType="string">
+
+	DELETE FROM ALARM
+	WHERE POST_CODE = #{postCode}
+
+</delete>
 
 </mapper>

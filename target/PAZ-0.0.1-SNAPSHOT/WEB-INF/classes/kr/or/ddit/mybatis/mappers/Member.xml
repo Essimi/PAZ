@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.member.dao.MemberDAO">
+
+	<resultMap type="MemberVO" id="simpleMemberMap" autoMapping="true">
+		<id property="memId" column="MEM_ID"/>
+		<association property="memIkon" javaType="MemberIkonVO" autoMapping="true">
+			<id property="imgCode" column="IMG_CODE"/>
+			<result property="memId" column="ID"/>
+		</association>
+		<collection property="memRoles" ofType="string" javaType="list">
+			<result column="MEM_ROLES"/>
+		</collection>
+	</resultMap>
+	
+	<resultMap type="MemberVO" id="selectMemberMap" autoMapping="true">
+		<id property="memId" column="MEM_ID"/>
+		<association property="memIkon" javaType="MemberIkonVO" autoMapping="true">
+			<id property="imgCode" column="IMG_CODE"/>
+			<result property="memId" column="ID"/>
+		</association>
+	</resultMap>
+
+	<select id="selectMemberForAuth" parameterType="string" resultMap="simpleMemberMap">
+		SELECT 
+			A.MEM_ID, MEM_PASS
+			, MEM_NICKNAME, REVIEW_STATUS
+			, IMG_CODE, C.MEM_ID ID
+			, REAL_NAME, SAVE_NAME
+			, IMG_MIME , IMG_SIZE  
+			, ROLE_CODE MEM_ROLES
+			, MEM_MAIL
+			, TO_CHAR(MEM_BIRTH, 'YYYY-MM-DD') MEM_BIRTH
+			, TO_CHAR(PAY_DEADLINE, 'YYYY-MM-DD') PAY_DEADLINE
+			, MEM_TEL           
+		FROM MEMBER A, MEM_MAPPING B, MEMBER_IKON C
+		WHERE A.MEM_ID = B.MEM_ID
+        AND A.MEM_ID = C.MEM_ID(+)
+		AND A.MEM_ID = #{memId} AND OUT_CODE != '1'
+	</select>
+	
+	<select id="selectMember" parameterType="kr.or.ddit.vo.MemberVO" resultMap="selectMemberMap">
+		SELECT 
+		    A.MEM_ID
+		  , MEM_NICKNAME
+		  , TO_CHAR(PAY_DEADLINE, 'YYYY-MM-DD') PAY_DEADLINE
+		  , MEM_MAIL, MEM_TEL
+		  , MEM_BIRTH, MEM_GENDER
+		  , MEM_COMPANY, JOIN_DATE
+		  , OUT_DATE, SURVEY_STATUS
+		  , IMG_CODE, B.MEM_ID ID
+		  , REAL_NAME, SAVE_NAME
+		  , IMG_MIME , IMG_SIZE
+		FROM MEMBER A, MEMBER_IKON B
+		WHERE A.MEM_ID = B.MEM_ID(+)
+		AND A.MEM_ID = #{memId}
+	</select>
+
+	<select id="projectMemberList" parameterType="ProjectVO" resultMap="simpleMemberMap">
+		SELECT   A.MEM_ID
+		       , A.POSITION MEM_ROLES
+		       , A.OUT_STATUS OUT_CODE
+		       , B.MEM_NICKNAME
+		       , C.IMG_CODE
+		       , C.SAVE_NAME
+		  FROM P_MEM A, MEMBER B, MEMBER_IKON C
+		 WHERE A.MEM_ID = B.MEM_ID
+		   AND A.MEM_ID = C.MEM_ID(+)
+		   AND A.P_CODE = #{pCode}
+	</select>
+
+	<insert id="insertMember" parameterType="kr.or.ddit.vo.MemberVO">
+		 INSERT INTO MEMBER (
+			    MEM_ID
+			  , MEM_PASS
+			  , MEM_NICKNAME
+			  , MEM_MAIL
+			  , MEM_TEL
+			  , MEM_BIRTH
+			  , MEM_GENDER
+			  , MEM_COMPANY
+			  , JOIN_DATE
+			  , SURVEY_STATUS
+			  , OUT_CODE
+			) VALUES (
+			  	#{memId, jdbcType=VARCHAR},
+				#{memPass, jdbcType=VARCHAR},
+				#{memNickname, jdbcType=VARCHAR},
+				#{memMail, jdbcType=VARCHAR},
+				#{memTel, jdbcType=NUMERIC},
+				TO_DATE(#{memBirth, jdbcType=DATE}, 'YYYY-MM-DD'),
+				#{memGender, jdbcType=CHAR},
+				#{memCompany, jdbcType=VARCHAR},
+				SYSDATE,
+				'REVIEW_STATUS002',
+				'0'
+			)
+	</insert>
+	<insert id="insertMemberRole" parameterType="MemberVO">
+		INSERT INTO mem_mapping (
+		    MEM_ID
+		  , ROLE_CODE
+		) VALUES (
+		   	#{memId, jdbcType=VARCHAR}
+		  , 'IS_AUTHENTICATED_FULLY'
+		)
+	</insert>
+	
+	<select id="selectMemberEmail" parameterType="MemberVO" resultType="MemberVO">
+		SELECT MEM_ID,
+			   MEM_MAIL,
+			   JOIN_DATE
+		  FROM MEMBER
+		 WHERE MEM_MAIL = #{memMail, jdbcType=VARCHAR}
+		 <if test="@org.apache.commons.lang3.StringUtils@isNotBlank(memId)">
+		   AND MEM_ID = #{memId, jdbcType=VARCHAR}
+		 </if>
+		   AND OUT_CODE != '1'
+	</select>
+	
+	<update id="updateMember" parameterType="MemberVO">
+		UPDATE MEMBER
+		   SET 
+			  MEM_NICKNAME = #{memNickname, jdbcType=VARCHAR}
+			, MEM_MAIL = #{memMail, jdbcType=VARCHAR}
+			, MEM_TEL = #{memTel, jdbcType=VARCHAR}
+			<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(memPass)">
+			  , MEM_PASS = #{memPass, jdbcType=VARCHAR}
+			</if>
+		 WHERE MEM_ID = #{memId, jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updatePassword" parameterType="MemberVO">
+		UPDATE MEMBER
+		   SET 
+			   MEM_PASS = #{memPass, jdbcType=VARCHAR}
+		 WHERE MEM_ID = #{memId, jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteMemberImage" parameterType="MemberIkonVO">
+		DELETE MEMBER_IKON
+		WHERE MEM_ID = #{memId, jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="insertMemberImage" parameterType="MemberIkonVO">
+		INSERT INTO member_ikon (
+		    IMG_CODE
+		  , MEM_ID
+		  , REAL_NAME
+		  , SAVE_NAME
+		  , IMG_MIME
+		  , IMG_SIZE
+		) VALUES (
+		 	'IKON' || LPAD(IKON_SEQ.NEXTVAL, 5, '0'),
+			#{memId, jdbcType=VARCHAR},
+			#{realName, jdbcType=VARCHAR},
+			#{saveName, jdbcType=VARCHAR},
+			#{imgMime, jdbcType=VARCHAR},
+			#{imgSize, jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<!-- ========================================================================================== -->
+	<!-- ========================================   관리자   ======================================== -->
+	<!-- ========================================================================================== -->
+	
+	<!-- detailSearch -->
+	<sql id="searchFrag">
+		<!-- <trim prefix=" WHERE " prefixOverrides=" AND "> -->
+		 	<if test="detailSearch neq null">
+		 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.outCode)">
+		 			AND OUT_CODE = #{detailSearch.outCode}
+		 		</if>
+		 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.memCompany)">
+		 			AND MEM_COMPANY = #{detailSearch.memCompany}
+		 		</if>
+		 		<if test="@org.apache.commons.lang3.StringUtils@isNotBlank(detailSearch.memId)">
+		 			AND INSTR(MEM_ID, #{detailSearch.memId}) > 0
+		 		</if>
+		 	</if>   	
+		<!-- </trim> -->
+	</sql>
+	
+	<!--  총 회원 수 조회 -->
+	<select id="selectMemberTotal" resultType="int" parameterType="PagingVO">
+		SELECT COUNT(*)
+		FROM MEMBER
+		WHERE 1=1
+		 <include refid="searchFrag" />
+	</select>
+	
+	<!-- 관리자 - 전체 회원 리스트 출력 -->
+	<select id="selectAllMemberList" resultType="MemberVO" parameterType="PagingVO">      
+	      SELECT E.*
+			FROM(
+			    SELECT D.*, ROWNUM RNUM
+			    FROM (
+			             SELECT C.*
+			             FROM (
+			                      SELECT
+			                          MEM_ID,
+			                          MEM_PASS,
+			                          MEM_NICKNAME,
+			                          MEM_MAIL,
+			                          MEM_TEL,
+			                          TO_CHAR(MEM_BIRTH, 'YYYY-MM-DD') MEM_BIRTH,
+			                          MEM_GENDER,
+			                          MEM_COMPANY,
+			                          TO_CHAR(JOIN_DATE, 'YYYY-MM-DD') JOIN_DATE,
+			                          TO_CHAR(OUT_DATE, 'YYYY-MM-DD') OUT_DATE,
+			                          SURVEY_STATUS,
+			                          OUT_CODE
+			                      FROM
+			                          MEMBER
+			                      WHERE 1=1
+			                      <include refid="searchFrag" />
+			                  ) C  ORDER BY C.JOIN_DATE DESC
+			              ) D
+			        ) E  
+	      
+     	<![CDATA[   
+			WHERE RNUM BETWEEN #{startRow} AND #{endRow}   ]]>   
+	</select>
+	
+	
+	<!-- 회원 탈퇴 -->
+	<update id="updateMemberOutCode" parameterType="MemberVO">
+		UPDATE MEMBER
+	   	   SET
+			   OUT_CODE = '1'
+	     WHERE MEM_ID = #{memId}
+	</update>
+	
+	<!-- 회원 탈퇴 시 P_MEM OutStatus 변경 -->
+	<update id="updatePmemOutStatus" parameterType="MemberVO">
+		UPDATE P_MEM
+		   SET OUT_STATUS = '1'
+		 WHERE MEM_ID = #{memId}
+	</update>
+	
+	<!-- 로그인한 회원의 결제유무를 판단합니다. -->
+	<select id = "memberPay" parameterType="MemberVO" resultType="String">
+		SELECT PAYMENT
+		FROM MEMBER
+		WHERE MEM_ID = #{memId}
+	</select>
+	
+	<!-- 현재 날짜와 데드라인이 같은 멤버만 가져옵니다.(scheduler) -->
+   <select id = "memberDeadLineInfo" resultType = "map">
+   		SELECT MEM_ID, TO_CHAR(PAY_DEADLINE,'YYYY-MM-DD') PAY_DEADLINE
+		FROM MEMBER
+		WHERE TO_CHAR(PAY_DEADLINE,'YYYY-MM-DD') = TO_CHAR(SYSDATE,'YYYY-MM-DD')
+   </select>
+   
+    <!-- 데드라인이 지난 멤버들의 상태를 변경합니다.. -->
+    <update id = "memberDeadLineChangePayment" parameterType = "java.util.List">
+   		UPDATE MEMBER
+		SET PAYMENT = 'N'
+		WHERE MEM_ID IN 
+		<foreach collection = "list" item = "item" index = "index" open = "(" separator = "," close = ")">
+			#{item} 
+		</foreach>	
+   </update> 
+	
+</mapper>

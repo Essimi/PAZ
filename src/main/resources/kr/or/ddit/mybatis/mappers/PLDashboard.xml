@@ -56,7 +56,7 @@
 		AND   P_CODE = #{pCode} 
 	</select>
 	
-	<!-- 사용자 업무별  -->
+	<!-- 사용자 업무별 칸반  -->
 	<select id="teamState" resultType="PLDashboardVO" parameterType="String">
 		SELECT DISTINCT B.MEM_ID, MEM_NICKNAME, NVL(A.TODO,0) TODO, NVL(C.PROCESS,0) PROCESS , NVL(D.DONE,0) DONE
 			FROM P_MEM B,
@@ -85,6 +85,7 @@
 			AND   P_CODE = #{pCode} 
 	</select>
 	
+	<!-- 근무시간 -->
 	<select id="teamWorkTime" resultType="PLDashboardVO" parameterType="String">
 	SELECT DISTINCT A.*
 		FROM(
@@ -184,7 +185,7 @@
 		                WHERE A.MEM_ID = B.MEM_ID
 		                  AND A.PROGRESS = C.PROGRESS
 		                  AND A.TOP_WORK_CODE = D.WORK_CODE(+)
-		                  AND A.P_CODE = 'PROJECT00004'
+		                  AND A.P_CODE = #{detailSearch.pCode}
 		                  AND A.WORK_DELETE = '0'
                           AND A.IMPORTANCE = 'IMPORTANCE001'
 		                  

@@ -1,0 +1,91 @@
+
+   
+	 #content {
+	 	padding: 30px;
+	 }
+	 
+	.card-primary.card-outline {
+    	border-top: 3px solid #8da1b7;
+	}
+
+	.mailbox-read-info {
+		padding: 20px;
+	}
+	
+	.mailbox-controls {
+		padding: 20px;
+		min-height: 250px;
+	}
+	
+	.quote-secondary {
+		border-radius: 0xp 10px 10px 0px;
+	}
+	
+	.mailbox-read-message {
+		padding: 20px;
+	}
+	
+	#editList {
+		margin-bottom : 10px;
+	}
+	
+	.callout {
+		box-shadow: 0 1px 3px rgb(0 0 0 / 7%), 0 1px 2px rgb(0 0 0 / 14%);
+	}
+	
+	.table { 
+		text-align: center;
+	}
+	
+	.progress {
+		height: 15px;
+    	border-radius: 20px;
+	}
+	
+	.card-footer{
+		padding:20px;
+	}
+	
+	.js-irs-2 {
+		display:none;
+	}
+	
+	.searchList{
+		height: 200px;
+		overflow: auto;
+		margin: 30px 0px;
+    	border: 1px solid lightgray;
+   		border-radius: 10px;
+	}
+	
+	.container {
+		margin-left : 0px;
+	}
+	
+	.searchTr:hover {
+		background : #f8f9fa;
+	}
+	
+	.note-editable {
+		height: 300px;
+	}
+	
+	.importanceBadge {
+		padding : 5px 10px;
+	}
+	
+	.modal-body {
+		padding: 30px;
+	}
+	
+	.modal-body p {
+		color : gray;
+	}
+	
+	.dateInput {
+		border: 1px solid #ced4d9;
+	    padding: 3px;
+	    border-radius: 3px;
+	}
+
+ 

@@ -1,0 +1,90 @@
+
+@charset "UTF-8";
+
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+	{
+	margin-left: 0px;
+}
+
+#content {
+	padding: 50px 70px;
+}
+
+.table {
+	text-align: center;
+}
+
+.table a {
+	color: black
+}
+
+.table a:hover {
+	color: gray;
+}
+
+
+.invoice {
+	border-top: 3px solid #17a2b8;
+    border-radius: 10px;
+}
+
+.fa-chalkboard-teacher {
+	margin-right:10px;
+}
+	
+.col-12 h4 {
+	margin-top: 10px;
+}
+
+#changeMemberInfo{
+	float: right; 
+	height: 40px; 
+	width: 125px
+}
+
+#memberImage{
+	height: 200px; 
+	width: 200px; 
+}
+
+#extensionBtn{
+	margin-left: 30px;	
+}
+
+#memberDeadLineInfo{
+	margin-top: 10px;
+}
+
+#refundHead{
+	margin-left: 10px;
+}
+
+#qnaLinkBtn{
+	float: right;
+	height: 35px; 
+	margin-top: 5px;
+	margin-right: 10px;
+}
+
+#payAddInfo{
+	margin-top: 30px;
+}
+
+.payAddArea{
+	height: 460px;
+}
+
+#refundText{
+	height: 180px; 
+	width: 465px;
+}
+
+
+
+
+.list-group-item {
+	
+	padding: 20px;
+}

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.common.qna.dao.QnADAO">
+
+	<!-- 게시글 총 개수 조회 -->
+	<select id = "selectQnATotalRecord" resultType = "int" parameterType = "kr.or.ddit.vo.PagingVO">
+		SELECT COUNT(*)
+		FROM QANDA
+	</select>
+	
+	<!-- 답변글이 달리지 않은 글의 총 개수 조회(관리자) -->
+	<select id = "selectNotAnswerQnATotalRecord" resultType = "int" parameterType = "kr.or.ddit.vo.PagingVO">
+		SELECT COUNT(*)
+		FROM QANDA
+		WHERE QANDA.PARENT_CODE IS NULL
+		AND CONNECT_BY_ISLEAF = '1'
+		START WITH  PARENT_CODE IS NULL CONNECT BY  PRIOR QANDA_CODE = PARENT_CODE
+	</select>
+	
+	<!-- 관리자 입장에서의 삭제된 글의 개수(페이징 처리용) -->
+	<select id = "selectQnADeleteTotalRecord" resultType = "int" parameterType = "kr.or.ddit.vo.PagingVO">
+	    SELECT COUNT(*)
+		FROM QANDA
+		WHERE QANDA_CHECK = 'Y'
+	</select>
+	
+	<!-- 개인 회원 입장에서의 개인이 작성한 글의 개수 조회(삭제하지 않은 것만) (페이징 처리용) -->
+	<select id = "selectQnAListUserRecord" resultType = "int" parameterType = "kr.or.ddit.vo.PagingVO">
+	   SELECT COUNT(*) FROM
+		(SELECT A.* FROM
+    		(SELECT QANDA_CODE ,PARENT_CODE ,LPAD(' re:', (LEVEL-1) * 12) || QANDA_TITLE QANDA_TITLE , MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK , ROWNUM RNUM
+     		FROM (select * from QANDA where PARENT_CODE in (select QANDA_CODE from QANDA where MEM_ID = #{detailSearch.memId})
+            union all
+            select * from QANDA where MEM_ID = #{detailSearch.memId})
+     	WHERE QANDA_CHECK = 'N'
+        START WITH PARENT_CODE IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY QANDA_DATE DESC) A)
+	</select>
+
+	<!-- 관리자 입장에서의 게시글 리스트 조회 -->
+	<select id = "selectQnAList" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "kr.or.ddit.vo.PagingVO">
+		SELECT B.* FROM
+			(SELECT A.*, ROWNUM RNUM FROM
+				<![CDATA[
+					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
+					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK
+				FROM QANDA START WITH PARENT_CODE
+				IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY
+				QANDA_DATE DESC) A
+			) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 관리자 입장에서의 삭제된 글만 조회 -->
+	<select id = "selectQnADeleteList" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "kr.or.ddit.vo.PagingVO">
+	   SELECT B.* FROM
+			(SELECT A.*, ROWNUM RNUM FROM
+				<![CDATA[
+					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;:&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
+					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK
+				FROM QANDA START WITH PARENT_CODE
+				IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY
+				QANDA_DATE DESC) A WHERE QANDA_CHECK = 'Y' 
+			) B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+	<!-- 답변글이 달리지 않은 글만 조회(관리자) -->
+	<select id = "selectNotAnswerQnAList" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "kr.or.ddit.vo.PagingVO">
+		SELECT B.* 
+		FROM
+		    (SELECT A.*, ROWNUM RNUM
+		    FROM
+		         (SELECT QANDA_CODE, QANDA_TITLE, MEM_ID, TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK,
+		                 CONNECT_BY_ISLEAF AS LEAF
+		          FROM QANDA
+		          WHERE NOT MEM_ID IN ('admin')
+		          AND PARENT_CODE IS NULL
+		          START WITH  PARENT_CODE IS NULL CONNECT BY  PRIOR QANDA_CODE = PARENT_CODE
+		          ORDER BY QANDA_DATE) A
+		    WHERE LEAF = '1') B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 개인 회원 입장에서의 개인이 작성한 글(삭제하지 않은 것만) -->
+	<select id = "selectQnAListUser" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "kr.or.ddit.vo.PagingVO">
+	    SELECT A.* FROM
+	    <![CDATA[
+    		(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE , MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK , ROWNUM RNUM]]>
+     		 FROM (select * from QANDA where PARENT_CODE in (select QANDA_CODE from QANDA where MEM_ID = #{detailSearch.memId})
+             union all
+             select * from QANDA where MEM_ID = #{detailSearch.memId})
+     		WHERE QANDA_CHECK = 'N'
+		START WITH PARENT_CODE IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY QANDA_DATE DESC) A
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	</select>
+	
+	<!-- 상세 조회 -->
+	<select id = "selectQnA" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "String">
+	
+		SELECT * FROM QANDA
+		WHERE QANDA_CODE = #{qandaCode}
+	
+	</select>
+	
+	<!-- 회원의 답글 작성과 관리자의 답글 작성 -->
+	<insert id = "insertQnA" parameterType = "kr.or.ddit.vo.QnaVO">
+		<selectKey keyProperty = "qandaCode" resultType = "String" order = "BEFORE">
+			SELECT 'q'||QNA_SEQ.NEXTVAL
+			FROM DUAL
+		</selectKey>
+			INSERT INTO QANDA(
+				QANDA_CODE,
+				MEM_ID, 
+				QANDA_TITLE, 
+				QANDA_CONTENT,
+				QANDA_DATE
+				<if test = "parentCode neq null">
+				 ,PARENT_CODE 
+				</if>
+				,QANDA_CHECK
+			) VALUES(
+				#{qandaCode,jdbcType=VARCHAR},
+				#{memId,jdbcType=VARCHAR},
+				#{qandaTitle,jdbcType=VARCHAR},
+				#{qandaContent,jdbcType=CLOB},
+				SYSDATE
+				<if test = "parentCode neq null">
+				 ,#{parentCode,jdbcType=VARCHAR}
+				</if>
+				,'N'
+			)
+	</insert>
+	
+	<!-- 작성 글 수정 -->
+	<update id = "updateQnA" parameterType = "kr.or.ddit.vo.QnaVO">
+			UPDATE QANDA 
+			SET 
+			QANDA_TITLE = #{qandaTitle,jdbcType=VARCHAR},
+            QANDA_CONTENT = #{qandaContent,jdbcType=VARCHAR}
+			WHERE QANDA_CODE = #{qandaCode,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 글 삭제(업데이트) -->
+	<update id = "deleteQnA" parameterType = "String">
+		UPDATE QANDA SET QANDA_CHECK = 'Y'
+		WHERE QANDA_CODE = #{qandaCode} OR PARENT_CODE = #{qandaCode}
+		
+	</update>
+	
+</mapper>

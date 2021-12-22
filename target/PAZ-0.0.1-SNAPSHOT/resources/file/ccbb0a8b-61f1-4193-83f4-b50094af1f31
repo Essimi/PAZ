@@ -1,0 +1,8 @@
+				}
+				result = ServiceResult.OK;
+			}else {
+				result = ServiceResult.FAILED;
+			}
+		} else {
+			result = ServiceResult.FAILED;
+		}

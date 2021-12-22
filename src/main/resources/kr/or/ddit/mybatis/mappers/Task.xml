@@ -266,7 +266,7 @@
 		and a.WORK_STATUS = c.WORK_STATUS
 		and a.MEM_ID = d.MEM_ID
 		and a.p_code = #{pCode}
-
+		and a.work_delete = '0'
 		    order by a.work_code
    </select>
    

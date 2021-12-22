@@ -1,0 +1,81 @@
+@charset "UTF-8";
+
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+	{
+	margin-left: 0px;
+}
+
+#pagingArea {
+	background-color: white;
+	float: left;
+}
+
+#QnA_WriteButton {
+	float : right;
+	margin-right: 10px;
+	height: 38px;
+}
+
+
+
+
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
+	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header
+	{
+	margin-left: 0px;
+}
+
+#QnA_WriteButton {
+	margin-top: 15px;
+	height: 38px;
+}
+
+#pagingArea {
+	background-color: white;
+	float: left;
+}
+
+#lastBBtn{
+	
+	margin-right: 10px;
+}
+
+
+#content {
+	padding: 50px 70px;
+}
+
+.table {
+	text-align: center;
+}
+
+.table a {
+	color: black
+}
+
+.table a:hover {
+	color: gray;
+}
+
+
+.invoice {
+	border-top: 3px solid #17a2b8;
+    border-radius: 10px;
+}
+
+.fa-chalkboard-teacher {
+	margin-right:10px;
+}
+	
+.col-12 h4 {
+	margin-top: 10px;
+}
+
+#QnA_WriteButton {
+	margin-top: 0;
+	height: auto;
+	width: 100px;
+}

@@ -5,7 +5,7 @@
 
 	<!-- 환불 가능한 결제 리스트 입니다. -->
 	<select id = "payInfo" parameterType = "String" resultType = "PayVO">
-		 SELECT PAY_CODE, TO_CHAR(PAY_DATE, 'YYYY-MM-DD') PAY_DATE, PAY_AMOUNT, PAY_MONTH, PAY_PROVIDER
+		 SELECT PAY_CODE, TO_CHAR(PAY_DATE, 'YYYY-MM-DD') PAY_DATE, TO_CHAR(PAY_AMOUNT, '99,999') PAY_AMOUNT, PAY_MONTH, PAY_PROVIDER
 		 FROM PAY_INFO WHERE MEM_ID = #{memId}
 		 <![CDATA[
 		 AND PAY_DATE + (INTERVAL '1' MONTH) > SYSDATE 

@@ -1,0 +1,18 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+ <!-- Summernote -->
+  <script src="${cPath }/resources/adminLTE3/summernote/summernote-bs4.min.js"></script>
+ 
+<script>
+$("#testIn").on("click",function(){
+	$("#insertTitle").val("회의록 8주차 주간보고")
+	
+	$('#compose-textarea').summernote('editor.insertText', '회의록 8주차 주간보고 내용으로 전체 테스트 내역입니다.')
+	
+	$("#compose-textarea-result").val("전체 테이블 내역입니다.")
+	
+	$('.projectman').attr('checked', true);
+	
+})
+</script>

@@ -1,0 +1,34 @@
+
+P
+java:S1854A":Remove this useless assignment to local variable "status".(Š²„Ç
+`
+java:S44889"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(Â±œë
+`
+java:S4488k"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(µÔ¡
+d
+java:S1871"MThis branch's code block is the same as the block for the branch on line 123.(ÛÊæË
+X
+java:S1128"BRemove this unused import 'javax.servlet.http.HttpServletRequest'.(ø©¹…
+N
+java:S1128"3Remove this unused import 'javax.validation.Valid'.(æ¤ñ÷úÿÿÿÿ
+|
+java:S1128"aRemove this unused import 'org.apache.logging.log4j.core.appender.rewrite.MapRewritePolicy.Mode'.(í¬Î¯ûÿÿÿÿ
+I
+java:S1128"3Remove this unused import 'lombok.extern.java.Log'.(Ë¡±ì
+r
+java:S11926"WDefine a constant instead of duplicating this literal "serviceCenter/QnAWrite" 3 times.(º›„åıÿÿÿÿ
+{
+java:S1192H"`Define a constant instead of duplicating this literal "redirect:/qna/qnaView.do?QnANo=" 3 times.(Ê’†›ıÿÿÿÿ
+m
+java:S1192h"XDefine a constant instead of duplicating this literal "serviceCenter/QnAModify" 3 times.(Ë¹”
+]
+java:S1192J"GDefine a constant instead of duplicating this literal "status" 5 times.(«‹úì
+f	java:S117a"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ùÎÿ±
+f
+java:S1301F"KReplace this "switch" statement by "if" statements to increase readability.(¿ÂĞ¥üÿÿÿÿ
+f
+java:S1301y"KReplace this "switch" statement by "if" statements to increase readability.(¿ÂĞ¥üÿÿÿÿ
+{
+java:S4165‘"dRemove this useless assignment; "status" already holds the assigned value along all execution paths.(Ë„ØÓ
+{
+java:S4165‹"dRemove this useless assignment; "status" already holds the assigned value along all execution paths.(Ë„ØÓ

@@ -44,7 +44,7 @@
 						SELECT
 		                    meeting_code,    p_code,    a.mem_id mem_id,
 		                    meeting_topic,    meeting_content,    meeting_result,
-		                     TO_CHAR(meeting_date,'YYYY-MM-DD HH:MI')meeting_date, 
+		                     TO_CHAR(meeting_date,'YYYY-MM-DD')meeting_date, 
 		                    MEM_NICKNAME
 						FROM meeting a, member b
                        where a.mem_id = b.mem_id 
@@ -76,7 +76,7 @@
 		    meeting_topic,
 		    meeting_content,
 		    meeting_result,
-		    TO_CHAR(meeting_date,'YYYY-MM-DD HH:MI')meeting_date, 
+		    TO_CHAR(meeting_date,'YYYY-MM-DD')meeting_date, 
 		    a.mem_nickname mem_nickname_to,
 		    b.mem_nickname mem_nickname_we
 		FROM
@@ -192,7 +192,7 @@
 		 and a.OUT_STATUS =0
 	</select>
 	
-	<!-- 회의록 참여자 삭제 / 회의록 딜레트 사용  -->
+	<!-- 회의록 참여자 삭제 / 회의록 딜레트 사용  -->	
 	<delete id="deleteMeetingMemberList" parameterType="String">
 	DELETE FROM meeting_mem
     WHERE

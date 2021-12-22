@@ -25,18 +25,22 @@
 
 	<select id="newsReplyList" parameterType="NewsReplyVO"
 	resultType="NewsReplyVO">
-	a.comment_code commentCode,
+    SELECT
+    a.comment_code commentCode,
 	a.news_code newsCode,
 	a.comment_content commentContent,
 	a.comment_date commentDate,
 	a.mem_id memId,
-    b.mem_Nickname memNickname
+    b.mem_Nickname memNickname,
+    c.save_name saveName
 	FROM
-	news_comment a, member b
+	news_comment a, member b, MEMBER_IKON c
 	where
 	news_code = #{newsCode}
     and
     a.mem_id = b.mem_id
+    and
+    a.mem_id = c.mem_id(+)
 	
 	order by comment_date DESC
 

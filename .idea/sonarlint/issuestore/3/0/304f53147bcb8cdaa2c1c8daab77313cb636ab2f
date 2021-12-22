@@ -1,0 +1,11 @@
+
+`
+java:S4488$"JReplace "@RequestMapping(method = RequestMethod.POST)" with "@PostMapping"(íŞ•
+w
+java:S1128	"aRemove this unused import 'org.springframework.security.core.annotation.AuthenticationPrincipal'.(Øù¢
+l
+java:S1128"VRemove this unused import 'org.springframework.security.core.userdetails.UserDetails'.(ÊÁ¥
+o
+java:S1128"TRemove this unnecessary import: same package classes are always implicitly imported.(ù¬Šÿÿÿÿÿ
+{
+java:S2293="YReplace the type specification in this constructor call with the diamond operator ("<>").(¾Ì¹áıÿÿÿÿ8Óìëıİ/

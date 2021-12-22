@@ -13,6 +13,8 @@
 		SELECT COUNT(*)
 		FROM QANDA
 		WHERE QANDA.PARENT_CODE IS NULL
+		AND CONNECT_BY_ISLEAF = '1'
+		START WITH  PARENT_CODE IS NULL CONNECT BY  PRIOR QANDA_CODE = PARENT_CODE
 	</select>
 	
 	<!-- 관리자 입장에서의 삭제된 글의 개수(페이징 처리용) -->
@@ -40,7 +42,7 @@
 			(SELECT A.*, ROWNUM RNUM FROM
 				<![CDATA[
 					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
-					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK
+					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK
 				FROM QANDA START WITH PARENT_CODE
 				IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY
 				QANDA_DATE DESC) A
@@ -54,7 +56,7 @@
 			(SELECT A.*, ROWNUM RNUM FROM
 				<![CDATA[
 					(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;:&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE]]>
-					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK
+					, MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK
 				FROM QANDA START WITH PARENT_CODE
 				IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE ORDER SIBLINGS BY
 				QANDA_DATE DESC) A WHERE QANDA_CHECK = 'Y' 
@@ -64,26 +66,26 @@
 
 	<!-- 답변글이 달리지 않은 글만 조회(관리자) -->
 	<select id = "selectNotAnswerQnAList" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "kr.or.ddit.vo.PagingVO">
-		<!-- SELECT QANDA_CODE, QANDA_TITLE, MEM_ID, QANDA_DATE, QANDA_CHECK, ROWNUM RNUM
-		FROM QANDA
-		WHERE NOT MEM_ID IN ('admin')
-		AND CONNECT_BY_ISLEAF = '1'
-		AND ROWNUM BETWEEN #{startRow} AND #{endRow}
-		START WITH PARENT_CODE IS NULL CONNECT BY PRIOR QANDA_CODE = PARENT_CODE -->
-		
-		SELECT A.* FROM
-		(SELECT QANDA_CODE, QANDA_TITLE, MEM_ID, QANDA_DATE, QANDA_CHECK, ROWNUM RNUM
-    	FROM QANDA
-    	WHERE NOT MEM_ID IN ('admin')
-    	AND PARENT_CODE IS NULL) A
-		WHERE RNUM BETWEEN  #{startRow} AND #{endRow}
+		SELECT B.* 
+		FROM
+		    (SELECT A.*, ROWNUM RNUM
+		    FROM
+		         (SELECT QANDA_CODE, QANDA_TITLE, MEM_ID, TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK,
+		                 CONNECT_BY_ISLEAF AS LEAF
+		          FROM QANDA
+		          WHERE NOT MEM_ID IN ('admin')
+		          AND PARENT_CODE IS NULL
+		          START WITH  PARENT_CODE IS NULL CONNECT BY  PRIOR QANDA_CODE = PARENT_CODE
+		          ORDER BY QANDA_DATE DESC) A
+		    WHERE LEAF = '1') B
+		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
 	</select>
 	
 	<!-- 개인 회원 입장에서의 개인이 작성한 글(삭제하지 않은 것만) -->
 	<select id = "selectQnAListUser" resultType = "kr.or.ddit.vo.QnaVO" parameterType = "kr.or.ddit.vo.PagingVO">
 	    SELECT A.* FROM
 	    <![CDATA[
-    		(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE , MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD HH:MI') QANDA_DATE, QANDA_CHECK , ROWNUM RNUM]]>
+    		(SELECT QANDA_CODE ,PARENT_CODE ,LPAD('   re&nbsp;&nbsp;', (LEVEL-1) * 60, '&nbsp;') || QANDA_TITLE QANDA_TITLE , MEM_ID , TO_CHAR(QANDA_DATE, 'YYYY-MM-DD') QANDA_DATE_SELECT, QANDA_CHECK , ROWNUM RNUM]]>
      		 FROM (select * from QANDA where PARENT_CODE in (select QANDA_CODE from QANDA where MEM_ID = #{detailSearch.memId})
              union all
              select * from QANDA where MEM_ID = #{detailSearch.memId})

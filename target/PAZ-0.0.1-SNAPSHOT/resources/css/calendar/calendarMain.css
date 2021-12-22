@@ -1,0 +1,36 @@
+
+#content {
+	padding: 30px;
+}
+
+.invoice {
+	padding:50px;
+	border-radius: 10px;
+}
+
+.fc-scrollgrid-sync-inner a {
+	color: gray;
+}
+
+.fc .fc-daygrid-day.fc-day-today{
+    background-color: #f9f9f9;
+}
+
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number{
+
+	
+	background: #e74c3c;
+    border-radius: 100px;
+    width: 33px;
+    color: white;
+    text-align: center;
+   
+}
+
+.fc-daygrid-day-events a {
+	color : black;
+}
+
+#calendar {
+	padding: 20px 50px 50px 50px;
+}

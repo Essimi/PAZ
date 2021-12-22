@@ -1,0 +1,22 @@
+	<!-- ************************************************ --> 
+	<!-- 채팅 -->
+	
+	<li class="nav-item dropdown">
+	
+	<!-- 채팅 아이콘 등록(하단 숫자는 채팅 갯수) -->
+		<a class="nav-link" data-toggle="dropdown" href="#">
+			<i class="far fa-comments"></i>
+			<span class="badge badge-danger navbar-badge">0</span>	
+		</a>
+		
+		<!-- 채팅 리스트 div -->
+		<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+		
+		<!-- 하단 버튼  -->
+		<div class="dropdown-divider">
+		</div>
+		<a href="${cPath }/chat/chatting.do" class="dropdown-item dropdown-footer">CHAT MAIN</a>
+        </div>
+	
+	</li>
+	<!-- ************************************************ --> 

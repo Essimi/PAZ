@@ -1,0 +1,163 @@
+@charset "UTF-8";
+
+#content {
+	padding: 30px;
+}
+
+#monthIssueCard{
+	height: 100%;
+}
+
+#monthIssueCardArea {
+	height: 172px;
+}
+
+.monthIssueCardBodyDiv{
+	overflow: auto;	
+}
+
+#monthIssueCardBody {
+	height: 113px;
+}
+
+.leftCard {
+	width: 50%;
+	height: 520px;
+}
+
+.leftCardBody {
+	height: 450px;
+}
+
+.rightCard {
+	width: 50%;
+	height: 520px;
+}
+
+.rightCardBody {
+	height: 450px;
+}
+
+.firstInfo {
+	margin-top: 22px;
+	margin-left: 90px;
+}
+
+.iconCss {
+	border-radius: 60px;
+	height: 56px;
+	margin-top: 23px;
+}
+
+.info-box-text {
+	margin-top: -3px;
+}
+
+.info-box-number {
+	font-size: 45px;
+}
+
+.shadow-none {
+	margin-top: -21px;
+}
+
+.info-box .info-box-number {
+	margin-top: -0.75rem;
+}
+
+.mainText {
+	margin-top: -25px;
+}
+
+.cardWidth {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+.colOver {
+	overflow: auto;
+	height: 100%;
+}
+
+.colPadding {
+	padding-right: 5%;
+	height: 100%;
+}
+
+.table td {
+	vertical-align: middle;
+}
+
+.table th {
+	text-align: center;
+}
+
+.calendarList {
+	height: 100%;
+	overflow: auto;
+}
+
+.info-box-content{
+	margin-left: 10px;	
+}
+
+.memberInfoCard{
+	width: 100%; 
+	height: 700px;
+	margin-top: 20px;
+}
+
+.memberInfoCardBody{
+	padding: 40px; width: 100%; height: 100%;
+}
+
+.memberInfoCardBodyRow{
+	height: 100%;
+}
+
+.memberInfoCardBodyRow2{
+	height: 100%;
+}
+
+.text-muted{
+	width: 100%; 
+	margin-top: 20px; 
+	overflow: auto; 
+	height: 45%;
+}
+
+.rightCardBodyrow{
+	width: 100%; 
+	height: 100%;
+}
+
+.timeline{
+	margin-top: 20px;
+}
+
+.projectIssueList{
+	height: 500px;
+}
+
+.projectIssueListDiv{
+	height: 100%;
+}
+
+.issueTd{
+	text-align: center;
+}
+
+.issueTypeArea{
+	vertical-align: inherit;
+}
+
+.table-avatar{
+	width: 40px; 
+	border-radius: 50%;
+}
+
+.list-unstyled{
+	margin-top: -135px;
+	margin-right: -5px;
+}
